@@ -20,7 +20,7 @@
             <div class="w-full max-w-[26rem] p-4 sm:px-5">
                 <div class="text-center">
                     <img class="mx-auto size-16"
-                         src="{{ asset('images/app-logo.svg') }}"
+                         src="{{ asset('assets/images/app-logo.svg') }}"
                          alt="logo"
                     />
                     @if($cardTitle)
