@@ -1,7 +1,7 @@
 <div id="{{ $wrapperId }}" class="flex">
     <button id="{{ $refId }}" class="avatar cursor-pointer {{ $config['button'] }}">
         <img class="rounded-full"
-             src="{{ auth()->user()->avatar ?? asset('images/200x200.png') }}"
+             src="{{ auth()->user()->avatar ?? asset('assets/images/200x200.png') }}"
              alt="avatar">
         <span class="absolute right-0 {{ $config['badge'] }} rounded-full {{ $config['border'] }} border-white bg-success dark:border-navy-700"></span>
     </button>
@@ -13,7 +13,7 @@
             <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-2 px-4 dark:bg-navy-800">
                 <div class="avatar size-12">
                     <img class="rounded-full"
-                         src="{{ auth()->user()->avatar ?? asset('images/200x200.png') }}"
+                         src="{{ auth()->user()->avatar ?? asset('assets/images/200x200.png') }}"
                          alt="avatar">
                 </div>
                 <div>

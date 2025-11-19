@@ -4,7 +4,7 @@
         <div class="flex pt-4">
             <a href="{{ route('dashboard') }}">
                 <img class="size-11 transition-transform duration-500 ease-in-out hover:rotate-[360deg]"
-                     src="{{ asset('images/app-logo.svg') }}"
+                     src="{{ asset('assets/images/app-logo.svg') }}"
                      alt="logo"
                 />
             </a>
@@ -45,7 +45,7 @@
                 <button id="profile-ref" class="avatar cursor-pointer size-12">
                     <img
                             class="rounded-full"
-                            src="images/200x200.png"
+                            src="{{ asset('assets/images/200x200.png') }}"
                             alt="avatar"
                     />
                     <span

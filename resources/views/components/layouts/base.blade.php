@@ -29,9 +29,7 @@
 
     <!-- Global CSS -->
     @vite('resources/css/app.css')
-
-    <!-- Fallback CSS -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+{{--    @vite('resources/lineone/css/app.css')--}}
 
     <!-- Additional Styles -->
     {!! $styles ?? '' !!}
@@ -49,8 +47,8 @@
 @vite('resources/js/app.js')
 
 {{-- Third-party JS --}}
-<script src="{{ asset('js/app.js') }}"></script>
-<script src="{{ asset('js/libs/components.js') }}"></script>
+@vite('resources/lineone/js/app.js')
+@vite('resources/lineone/js/libs/components.js')
 
 {{-- Additional Scripts --}}
 {!! $scripts ?? '' !!}

@@ -8,7 +8,7 @@
             <div class="avatar size-14">
                 <img
                         class="rounded-full"
-                        src="images/200x200.png"
+                        src="{{ asset('assets/images/200x200.png') }}"
                         alt="avatar"
                 />
             </div>
