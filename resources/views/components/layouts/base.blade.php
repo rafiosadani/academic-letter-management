@@ -10,7 +10,7 @@
 
     <title>{{ $title ?? config('app.name', 'Laravel') }} - Layanan Akademik FV UB</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}"/>
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}"/>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>

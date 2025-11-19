@@ -72,7 +72,7 @@
         <div class="mt-4 text-center text-xs-plus">
             <p class="line-clamp-1">
                 <span>Dont have Account?</span>
-                <a href="pages-singup-1.html"
+                <a href="{{ route('register') }}"
                    class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
                 >
                     Create account
