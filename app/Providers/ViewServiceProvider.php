@@ -24,7 +24,7 @@ class ViewServiceProvider extends ServiceProvider
         // Attach NavigationComposer to app layout
         View::composer(
             'components.layouts.app',
-            NavigationCompopser::class
+            NavigationComposer::class
         );
     }
 }
