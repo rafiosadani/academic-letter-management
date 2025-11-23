@@ -52,31 +52,36 @@ class Menu
         $submenus = [
             [
                 'text' => 'Manajemen Pengguna',
-                'route' => route('master.users.index'),
+//                'route' => route('master.users.index'),
+                'route' => '#',
                 'active' => ['master.users.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_USER_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Manajemen Role & Permission',
-                'route' => route('master.roles.index'),
+//                'route' => route('master.roles.index'),
+                'route' => '#',
                 'active' => ['master.roles.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_ROLE_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Program Studi',
-                'route' => route('master.prodi.index'),
+//                'route' => route('master.prodi.index'),
+                'route' => '#',
                 'active' => ['master.prodi.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_PRODI_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Tahun Akademik & Semester',
-                'route' => route('master.tahun-akademik.index'),
+//                'route' => route('master.tahun-akademik.index'),
+                'route' => '#',
                 'active' => ['master.tahun-akademik.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_TAHUN_AKADEMIK_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Struktur Organisasi',
-                'route' => route('master.organisasi.index'),
+//                'route' => route('master.organisasi.index'),
+                'route' => '#',
                 'active' => ['master.organisasi.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_ORGANISASI_VIEW->value) ?? false,
             ],
@@ -108,13 +113,15 @@ class Menu
         $submenus = [
             [
                 'text' => 'Ajukan Surat Baru',
-                'route' => route('surat.create'),
+//                'route' => route('surat.create'),
+                'route' => '#',
                 'active' => ['surat.create'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::SURAT_SAYA_CREATE->value) ?? false,
             ],
             [
                 'text' => 'Daftar Pengajuan Saya',
-                'route' => route('surat.index'),
+//                'route' => route('surat.index'),
+                'route' => '#',
                 'active' => ['surat.index', 'surat.show'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::SURAT_SAYA_VIEW->value) ?? false,
             ],
@@ -146,13 +153,15 @@ class Menu
         $submenus = [
             [
                 'text' => 'Surat Masuk',
-                'route' => route('transaksi.masuk.index'),
+//                'route' => route('transaksi.masuk.index'),
+                'route' => '#',
                 'active' => ['transaksi.masuk.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::SURAT_MASUK_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Kelola Semua Surat',
-                'route' => route('transaksi.kelola.index'),
+//                'route' => route('transaksi.kelola.index'),
+                'route' => '#',
                 'active' => ['transaksi.kelola.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::SURAT_KELOLA_VIEW->value) ?? false,
             ],
@@ -185,7 +194,8 @@ class Menu
 
         return [
             'text' => 'Notifikasi',
-            'route' => route('notifikasi.index'),
+//            'route' => route('notifikasi.index'),
+            'route' => '#',
             'icon' => '<i class="fa-solid fa-bell fa-xl"></i>',
             'active' => ['notifikasi.*'],
             'hasPanel' => false,
@@ -198,19 +208,22 @@ class Menu
         $submenus = [
             [
                 'text' => 'Statistik Surat',
-                'route' => route('laporan.statistik.index'),
+//                'route' => route('laporan.statistik.index'),
+                'route' => '#',
                 'active' => ['laporan.statistik.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LAPORAN_STATISTIK_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Tracking Riwayat Approval',
-                'route' => route('laporan.tracking.index'),
+//                'route' => route('laporan.tracking.index'),
+                'route' => '#',
                 'active' => ['laporan.tracking.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LAPORAN_TRACKING_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Export Data',
-                'route' => route('laporan.export.index'),
+//                'route' => route('laporan.export.index'),
+                'route' => '#',
                 'active' => ['laporan.export.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LAPORAN_EXPORT->value) ?? false,
             ],
@@ -242,25 +255,29 @@ class Menu
         $submenus = [
             [
                 'text' => 'Identitas Fakultas',
-                'route' => route('pengaturan.identitas.index'),
+//                'route' => route('pengaturan.identitas.index'),
+                'route' => '#',
                 'active' => ['pengaturan.identitas.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::PENGATURAN_IDENTITAS_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Konfigurasi Nomor Surat',
-                'route' => route('pengaturan.nomor.index'),
+//                'route' => route('pengaturan.nomor.index'),
+                'route' => '#',
                 'active' => ['pengaturan.nomor.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::PENGATURAN_NOMOR_SURAT_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Alur Persetujuan',
-                'route' => route('pengaturan.alur.index'),
+//                'route' => route('pengaturan.alur.index'),
+                'route' => '#',
                 'active' => ['pengaturan.alur.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::PENGATURAN_ALUR_APPROVAL_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Pengaturan Notifikasi',
-                'route' => route('pengaturan.notifikasi.index'),
+//                'route' => route('pengaturan.notifikasi.index'),
+                'route' => '#',
                 'active' => ['pengaturan.notifikasi.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::PENGATURAN_NOTIFIKASI_VIEW->value) ?? false,
             ],
@@ -293,7 +310,8 @@ class Menu
 
         return [
             'text' => 'Profil Saya',
-            'route' => route('profile.show'),
+//            'route' => route('profile.show'),
+            'route' => '#',
             'icon' => '<i class="fa-solid fa-user fa-xl"></i>',
             'active' => ['profile.*'],
             'hasPanel' => false,
