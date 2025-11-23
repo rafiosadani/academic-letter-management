@@ -73,7 +73,7 @@
 
                 <!-- Logout Button -->
                 <div class="mt-3 px-4">
-                    <form method="POST" action="/">
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
                                 class="btn h-9 w-full space-x-2 bg-primary text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
