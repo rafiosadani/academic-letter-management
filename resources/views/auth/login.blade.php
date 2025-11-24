@@ -68,8 +68,9 @@
                 <label class="inline-flex items-center space-x-2">
                     <input
                         name="remember"
-                        class="form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
+                        value="1"
                         type="checkbox"
+                        class="form-checkbox is-basic size-5 rounded-sm border-slate-400/70 checked:border-primary checked:bg-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:border-accent dark:checked:bg-accent dark:hover:border-accent dark:focus:border-accent"
                         {{ old('remember') ? 'checked' : '' }}
                     />
                     <span class="line-clamp-1">Remember me</span>
