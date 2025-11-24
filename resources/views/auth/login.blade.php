@@ -31,7 +31,7 @@
                     </span>
                 </span>
                 @error('email')
-                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                    <p class="mt-2 ms-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </label>
             <label class="mt-4 block">
@@ -61,7 +61,7 @@
                     </span>
                 </span>
                 @error('password')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                <p class="mt-2 ms-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </label>
             <div class="mt-4 flex items-center justify-between space-x-2">
@@ -100,4 +100,14 @@
             </div>
         </div>
     </form>
+
+    {{--  Modal Alert  --}}
+    <x-modal.alert
+        id="alert-logout-success"
+        type="success"
+        title="Sesi Berakhir"
+        message="Anda telah berhasil keluar dari sistem. Silakan masuk kembali."
+        button-text="OK"
+        :show-button="true"
+    />
 </x-layouts.guest>

@@ -157,6 +157,20 @@
 
     </div>
 
+    {{--  Modal Logout  --}}
+    <form id="logout-confirm-modal-form" method="POST" action="{{ route('logout') }}" class="hidden">
+        @csrf
+    </form>
+
+    <x-modal.confirm
+        id="logout-confirm-modal"
+        title="Konfirmasi Logout"
+        message="Anda yakin ingin mengakhiri sesi Anda saat ini?"
+        confirm-type="danger"
+        confirm-text="Logout Sekarang!"
+        form="logout-confirm-modal-form"
+    />
+
     {{-- Pass scripts dari child ke base --}}
     @isset($scripts)
         <x-slot:styles>

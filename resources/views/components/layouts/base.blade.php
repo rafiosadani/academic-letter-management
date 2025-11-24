@@ -50,6 +50,22 @@
 @vite('resources/lineone/js/app.js')
 @vite('resources/lineone/js/libs/components.js')
 
+{{-- Elemen Tersembunyi untuk Session Flash Data --}}
+@if(session()->has('alert_show_id'))
+    <div id="session-alert-data"
+         class="hidden"
+         data-json="{{ json_encode(['alert_show_id' => session('alert_show_id')]) }}">
+    </div>
+@endif
+
+{{-- Toastify dengan Session Flash Data --}}
+@if(session()->has('notification_data'))
+    <div id="session-notification-data"
+         class="hidden"
+         data-json="{{ json_encode(session('notification_data')) }}">
+    </div>
+@endif
+
 {{-- Additional Scripts --}}
 {!! $scripts ?? '' !!}
 

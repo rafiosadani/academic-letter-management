@@ -1579,6 +1579,13 @@
 
     </div>
 
+    <x-modal.alert
+        id="alert-login-success"
+        type="success"
+        title="Welcome Back, {{ auth()->user()->name ?? 'Pengguna'}}!"
+        message="Anda telah berhasil login ke dalam sistem!. Sistem siap digunakan."
+    />
+
     {{-- Page-Specific JS --}}
     <x-slot:scripts>
 {{--        @vite('resources/js/pages/dashboard.js')--}}

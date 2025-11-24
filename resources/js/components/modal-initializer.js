@@ -1,6 +1,6 @@
 export function initAllModals() {
     // Memeriksa apakah Class Modal dari lineone sudah tersedia
-    if (typeof window.Modal === 'undefined') {
+    if (typeof Modal === 'undefined') {
         console.warn("Modal class (window.Modal) not found. Modal initialization skipped.");
         return;
     }
@@ -9,7 +9,7 @@ export function initAllModals() {
 
     modalElements.forEach(modalEl => {
         if (modalEl.id) {
-            new window.Modal(`#${modalEl.id}`);
+            new Modal(`#${modalEl.id}`);
         }
     });
 }

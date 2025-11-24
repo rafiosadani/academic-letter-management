@@ -18,8 +18,22 @@ class LoginController extends Controller
 
         if(Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            $request->session()->flash('alert_show_id', 'alert-login-success');
+            $request->session()->flash('notification_data', [
+                'type' => 'success',
+                'text' => 'Selamat Datang Kembali, ' . Auth::user()->name . '! Login berhasil. Sistem siap digunakan.',
+                'position' => 'center-top',
+                'duration' => 4000
+            ]);
             return redirect()->intended(route('dashboard'));
         }
+
+        $request->session()->flash('notification_data', [
+            'type' => 'error',
+            'text' => 'Otentikasi gagal. Silakan periksa kredensial Anda.',
+            'position' => 'center-top',
+            'duration' => 4000
+        ]);
 
         return back()->withErrors([
             'email' => 'Email atau password salah.',

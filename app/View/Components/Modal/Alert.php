@@ -15,6 +15,8 @@ class Alert extends Component
     public string $buttonText;
     public ?string $icon;
     public array $config;
+    public bool $showButton;
+
     /**
      * Create a new component instance.
      */
@@ -24,7 +26,8 @@ class Alert extends Component
         string $title = 'Success',
         string $message = '',
         string $buttonText = 'OK',
-        ?string $icon = null
+        ?string $icon = null,
+        bool $showButton = false
     ) {
         $this->id = $id;
         $this->type = $type;
@@ -32,6 +35,7 @@ class Alert extends Component
         $this->message = $message;
         $this->buttonText = $buttonText;
         $this->icon = $icon;
+        $this->showButton = $showButton;
 
         $configs = [
             'success' => [

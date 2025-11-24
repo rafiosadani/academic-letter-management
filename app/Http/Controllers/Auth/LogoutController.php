@@ -14,6 +14,8 @@ class LogoutController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        $request->session()->flash('alert_show_id', 'alert-logout-success');
+
         return redirect(route('login'));
     }
 }

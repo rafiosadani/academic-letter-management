@@ -2,7 +2,8 @@
      class="modal fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
      role="dialog">
 
-    <div class="modal-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+{{--    <div class="modal-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>--}}
+    <div class="modal-overlay absolute inset-0 bg-slate-900/60"></div>
 
     <div class="modal-content scrollbar-sm relative flex max-w-lg flex-col items-center overflow-y-auto rounded-lg bg-white px-4 py-10 text-center dark:bg-navy-700 sm:px-5">
 
@@ -21,12 +22,14 @@
 
             {{ $slot }}
 
-            <button
-                data-close-modal
-                type="button"
-                class="btn mt-6 font-medium text-white {{ $config['buttonClass'] }}">
-                {{ $buttonText }}
-            </button>
+            @if ($showButton)
+                <button
+                    data-close-modal
+                    type="button"
+                    class="btn mt-6 font-medium text-white {{ $config['buttonClass'] }}">
+                    {{ $buttonText }}
+                </button>
+            @endif
         </div>
     </div>
 </div>
