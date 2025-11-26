@@ -15,10 +15,18 @@ class UserSeeder extends Seeder
         // Administrator
         $administrator = User::create([
             'name' => 'Administrator',
-            'email' => 'administartor@gmail.com',
+            'email' => 'administrator@gmail.com',
             'password' => bcrypt('password'),
         ]);
         $administrator->assignRole('Administrator');
+
+        // Kepala Subbagian Akademik
+        $staff = User::create([
+            'name' => 'Kepala Subbagian Akademik',
+            'email' => 'kasubbagakademik@gmail.com',
+            'password' => bcrypt('password'),
+        ]);
+        $staff->assignRole('Kepala Subbagian Akademik');
 
         // Staf Akademik
         $staff = User::create([

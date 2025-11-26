@@ -69,4 +69,28 @@ enum PermissionName: string
     // Profile
     case PROFILE_VIEW = 'profile.view';
     case PROFILE_UPDATE = 'profile.update';
+
+    public function groupName(): string
+    {
+        $main = explode('.', $this->value)[0]; // master, surat, laporan, dll.
+
+        return match ($main) {
+            'dashboard'  => 'Dashboard',
+            'master'     => 'Master Data',
+            'surat'      => 'Surat',
+            'notifikasi' => 'Notifikasi',
+            'laporan'    => 'Laporan',
+            'pengaturan' => 'Pengaturan',
+            'profile'    => 'Profile',
+            default      => ucfirst($main)
+        };
+    }
+
+    public function displayName(): string
+    {
+        $parts = explode('.', $this->value);
+        $parts = array_map(fn ($p) => ucfirst(str_replace('_', ' ', $p)), $parts);
+
+        return implode(' ', $parts); // contoh: master.user.update => "Master User Update"
+    }
 }
