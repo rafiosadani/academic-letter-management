@@ -1,3 +1,8 @@
 export { initProfileDropdown } from './profile-dropdown';
 export { initAllModals } from './modal-initializer.js';
-export { initSessionHandlers } from './session-handler.js'
+export { initSessionHandlers } from './session-handler.js';
+export { initRealtimeClock } from './clock.js';
+export { initSidebarState } from './sidebar-state.js';
+export { initUniversalPopperFix } from './universal-popover-fix.js';
+export { initModalErrorReopener } from './modal-error-reopener.js';
+export { initModalFormReset } from './modal-form-reset.js';

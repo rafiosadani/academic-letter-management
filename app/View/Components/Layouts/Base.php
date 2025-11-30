@@ -15,7 +15,8 @@ class Base extends Component
         public ?string $title,
         public ?string $bodyClass,
         public ?string $styles,
-        public ?string $scripts
+        public ?string $scripts,
+        public bool $hasPanel = false
     ) {
         //
     }

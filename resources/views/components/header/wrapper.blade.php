@@ -8,14 +8,22 @@
         <div class="flex w-full items-center justify-between">
 
             <!-- Left: Sidebar Toggle Button -->
-            <div class="size-7">
-                @if($hasPanel)
+            <div class="flex items-center space-x-6">
+                <div class="size-7
+                    @if(!$hasPanel)
+                        xl:hidden
+                    @endif
+                ">
                     <button class="sidebar-toggle cursor-pointer ml-0.5 flex size-7 flex-col justify-center space-y-1.5 text-primary outline-hidden focus:outline-hidden dark:text-accent-light/80">
                         <span></span>
                         <span></span>
                         <span></span>
                     </button>
-                @endif
+                </div>
+
+                <div id="realtime-clock" class="text-xs-plus font-medium text-slate-700 dark:text-navy-100 hidden sm:block">
+                    {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y H:i:s') }}
+                </div>
             </div>
 
             <!-- Right: Header buttons -->

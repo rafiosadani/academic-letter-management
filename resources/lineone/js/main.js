@@ -521,13 +521,13 @@ export default class Main {
   _uiToggleTableSearchbar(input) {
     if (input.isActive) {
       input.classList.remove("w-32");
-      input.classList.remove("lg:w-48");
+      input.classList.remove("lg:w-80");
       input.classList.add("w-0");
       input.isActive = false;
     } else {
       input.classList.remove("w-0");
       input.classList.add("w-32");
-      input.classList.add("lg:w-48");
+      input.classList.add("lg:w-80");
       setTimeout(() => input.focus());
       input.isActive = true;
     }

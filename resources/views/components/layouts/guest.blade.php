@@ -19,8 +19,8 @@
         <main class="grid w-full grow grid-cols-1 place-items-center">
             <div class="w-full max-w-[26rem] p-4 sm:px-5">
                 <div class="text-center">
-                    <img class="mx-auto size-16"
-                         src="{{ asset('assets/images/app-logo.svg') }}"
+                    <img class="mx-auto size-28 transition-transform duration-500 ease-in-out hover:scale-110 hover:rotate-[12deg]"
+                         src="{{ asset('assets/images/logo/vokasi-ub.png') }}"
                          alt="logo"
                     />
                     @if($cardTitle)

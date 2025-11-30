@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,11 @@ class LoginController extends Controller
         $remember = $request->boolean('remember');
 
         if(Auth::attempt($credentials, $remember)) {
+            // LOG INFO
+            LogHelper::logInfo('User logged in successfully', [
+                'user_id_logged' => Auth::id(),
+            ]);
+
             $request->session()->regenerate();
             $request->session()->flash('alert_show_id', 'alert-login-success');
             $request->session()->flash('notification_data', [
@@ -27,6 +33,11 @@ class LoginController extends Controller
             ]);
             return redirect()->intended(route('dashboard'));
         }
+
+        // LOG WARNING
+        LogHelper::logWarning('Failed login attempt with invalid credentials', [
+            'email_attempt' => $request->email,
+        ]);
 
         $request->session()->flash('notification_data', [
             'type' => 'error',

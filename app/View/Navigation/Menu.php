@@ -59,8 +59,7 @@ class Menu
             ],
             [
                 'text' => 'Manajemen Role & Permission',
-//                'route' => route('master.roles.index'),
-                'route' => '#',
+                'route' => route('master.roles.index'),
                 'active' => ['master.roles.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_ROLE_VIEW->value) ?? false,
             ],
@@ -98,7 +97,7 @@ class Menu
 
         return [
             'text' => 'Master Data',
-            'route' => '#',
+            'route' => route('master.roles.index'),
             'icon' => self::iconMasterData(),
             'active' => ['master.*'],
             'hasPanel' => true,

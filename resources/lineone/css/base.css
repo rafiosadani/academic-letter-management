@@ -347,3 +347,21 @@ code.inline-code {
     visibility: hidden;
   }
 }
+
+/* Custom CSS */
+.no-panel.is-sidebar-open {
+  /* Variabel default XL untuk --margin-x adalah 4rem.
+     Kita timpa nilai 1.5rem yang diatur oleh kelas is-sidebar-open. */
+  @apply xl:[--margin-x:4rem];
+}
+
+.no-panel.is-sidebar-open .main-content {
+  /* Paksa margin Main Content hanya sebesar Main Sidebar */
+  /* Gunakan md:ml dan xl:ml yang sesuai dengan margin default saat panel tidak ada */
+  @apply ease-out xl:ml-[var(--main-sidebar-width)];
+}
+
+.no-panel.is-sidebar-open nav.header {
+  /* Paksa lebar Header sesuai tanpa panel */
+  @apply xl:w-[calc(100%-var(--main-sidebar-width))];
+}

@@ -52,8 +52,6 @@ export function initSessionNotifications() {
         try {
             const options = JSON.parse(dataJson);
 
-            console.log(options)
-
             if (options && options.text) {
                 window.$notification({
                     text: options.text,

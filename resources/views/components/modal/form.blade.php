@@ -1,12 +1,14 @@
 <div id="{{ $id }}"
      class="modal {{ $transition }} fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
-     role="dialog">
+     role="dialog"
+     {{ $attributes->only(['data-open-on-error']) }}
+>
 
     <div class="modal-overlay absolute inset-0 bg-slate-900/60"></div>
 
-    <div class="modal-content relative flex w-full max-w-{{ $size }} origin-top flex-col overflow-hidden rounded-lg bg-white dark:bg-navy-700">
+    <div class="modal-content relative flex w-full {{ $sizeClass }} origin-top flex-col overflow-hidden rounded-lg bg-white dark:bg-navy-700">
 
-        <div class="flex justify-between rounded-t-lg bg-slate-200 px-4 py-3 dark:bg-navy-800 sm:px-5">
+        <div class="flex items-center justify-between rounded-t-lg bg-slate-200 px-4 py-3 dark:bg-navy-800 sm:px-5">
             <h3 class="text-base font-medium text-slate-700 dark:text-navy-100">
                 {{ $title }}
             </h3>
@@ -22,7 +24,9 @@
         </div>
 
         {{-- Menggunakan $htmlMethod yang sudah ditentukan di class --}}
-        <form method="{{ $htmlMethod }}" action="{{ $action }}" {{ $attributes }}>
+        <form method="{{ $htmlMethod }}" action="{{ $action }}" {{ $attributes->except(['scrollable', 'size']) }}
+            class="flex flex-col flex-1 min-h-0 overflow-hidden"
+        >
             {{-- Tambahkan CSRF dan Method Spoofing jika method bukan GET --}}
             @if($method !== 'GET')
                 @csrf
@@ -31,7 +35,7 @@
                 @endif
             @endif
 
-            <div class="scrollbar-sm overflow-y-auto px-4 py-4 sm:px-5">
+            <div class="{{ $scrollable ? 'scrollbar-sm overflow-y-auto' : 'overflow-visible' }} flex-1 px-4 py-4 sm:px-5">
                 {{ $slot }}
             </div>
 

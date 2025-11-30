@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\PermissionName;
+use App\Helpers\CodeGeneration;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
@@ -48,6 +49,7 @@ class RoleAndPermissionSeeder extends Seeder
             'name' => 'Administrator',
             'guard_name' => 'web',
         ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
             'is_editable' => false,
             'is_deletable' => false,
         ]);
@@ -61,6 +63,7 @@ class RoleAndPermissionSeeder extends Seeder
             'name' => 'Staf Akademik',
             'guard_name' => 'web',
         ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
             'is_editable' => true,
             'is_deletable' => true,
         ]);
@@ -94,6 +97,7 @@ class RoleAndPermissionSeeder extends Seeder
             'name' => 'Kepala Subbagian Akademik',
             'guard_name' => 'web',
         ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
             'is_editable' => true,
             'is_deletable' => true,
         ]);
@@ -127,6 +131,7 @@ class RoleAndPermissionSeeder extends Seeder
             'name' => 'Mahasiswa',
             'guard_name' => 'web',
         ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
             'is_editable' => true,
             'is_deletable' => true,
         ]);

@@ -4,9 +4,12 @@
 
     <div class="modal-overlay absolute inset-0 bg-slate-900/60"></div>
 
-    <div class="modal-content scrollbar-sm relative flex max-w-md flex-col overflow-y-auto rounded-lg bg-white py-6 text-center dark:bg-navy-700">
+    <div class="modal-content scrollbar-sm relative flex w-full max-w-xl flex-col items-center overflow-y-auto rounded-lg bg-white px-4 py-6 text-center dark:bg-navy-700 sm:px-5">
 
-        <div class="px-4 sm:px-12">
+        {{-- Icon Display --}}
+        {!! $getDisplayIcon() !!}
+
+        <div class="px-4 sm:px-4">
             <h3 class="text-lg text-slate-800 dark:text-navy-50">
                 {{ $title }}
             </h3>

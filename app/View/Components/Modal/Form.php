@@ -16,7 +16,9 @@ class Form extends Component
     public string $cancelText;
     public string $submitText;
     public string $transition;
+    public string $sizeClass;
     public string $htmlMethod;
+    public bool $scrollable;
     /**
      * Create a new component instance.
      */
@@ -28,7 +30,8 @@ class Form extends Component
         string $action = '#',
         string $cancelText = 'Cancel',
         string $submitText = 'Submit',
-        string $transition = 'modal-scale'
+        string $transition = 'modal-scale',
+        bool $scrollable = true
     ) {
         $this->id = $id;
         $this->title = $title;
@@ -38,6 +41,23 @@ class Form extends Component
         $this->cancelText = $cancelText;
         $this->submitText = $submitText;
         $this->transition = $transition;
+        $this->scrollable = $scrollable;
+
+        $allowed = [
+            'sm' => 'max-w-sm',
+            'md' => 'max-w-md',
+            'lg' => 'max-w-lg',
+            'xl' => 'max-w-xl',
+            '2xl' => 'max-w-2xl',
+            '3xl' => 'max-w-3xl',
+            '4xl' => 'max-w-4xl',
+            '5xl' => 'max-w-5xl',
+            '6xl' => 'max-w-6xl',
+            '7xl' => 'max-w-7xl',
+            '8xl' => 'max-w-8xl',
+        ];
+
+        $this->sizeClass = $allowed[$size] ?? 'max-w-lg';
 
         // Tentukan method HTML: Jika bukan GET, gunakan POST (untuk spoofing method)
         $this->htmlMethod = ($this->method === 'GET') ? 'GET' : 'POST';
