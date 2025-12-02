@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Master\RoleController;
+use App\Http\Controllers\Master\UserController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -29,6 +30,13 @@ Route::middleware('auth')->group(function () {
         Route::post('roles/restore-all', [RoleController::class, 'restoreAll'])->name('roles.restore.all');
         Route::delete('roles/{id}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.force-delete');
         Route::resource('/roles', RoleController::class)->names('roles');
+
+        // Users
+        Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+        Route::post('users/restore-all', [UserController::class, 'restoreAll'])->name('users.restore.all');
+        Route::delete('roles/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
+        Route::patch('users/{user}/update-status', [UserController::class, 'updateStatus'])->name('users.updateStatus');
+        Route::resource('/users', UserController::class)->names('users');
     });
     Route::post('/logout', LogoutController::class)->name('logout');
 });

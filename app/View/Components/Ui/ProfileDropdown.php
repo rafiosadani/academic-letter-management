@@ -31,7 +31,7 @@ class ProfileDropdown extends Component
                 'border' => 'border-2',
             ],
             'md' => [
-                'button' => 'size-8',
+                'button' => 'size-9',
                 'badge' => 'size-3',
                 'border' => 'border-2',
             ],

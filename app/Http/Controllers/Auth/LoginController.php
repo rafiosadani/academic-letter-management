@@ -18,16 +18,23 @@ class LoginController extends Controller
         $remember = $request->boolean('remember');
 
         if(Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+
+            $userName = $user->profile?->full_name ?? $user->email;
+
             // LOG INFO
             LogHelper::logInfo('User logged in successfully', [
-                'user_id_logged' => Auth::id(),
-            ]);
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'user_role' => $user->roles->first()?->name ?? 'N/A',
+            ], $request);
 
             $request->session()->regenerate();
+
             $request->session()->flash('alert_show_id', 'alert-login-success');
             $request->session()->flash('notification_data', [
                 'type' => 'success',
-                'text' => 'Selamat Datang Kembali, ' . Auth::user()->name . '! Login berhasil. Sistem siap digunakan.',
+                'text' => 'Selamat Datang Kembali, ' . $userName . '!. Sistem siap digunakan.',
                 'position' => 'center-top',
                 'duration' => 4000
             ]);
@@ -37,7 +44,7 @@ class LoginController extends Controller
         // LOG WARNING
         LogHelper::logWarning('Failed login attempt with invalid credentials', [
             'email_attempt' => $request->email,
-        ]);
+        ], $request);
 
         $request->session()->flash('notification_data', [
             'type' => 'error',

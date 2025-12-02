@@ -36,14 +36,14 @@
             </label>
             <label class="mt-4 block">
                 <span>Password:</span>
-                <span class="relative mt-1.5 flex">
+                <span class="relative mt-1.5 flex password-wrapper">
                     <input
                         name="password"
-                        class="form-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pl-9 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                        class="form-input peer w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pl-9 pr-10 placeholder:text-slate-400/70 hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
                         placeholder="Enter Password"
                         type="password"
                     />
-                    <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                    <span class="pointer-events-none absolute left-0 flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="size-5 transition-colors duration-200"
@@ -59,6 +59,14 @@
                             />
                         </svg>
                     </span>
+                    <button
+                        type="button"
+                        data-toggle-password="true"
+                        class="absolute right-0 flex h-full w-10 items-center justify-center text-slate-400 hover:text-primary focus:text-primary dark:text-navy-300 dark:hover:text-accent dark:focus:text-accent z-30"
+                        title="Toggle Password Visibility"
+                    >
+                        <i class="fa fa-eye transition-colors duration-200"></i>
+                    </button>
                 </span>
                 @error('password')
                 <p class="mt-2 ms-1 text-xs text-red-500">{{ $message }}</p>

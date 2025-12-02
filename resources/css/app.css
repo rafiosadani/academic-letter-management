@@ -1,10 +1,7 @@
 @import 'tailwindcss';
 
-/* WAJIB: Deteksi file Pagination Vendor Laravel */
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-/*@source '../../storage/framework/views!*.php';*/
-/*@source '..!**!*.blade.php';*/
-/*@source '..!**!*.js';*/
+/* Import Style Template Lineone (Urutan Paling Akhir) */
+@import "../lineone/css/app.css";
 
 /* Konfigurasi Theme (Warna, Font, Breakpoints) */
 @theme {
@@ -12,5 +9,9 @@
     'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Import Style Template Lineone (Urutan Paling Akhir) */
-@import "../lineone/css/app.css";
+/* WAJIB: Deteksi file Pagination Vendor Laravel */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+/*@source '../../storage/framework/views!*.php';*/
+/*@source '..!**!*.blade.php';*/
+/*@source '..!**!*.js';*/
+

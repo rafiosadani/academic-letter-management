@@ -52,8 +52,7 @@ class Menu
         $submenus = [
             [
                 'text' => 'Manajemen Pengguna',
-//                'route' => route('master.users.index'),
-                'route' => '#',
+                'route' => route('master.users.index'),
                 'active' => ['master.users.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_USER_VIEW->value) ?? false,
             ],

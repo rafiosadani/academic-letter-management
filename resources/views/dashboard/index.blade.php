@@ -1582,7 +1582,7 @@
     <x-modal.alert
         id="alert-login-success"
         type="success"
-        title="Welcome Back, {{ auth()->user()->name ?? 'Pengguna'}}!"
+        title="Welcome Back, {{ auth()->user()->profile?->full_name ?? 'Pengguna'}}!"
         message="Anda telah berhasil login ke dalam sistem!. Sistem siap digunakan."
     />
 

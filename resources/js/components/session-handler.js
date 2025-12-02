@@ -37,6 +37,38 @@ export function initSessionAlerts() {
     }
 }
 
+// export function initSessionNotifications() {
+//     // Pastikan fungsi global $notification tersedia
+//     if (typeof window.$notification === 'undefined') {
+//         console.warn("$notification function not found. Skipping session notification initialization.");
+//         return;
+//     }
+//
+//     const notificationDataElement = document.getElementById('session-notification-data');
+//
+//     if (notificationDataElement) {
+//         const dataJson = notificationDataElement.getAttribute('data-json');
+//
+//         try {
+//             const options = JSON.parse(dataJson);
+//
+//             if (options && options.text) {
+//                 window.$notification({
+//                     text: options.text,
+//                     variant: options.type || 'info',
+//                     position: options.position || 'bottom-right',
+//                     duration: options.duration || 5000,
+//                 });
+//                 console.log(`[Success] Showing session notification: ${options.text.substring(0, 30)}...`);
+//             }
+//         } catch (e) {
+//             console.error("Error parsing session notification data:", e);
+//         }
+//
+//         notificationDataElement.remove();
+//     }
+// }
+
 export function initSessionNotifications() {
     // Pastikan fungsi global $notification tersedia
     if (typeof window.$notification === 'undefined') {
@@ -50,21 +82,47 @@ export function initSessionNotifications() {
         const dataJson = notificationDataElement.getAttribute('data-json');
 
         try {
-            const options = JSON.parse(dataJson);
+            const data = JSON.parse(dataJson);
 
-            if (options && options.text) {
-                window.$notification({
-                    text: options.text,
-                    variant: options.type || 'info',
-                    position: options.position || 'bottom-right',
-                    duration: options.duration || 5000,
+            // Fungsi untuk menampilkan satu notifikasi
+            const showNotification = (options) => {
+                if (options && options.text) {
+                    window.$notification({
+                        text: options.text,
+                        variant: options.type || 'info',
+                        position: options.position || 'bottom-right',
+                        duration: options.duration || 5000,
+                    });
+                    console.log(`[Success] Showing session notification: ${options.text.substring(0, 30)}...`);
+                }
+            };
+
+            // 1. Cek apakah data yang diterima adalah Array (Multiple Notifications)
+            if (Array.isArray(data)) {
+                // Tentukan jeda dasar (misalnya 500ms atau 0.5 detik)
+                const delayPerToast = 300;
+
+                // Lakukan loop, gunakan index untuk menghitung total jeda
+                data.forEach((options, index) => {
+                    // Total jeda = index * delayPerToast.
+                    // Toast pertama (index 0) jedanya 0, toast kedua (index 1) jedanya 500ms, dst.
+                    const totalDelay = index * delayPerToast;
+
+                    setTimeout(() => {
+                        showNotification(options);
+                    }, totalDelay);
                 });
-                console.log(`[Success] Showing session notification: ${options.text.substring(0, 30)}...`);
             }
+            // 2. Jika bukan Array, perlakukan sebagai Notifikasi Tunggal
+            else if (data && data.text) {
+                showNotification(data);
+            }
+
         } catch (e) {
             console.error("Error parsing session notification data:", e);
         }
 
+        // Hapus elemen setelah selesai membaca data
         notificationDataElement.remove();
     }
 }

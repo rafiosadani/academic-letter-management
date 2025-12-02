@@ -5,31 +5,26 @@ namespace App\Models;
 use App\Traits\RecordSignature;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Role extends SpatieRole
+class StudyProgram extends Model
 {
     use SoftDeletes, RecordSignature;
-
     protected $primaryKey = 'id';
-
-//    protected $guarded = [];
 
     protected $fillable = [
         'code',
         'name',
-        'guard_name',
-        'is_editable',
-        'is_deletable',
+        'degree',
+        'status',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
 
     protected $casts = [
-        'is_editable' => 'boolean',
-        'is_deletable' => 'boolean',
+        'status' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -118,10 +113,12 @@ class Role extends SpatieRole
             $query->where(function ($query) use ($search) {
                 $query->where('code', 'like', "%{$search}%")
                     ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('degree', 'like', "%{$search}%")
                     ->orWhereHas('createdByUser', fn ($q) =>
-                        $q->where('name', 'like', "%{$search}%")
+                    $q->where('name', 'like', "%{$search}%")
                 );
             });
         });
     }
+
 }

@@ -49,8 +49,8 @@
 @vite('resources/js/app.js')
 
 {{-- Third-party JS --}}
-@vite('resources/lineone/js/app.js')
-@vite('resources/lineone/js/libs/components.js')
+{{--@vite('resources/lineone/js/app.js')--}}
+{{--@vite('resources/lineone/js/libs/components.js')--}}
 
 {{-- ============================= --}}
 {{--   RENDER MODAL ALERT DINAMIS   --}}

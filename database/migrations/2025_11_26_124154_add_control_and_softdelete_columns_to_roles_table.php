@@ -29,23 +29,40 @@ return new class extends Migration
             // Kolom Signature (created_by, updated_by, deleted_by)
             if (!Schema::hasColumn('roles', 'created_by')) {
                 $table->unsignedBigInteger('created_by')->nullable()->after('updated_at');
-                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
+//                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
             }
 
             if (!Schema::hasColumn('roles', 'updated_by')) {
                 $table->unsignedBigInteger('updated_by')->nullable()->after('created_by');
-                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
+//                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
             }
 
             if (!Schema::hasColumn('roles', 'deleted_by')) {
                 $table->unsignedBigInteger('deleted_by')->nullable()->after('updated_by');
-                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
+//                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
             }
 
             // Soft Delete
             if (!Schema::hasColumn('roles', 'deleted_at')) {
-                $table->softDeletes();
+                $table->softDeletes()->after('deleted_by');
             }
+
+            if (Schema::hasColumn('roles', 'created_by')) {
+                $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            }
+            if (Schema::hasColumn('roles', 'updated_by')) {
+                $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+            }
+            if (Schema::hasColumn('roles', 'deleted_by')) {
+                $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
+            }
+
+            // Indexes
+            $table->index('code');
+            $table->index('name');
+            $table->index('is_editable');
+            $table->index('is_deletable');
+            $table->index('deleted_at');
         });
     }
 

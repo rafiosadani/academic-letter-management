@@ -6,3 +6,5 @@ export { initSidebarState } from './sidebar-state.js';
 export { initUniversalPopperFix } from './universal-popover-fix.js';
 export { initModalErrorReopener } from './modal-error-reopener.js';
 export { initModalFormReset } from './modal-form-reset.js';
+export { initFormComponents, reinitFormComponents } from './form/form-handler.js';
+export { initStatusToggle } from './status-toggle.js';

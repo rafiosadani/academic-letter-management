@@ -1,7 +1,7 @@
 <div id="{{ $wrapperId }}" class="flex">
     <button id="{{ $refId }}" class="avatar cursor-pointer {{ $config['button'] }}">
-        <img class="rounded-full"
-             src="{{ auth()->user()->avatar ?? asset('assets/images/200x200.png') }}"
+        <img class="rounded-full border border-slate-300 dark:border-navy-500"
+             src="{{ auth()->user()->profile?->photo_url ?? asset('assets/images/default.png') }}"
              alt="avatar">
         <span class="absolute right-0 {{ $config['badge'] }} rounded-full {{ $config['border'] }} border-white bg-success dark:border-navy-700"></span>
     </button>
@@ -11,18 +11,20 @@
 
             <!-- Profile Header -->
             <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-2 px-4 dark:bg-navy-800">
-                <div class="avatar size-12">
+                <div class="avatar size-11">
                     <img class="rounded-full"
-                         src="{{ auth()->user()->avatar ?? asset('assets/images/200x200.png') }}"
+                         src="{{ auth()->user()->profile?->photo_url ?? asset('assets/images/default.png') }}"
                          alt="avatar">
                 </div>
                 <div>
                     <a href="/"
-                       class="text-base font-medium text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light">
-                        {{ auth()->user()->name ?? 'User' }}
+                       class="font-medium text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light"
+                       title="{{ auth()->user()->profile?->full_name ?? 'User' }}"
+                    >
+                        {{ auth()->user()->profile?->short_name ?? 'User' }}
                     </a>
                     <p class="text-xs text-slate-400 dark:text-navy-300">
-                        {{ auth()->user()->role ?? 'Member' }}
+                        {{ auth()->user()->role?->name ?? 'Member' }}
                     </p>
                 </div>
             </div>
