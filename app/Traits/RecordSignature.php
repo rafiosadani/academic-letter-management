@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 trait RecordSignature
@@ -21,25 +22,39 @@ trait RecordSignature
             $model->updated_by = $user?->id;
         });
 
-        static::deleting(function ($model) {
-            if (method_exists($model, 'isForceDeleting') && $model->isForceDeleting()) {
-                // Force delete, tidak perlu set deleted_by
-                return;
-            }
+        if (self::usesSoftDeletes()) {
+            static::deleting(function ($model) {
+                if (method_exists($model, 'isForceDeleting') && $model->isForceDeleting()) {
+                    // Force delete, tidak perlu set deleted_by
+                    return;
+                }
 
-            $user = Auth::user();
+                $user = Auth::user();
 
-            $model->deleted_by = $user?->id;
-            $model->saveQuietly(); // hindari infinite loop
-        });
+                if (in_array('deleted_by', $model->getFillable()) || $model->isFillable('deleted_by')) {
+                    $model->deleted_by = $user?->id;
+                    $model->saveQuietly(); // hindari infinite loop
+                }
+            });
 
-        static::restoring(function ($model) {
-            // Clear deleted_by saat restore
-            $model->deleted_by = null;
+            static::restoring(function ($model) {
+                // Clear deleted_by saat restore
+                if (in_array('deleted_by', $model->getFillable()) || $model->isFillable('deleted_by')) {
+                    $model->deleted_by = null;
+                }
 
-            // Update updated_by saat restore
-            $user = Auth::user();
-            $model->updated_by = $user?->id;
-        });
+                // Update updated_by saat restore
+                $user = Auth::user();
+                $model->updated_by = $user?->id;
+            });
+        }
+    }
+
+    /**
+     * Check if model uses SoftDeletes trait
+     */
+    private static function usesSoftDeletes(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive(static::class));
     }
 }

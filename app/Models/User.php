@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\UserProfile;
 use App\Traits\RecordSignature;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;

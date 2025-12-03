@@ -49,6 +49,9 @@ class UserSeeder extends Seeder
             ]);
 
             $user->assignRole($data['role']);
+
+            $this->command->info("   ✅ Created: {$data['full_name']} ({$data['role']})");
         }
+        $this->command->info('  🎉 Users seeding completed!');
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Master\AcademicYearController;
 use App\Http\Controllers\Master\RoleController;
+use App\Http\Controllers\Master\SemesterController;
 use App\Http\Controllers\Master\StudyProgramController;
 use App\Http\Controllers\Master\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -44,6 +46,14 @@ Route::middleware('auth')->group(function () {
         Route::post('study-programs/restore-all', [StudyProgramController::class, 'restoreAll'])->name('study-programs.restore.all');
         Route::delete('study-programs/{id}/force-delete', [StudyProgramController::class, 'forceDelete'])->name('study-programs.force-delete');
         Route::resource('/study-programs', StudyProgramController::class)->names('study-programs');
+
+        // Academic Years
+        Route::resource('/academic-years', AcademicYearController::class)->names('academic-years');
+
+        // Semesters
+//        Route::get('/semesters', [SemesterController::class, 'index'])->name('semesters.index');
+        Route::post('semesters/{semester}/toggle-active', [SemesterController::class, 'toggleActive'])->name('semesters.toggle-active');
+        Route::resource('semesters', SemesterController::class)->only(['index'])->names(['index' => 'semesters.index']);
     });
     Route::post('/logout', LogoutController::class)->name('logout');
 });

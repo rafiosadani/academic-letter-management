@@ -4,7 +4,7 @@
  */
 
 import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
+// import 'flatpickr/dist/flatpickr.min.css';
 
 // Import Indonesian locale
 import { Indonesian } from 'flatpickr/dist/l10n/id.js';

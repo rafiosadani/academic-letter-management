@@ -636,7 +636,7 @@
                     <div class="mt-8 pb-8 text-center">
                         <img
                                 class="mx-auto w-36"
-                                src="images/illustrations/empty-girl-box.svg"
+                                src="{{ asset('assets/images/illustrations/empty-girl-box.svg') }}"
                                 alt="image"
                         />
                         <div class="mt-5">

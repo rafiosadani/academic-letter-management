@@ -57,6 +57,8 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         $administrator->syncPermissions(Permission::all());
+
+        $this->command->info("  ✅ Created: {$administrator->name} " . ($administrator->is_editable ? '(YES)' : '(NO)') . "|" . ($administrator->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createStaffRole(): void
@@ -91,6 +93,8 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
         ]);
+
+        $this->command->info("  ✅ Created: {$staff->name} " . ($staff->is_editable ? '(YES)' : '(NO)') . "|" . ($staff->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createKasubbagAkademikRole(): void
@@ -125,6 +129,8 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
         ]);
+
+        $this->command->info("  ✅ Created: {$kasubbagAkademik->name} " . ($kasubbagAkademik->is_editable ? '(YES)' : '(NO)') . "|" . ($kasubbagAkademik->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createKetuaProgramStudiRole(): void
@@ -159,6 +165,8 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
         ]);
+
+        $this->command->info("  ✅ Created: {$ketuaProgramStudi->name} " . ($ketuaProgramStudi->is_editable ? '(YES)' : '(NO)') . "|" . ($ketuaProgramStudi->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createDosenRole(): void
@@ -193,6 +201,8 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
         ]);
+
+        $this->command->info("  ✅ Created: {$dosen->name} " . ($dosen->is_editable ? '(YES)' : '(NO)') . "|" . ($dosen->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createMahasiswaRole(): void
@@ -220,5 +230,7 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
         ]);
+
+        $this->command->info("  ✅ Created: {$mhs->name} " . ($mhs->is_editable ? '(YES)' : '(NO)') . "|" . ($mhs->is_deletable ? '(YES)' : '(NO)'));
     }
 }

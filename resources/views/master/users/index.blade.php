@@ -57,6 +57,9 @@
                                                     ID: {{ $user->profile->student_or_employee_id }}
                                                 </p>
                                             @endif
+                                            <p class="text-tiny-plus text-slate-400 dark:text-navy-300">
+                                                {{ $user?->code ?? '' }}
+                                            </p>
                                         </div>
                                     </div>
                                 </td>

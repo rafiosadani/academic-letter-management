@@ -26,7 +26,8 @@
                 name="{{ $name }}"
                 value="{{ old($name, $value) }}"
                 placeholder="{{ $placeholder }}"
-                {{ $required ? 'required' : '' }}
+{{--                {{ $required ? 'required' : '' }}--}}
+                autocomplete="off"
                 data-flatpickr="true"
                 data-flatpickr-mode="{{ $mode }}"
                 data-flatpickr-enable-time="{{ $enableTime ? 'true' : 'false' }}"
@@ -43,11 +44,21 @@
         </span>
     </span>
 
+{{--    @error($name)--}}
+{{--    <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>--}}
+{{--    @enderror--}}
+
+{{--    @if($helper)--}}
+{{--        <span class="text-xs text-slate-400 dark:text-navy-300 mt-1 block">{{ $helper }}</span>--}}
+{{--    @endif--}}
+
     @error($name)
-    <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>
+    <span class="text-tiny-plus text-error mt-1 ms-1">{{ $message }}</span>
     @enderror
 
-    @if($helper)
-        <span class="text-xs text-slate-400 dark:text-navy-300 mt-1 block">{{ $helper }}</span>
+    @if(!$errors->has($name) && $helper)
+        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1 ms-1">
+            {{ $helper }}
+        </span>
     @endif
 </label>

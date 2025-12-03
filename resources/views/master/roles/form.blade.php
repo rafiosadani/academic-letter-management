@@ -148,24 +148,11 @@
         </div>
 
         {{-- Action Buttons (Sticky Bottom) --}}
-        <div class="sticky bottom-0 z-10 bg-slate-50 dark:bg-navy-800 border-t border-slate-200 dark:border-navy-600 py-4 -mx-[var(--margin-x)] px-[var(--margin-x)]">
-            <div class="flex items-center justify-end space-x-3">
-                <a
-                        href="{{ route('master.roles.index') }}"
-                        class="btn min-w-[7rem] border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500"
-                >
-                    <i class="fa-solid fa-xmark mr-2"></i>
-                    Batal
-                </a>
-                <button
-                        type="submit"
-                        class="btn min-w-[7rem] {{ isset($role) ? 'bg-warning' : 'bg-primary' }} font-medium text-white hover:{{ isset($role) ? 'bg-warning-focus' : 'bg-primary-focus' }} focus:{{ isset($role) ? 'bg-warning-focus' : 'bg-primary-focus' }} active:{{ isset($role) ? 'bg-warning-focus' : 'bg-primary-focus' }}/90"
-                >
-                    <i class="fa-solid fa-check mr-2"></i>
-                    {{ isset($role) ? 'Update Role' : 'Simpan Role' }}
-                </button>
-            </div>
-        </div>
+        <x-form.sticky-form-actions
+            :cancelUrl="route('master.roles.index')"
+            :submitText="isset($role) ? 'Update Role' : 'Simpan Role'"
+            :submitType="isset($role) ? 'warning' : 'primary'"
+        />
     </form>
 
     <x-slot:scripts>

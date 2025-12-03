@@ -45,7 +45,11 @@ class StudyProgramSeeder extends Seeder
                 'name' => $data['name'],
                 'degree' => $data['degree']
             ]);
+
+            $this->command->info("  ✅ Created: {$data['degree']} - {$data['name']}");
         }
+
+        $this->command->info('  🎉 Study Programs seeding completed!');
     }
 
     private function generateUniqueCode(string $degree, string $name): string

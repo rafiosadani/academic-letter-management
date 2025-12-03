@@ -4,7 +4,7 @@
  */
 
 import TomSelect from 'tom-select';
-import 'tom-select/dist/css/tom-select.css';
+// import 'tom-select/dist/css/tom-select.css';
 
 // Store instances untuk cleanup
 const tomSelectInstances = new Map();

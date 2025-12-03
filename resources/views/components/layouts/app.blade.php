@@ -81,7 +81,7 @@
         </div>
 
         <!-- Main Content Wrapper -->
-        <main class="main-content w-full px-[var(--margin-x)] flex flex-col grow">
+        <main class="main-content w-full px-[var(--margin-x)] flex flex-col grow pb-8">
             {{ $slot }}
         </main>
 

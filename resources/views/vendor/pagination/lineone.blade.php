@@ -6,7 +6,7 @@
             @if ($paginator->onFirstPage())
                 <li>
                     <span
-                            class="flex size-8 items-center justify-center rounded-lg bg-slate-150 text-slate-400 dark:bg-navy-500 dark:text-navy-300 cursor-not-allowed"
+                        class="flex size-8 items-center justify-center rounded-lg bg-slate-150 text-slate-400 dark:bg-navy-500 dark:text-navy-300 cursor-not-allowed"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
                              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -46,7 +46,7 @@
                         @if ($page == $paginator->currentPage())
                             <li>
                                 <span
-                                        class="flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-primary px-3 leading-tight text-white dark:bg-accent">
+                                        class="flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-primary px-3 leading-tight text-xs-plus text-white dark:bg-accent">
                                     {{ $page }}
                                 </span>
                             </li>
@@ -55,7 +55,7 @@
                         @else
                             <li>
                                 <a href="{{ $url }}"
-                                   class="flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-slate-150 px-3 leading-tight transition-colors hover:bg-slate-300 dark:bg-navy-500 dark:hover:bg-navy-450">
+                                   class="flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-slate-150 px-3 leading-tight text-xs-plus transition-colors hover:bg-slate-300 dark:bg-navy-500 dark:hover:bg-navy-450">
                                     {{ $page }}
                                 </a>
                             </li>

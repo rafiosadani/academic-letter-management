@@ -18,8 +18,7 @@ class StudyProgramController extends Controller
      */
     public function index(Request $request)
     {
-        $query = StudyProgram::with(['createdByUser.profile'])
-            ->orderBy('degree', 'asc')
+        $query = StudyProgram::orderBy('degree', 'asc')
             ->orderBy('name', 'asc');
 
         if ($request->has('view_deleted')) {

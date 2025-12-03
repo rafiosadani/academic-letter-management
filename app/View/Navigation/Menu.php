@@ -70,9 +70,14 @@ class Menu
             ],
             [
                 'text' => 'Tahun Akademik & Semester',
-//                'route' => route('master.tahun-akademik.index'),
-                'route' => '#',
-                'active' => ['master.tahun-akademik.*'],
+                'route' => route('master.academic-years.index'),
+                'active' => ['master.academic_years.*'],
+                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_TAHUN_AKADEMIK_VIEW->value) ?? false,
+            ],
+            [
+                'text' => 'Semester',
+                'route' => route('master.semesters.index'),
+                'active' => ['master.semesters.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_TAHUN_AKADEMIK_VIEW->value) ?? false,
             ],
             [

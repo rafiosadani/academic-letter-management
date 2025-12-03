@@ -16,7 +16,7 @@ export function initRealtimeClock() {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric',
+            day: '2-digit',
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
