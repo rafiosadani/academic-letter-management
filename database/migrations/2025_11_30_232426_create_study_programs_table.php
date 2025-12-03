@@ -35,7 +35,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index('code');
-            $table->index('status');
+            $table->index(['name', 'degree']);
         });
     }
 

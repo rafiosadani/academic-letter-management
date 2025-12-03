@@ -13,4 +13,10 @@
         confirm-text="Ya, Restore Role!"
         cancel-text="Batal"
         form="restore-role-form-{{ $role->id }}"
-/>
+>
+    <x-slot:message>
+        Anda yakin ingin mengembalikan Role <strong>{{ $role->name }}</strong>?
+        <br>
+        Role akan aktif kembali dalam sistem.
+    </x-slot:message>
+</x-modal.confirm>

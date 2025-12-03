@@ -64,9 +64,8 @@ class Menu
             ],
             [
                 'text' => 'Program Studi',
-//                'route' => route('master.prodi.index'),
-                'route' => '#',
-                'active' => ['master.prodi.*'],
+                'route' => route('master.study-programs.index'),
+                'active' => ['master.study-programs.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_PRODI_VIEW->value) ?? false,
             ],
             [
@@ -96,7 +95,7 @@ class Menu
 
         return [
             'text' => 'Master Data',
-            'route' => route('master.roles.index'),
+            'route' => route('master.users.index'),
             'icon' => self::iconMasterData(),
             'active' => ['master.*'],
             'hasPanel' => true,

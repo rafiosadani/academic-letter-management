@@ -38,11 +38,27 @@ class StudyProgramSeeder extends Seeder
         ];
 
         foreach ($studyProgramData as $data) {
+            $code = $this->generateUniqueCode($data['degree'], $data['name']);
+
             StudyProgram::create([
-                'code' => (new CodeGeneration(StudyProgram::class, 'code', 'PST'))->getGeneratedCode(),
+                'code' => $code,
                 'name' => $data['name'],
                 'degree' => $data['degree']
             ]);
         }
+    }
+
+    private function generateUniqueCode(string $degree, string $name): string
+    {
+        // Get first 3 characters from name (alphanumeric only)
+        $namePrefix = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', substr($name, 0, 3)));
+        $namePrefix = str_pad($namePrefix, 3, 'X'); // Pad with X if less than 3 chars
+
+        // Get counter
+        $counter = StudyProgram::withTrashed()
+                ->where('code', 'like', "{$degree}-{$namePrefix}-%")
+                ->count() + 1;
+
+        return sprintf('%s-%s-%03d', $degree, $namePrefix, $counter);
     }
 }

@@ -28,10 +28,10 @@
 
     {{-- FORM --}}
     <form
-            method="POST"
-            action="{{ isset($user) ? route('master.users.update', $user) : route('master.users.store') }}"
-            enctype="multipart/form-data"
-            class="space-y-5"
+        method="POST"
+        action="{{ isset($user) ? route('master.users.update', $user) : route('master.users.store') }}"
+        enctype="multipart/form-data"
+        class="space-y-5"
     >
         @csrf
         @if(isset($user))
@@ -82,18 +82,18 @@
                                 </span>
                                 <div class="relative mt-1.5 password-wrapper">
                                     <input
-                                            type="password"
-                                            name="password"
-                                            id="password"
-                                            placeholder="{{ isset($user) ? 'Kosongkan jika tidak ingin ubah' : 'Minimal 8 karakter' }}"
-{{--                                            {{ !isset($user) ? 'required' : '' }}--}}
-                                            class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pr-10 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        placeholder="{{ isset($user) ? 'Kosongkan jika tidak ingin ubah' : 'Minimal 8 karakter' }}"
+                                        {{ !isset($user) ? 'required' : '' }}
+                                        class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pr-10 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
                                     />
                                     <button
-                                            type="button"
-                                            data-toggle-password="true"
-                                            class="absolute right-0 top-0 flex h-full w-10 items-center justify-center text-slate-400 hover:text-slate-600 dark:text-navy-300 dark:hover:text-navy-100"
-                                            title="Toggle Password Visibility"
+                                        type="button"
+                                        data-toggle-password="true"
+                                        class="absolute right-0 top-0 flex h-full w-10 items-center justify-center text-slate-400 hover:text-slate-600 dark:text-navy-300 dark:hover:text-navy-100"
+                                        title="Toggle Password Visibility"
                                     >
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
@@ -115,18 +115,18 @@
                                 </span>
                                 <div class="relative mt-1.5 password-wrapper">
                                     <input
-                                            type="password"
-                                            name="password_confirmation"
-                                            id="password_confirmation"
-                                            placeholder="Ketik ulang password"
-{{--                                            {{ !isset($user) ? 'required' : '' }}--}}
-                                            class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pr-10 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                                        type="password"
+                                        name="password_confirmation"
+                                        id="password_confirmation"
+                                        placeholder="Ketik ulang password"
+                                        {{ !isset($user) ? 'required' : '' }}
+                                        class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pr-10 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
                                     />
                                     <button
-                                            type="button"
-                                            data-toggle-password="true"
-                                            class="absolute right-0 top-0 flex h-full w-10 items-center justify-center text-slate-400 hover:text-slate-600 dark:text-navy-300 dark:hover:text-navy-100"
-                                            title="Toggle Password Visibility"
+                                        type="button"
+                                        data-toggle-password="true"
+                                        class="absolute right-0 top-0 flex h-full w-10 items-center justify-center text-slate-400 hover:text-slate-600 dark:text-navy-300 dark:hover:text-navy-100"
+                                        title="Toggle Password Visibility"
                                     >
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
@@ -155,30 +155,30 @@
                     <div class="p-4 sm:p-5 space-y-4">
                         {{-- Full Name --}}
                         <x-form.input
-                                label="Nama Lengkap"
-                                name="full_name"
-                                :value="$user->profile->full_name ?? ''"
-                                placeholder="Nama lengkap user"
-                                required
+                            label="Nama Lengkap"
+                            name="full_name"
+                            :value="$user->profile->full_name ?? ''"
+                            placeholder="Nama lengkap user"
+                            required
                         />
 
                         {{-- Student/Employee ID & Phone --}}
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <x-form.input
-                                    label="NIM/NIP"
-                                    name="student_or_employee_id"
-                                    :value="$user->profile->student_or_employee_id ?? ''"
-                                    placeholder="Contoh: 21011012345"
-                                    helper="Nomor Induk Mahasiswa atau Pegawai"
-                                    required
+                                label="NIM/NIP"
+                                name="student_or_employee_id"
+                                :value="$user->profile->student_or_employee_id ?? ''"
+                                placeholder="Contoh: 21011012345"
+                                helper="Nomor Induk Mahasiswa atau Pegawai"
+                                required
                             />
 
                             <x-form.input
-                                    label="No. Telepon"
-                                    name="phone"
-                                    type="tel"
-                                    :value="$user->profile->phone ?? ''"
-                                    placeholder="08123456789"
+                                label="No. Telepon"
+                                name="phone"
+                                type="tel"
+                                :value="$user->profile->phone ?? ''"
+                                placeholder="08123456789"
                             />
                         </div>
 
@@ -310,7 +310,7 @@
         {{-- Action Buttons (Sticky Bottom) --}}
         <div class="sticky bottom-0 z-10 bg-slate-50 dark:bg-navy-800 border-t border-slate-200 dark:border-navy-600 py-4 -mx-[var(--margin-x)] px-[var(--margin-x)]">
             <div class="flex items-center justify-end space-x-3">
-<a
+                <a
                 href="{{ route('master.users.index') }}"
                 class="btn min-w-[7rem] border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500"
                 >

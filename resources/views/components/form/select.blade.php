@@ -55,7 +55,13 @@
         <span class="text-tiny-plus text-error mt-1 ms-1">{{ $message }}</span>
     @enderror
 
-    @if($helper)
+{{--    @if($helper)--}}
+{{--        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1 ms-1">--}}
+{{--            {{ $helper }}--}}
+{{--        </span>--}}
+{{--    @endif--}}
+
+    @if(!$errors->has($name) && $helper)
         <span class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1 ms-1">
             {{ $helper }}
         </span>

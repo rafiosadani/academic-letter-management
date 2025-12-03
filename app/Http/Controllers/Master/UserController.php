@@ -479,19 +479,21 @@ class UserController extends Controller
 
     public function getStudyPrograms()
     {
-        $studyPrograms = StudyProgram::withoutTrashed()
+//        return StudyProgram::withoutTrashed()
+//            ->select('id', 'degree', 'name')
+//            ->orderBy('degree')
+//            ->orderBy('name')
+//            ->get()
+//            ->mapWithKeys(fn($p) => [$p->id => $p->degree_name]);
+
+        return StudyProgram::withoutTrashed()
             ->select('id', 'degree', 'name')
             ->orderBy('degree')
             ->orderBy('name')
             ->get()
             ->mapWithKeys(function ($program) {
-                $label = $program->degree
-                    ? "{$program->degree} - {$program->name}"
-                    : $program->name;
-                return [$program->id => $label];
+                return [$program->id => $program->degree_name];
             });
-
-        return $studyPrograms;
     }
 
 }

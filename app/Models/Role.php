@@ -35,6 +35,29 @@ class Role extends SpatieRole
         'deleted_at' => 'datetime',
     ];
 
+    // ==========================================================
+    // SCOPES
+    // ==========================================================
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when(!empty($filters['search']), function ($query) use ($filters) {
+            $search = $filters['search'];
+
+            $query->where(function ($query) use ($search) {
+                $query->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhereHas('createdByUser', fn ($q) =>
+                    $q->where('name', 'like', "%{$search}%")
+                    );
+            });
+        });
+    }
+
+    // ==========================================================
+    // RELATIONSHIPS
+    // ==========================================================
+
     public function createdByUser()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -49,6 +72,10 @@ class Role extends SpatieRole
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
+
+    // ==========================================================
+    // SIGNATURE ACCESSORS
+    // ==========================================================
 
     protected function createdAtFormatted(): Attribute
     {
@@ -108,20 +135,5 @@ class Role extends SpatieRole
                 ? ($this->deletedByUser?->name ?? "Administrator")
                 : "Administrator"
         );
-    }
-
-    public function scopeFilter($query, array $filters)
-    {
-        $query->when(!empty($filters['search']), function ($query) use ($filters) {
-            $search = $filters['search'];
-
-            $query->where(function ($query) use ($search) {
-                $query->where('code', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%")
-                    ->orWhereHas('createdByUser', fn ($q) =>
-                        $q->where('name', 'like', "%{$search}%")
-                );
-            });
-        });
     }
 }

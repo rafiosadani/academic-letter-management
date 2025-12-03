@@ -81,11 +81,11 @@
                     <div class="pt-3 border-t border-slate-200 dark:border-navy-500 space-y-2 text-xs text-slate-500 dark:text-navy-300">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-calendar-days"></i>
-                            <span>Dibuat: {{ $role->created_at->format('d M Y H:i') }}</span>
+                            <span>Dibuat: {{ $role->created_at_formatted }}</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-clock"></i>
-                            <span>Update: {{ $role->updated_at->format('d M Y H:i') }}</span>
+                            <span>Terakhir Update: {{ $role->updated_at_formatted }}</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-shield-halved"></i>

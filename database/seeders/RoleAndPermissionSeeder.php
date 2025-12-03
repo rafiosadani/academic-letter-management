@@ -23,6 +23,8 @@ class RoleAndPermissionSeeder extends Seeder
             $this->createAdministratorRole();
             $this->createStaffRole();
             $this->createKasubbagAkademikRole();
+            $this->createKetuaProgramStudiRole();
+            $this->createDosenRole();
             $this->createMahasiswaRole();
         });
     }
@@ -103,6 +105,74 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         $kasubbagAkademik->givePermissionTo([
+            PermissionName::DASHBOARD_VIEW->value,
+
+            // Transaksi Surat
+            PermissionName::SURAT_MASUK_VIEW->value,
+            PermissionName::SURAT_KELOLA_VIEW->value,
+            PermissionName::SURAT_KELOLA_UPDATE->value,
+            PermissionName::SURAT_APPROVE->value,
+            PermissionName::SURAT_REJECT->value,
+
+            // Notifikasi
+            PermissionName::NOTIFIKASI_VIEW->value,
+
+            // Laporan
+            PermissionName::LAPORAN_STATISTIK_VIEW->value,
+            PermissionName::LAPORAN_TRACKING_VIEW->value,
+
+            // Profile
+            PermissionName::PROFILE_VIEW->value,
+            PermissionName::PROFILE_UPDATE->value,
+        ]);
+    }
+
+    private function createKetuaProgramStudiRole(): void
+    {
+        $ketuaProgramStudi = Role::firstOrCreate([
+            'name' => 'Ketua Program Studi',
+            'guard_name' => 'web',
+        ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
+            'is_editable' => true,
+            'is_deletable' => true,
+        ]);
+
+        $ketuaProgramStudi->givePermissionTo([
+            PermissionName::DASHBOARD_VIEW->value,
+
+            // Transaksi Surat
+            PermissionName::SURAT_MASUK_VIEW->value,
+            PermissionName::SURAT_KELOLA_VIEW->value,
+            PermissionName::SURAT_KELOLA_UPDATE->value,
+            PermissionName::SURAT_APPROVE->value,
+            PermissionName::SURAT_REJECT->value,
+
+            // Notifikasi
+            PermissionName::NOTIFIKASI_VIEW->value,
+
+            // Laporan
+            PermissionName::LAPORAN_STATISTIK_VIEW->value,
+            PermissionName::LAPORAN_TRACKING_VIEW->value,
+
+            // Profile
+            PermissionName::PROFILE_VIEW->value,
+            PermissionName::PROFILE_UPDATE->value,
+        ]);
+    }
+
+    private function createDosenRole(): void
+    {
+        $dosen = Role::firstOrCreate([
+            'name' => 'Dosen',
+            'guard_name' => 'web',
+        ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
+            'is_editable' => true,
+            'is_deletable' => true,
+        ]);
+
+        $dosen->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
             // Transaksi Surat

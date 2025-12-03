@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Master\User;
+namespace App\Http\Requests\Master\StudyProgram;
 
+use App\Rules\ValidDegree;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
-class UpdateUserRequest extends FormRequest
+class UpdateStudyProgramRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,32 +18,33 @@ class UpdateUserRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Normalize degree to uppercase
+        $this->merge([
+            'degree' => $this->degree ? strtoupper($this->degree) : null,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        $userId = $this->route('user')->id ?? null;
+        $studyProgramId = $this->route('study_program')->id ?? null;
 
         return [
-            // User credentials
-            'email' => ['required', 'email', 'unique:users,email,' . $userId],
-            'password' => ['nullable', 'confirmed', Password::min(8)],
-            'status' => ['required', 'boolean'],
-            'role_id' => ['required', 'exists:roles,id'],
-
-            // User profile
-            'full_name' => ['required', 'string', 'max:255'],
-            'student_or_employee_id' => [
+            'name' => [
+                'required',
                 'string',
-                'max:50',
-                'unique:user_profiles,student_or_employee_id,' . $userId . ',user_id'
+                'max:100',
+                'unique:study_programs,name,' . $studyProgramId,
             ],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'study_program_id' => ['nullable', 'integer', 'exists:study_programs,id'],
-            'address' => ['nullable', 'string', 'max:500'],
+            'degree' => ['required', 'string', new ValidDegree()],
         ];
     }
 
@@ -55,16 +56,8 @@ class UpdateUserRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'email' => 'Email',
-            'password' => 'Password',
-            'status' => 'Status Akun',
-            'role_id' => 'Role',
-            'full_name' => 'Nama Lengkap',
-            'student_or_employee_id' => 'NIM/NIP',
-            'phone' => 'Nomor Telepon',
-            'photo' => 'Foto Profil',
-            'study_program_id' => 'Program Studi',
-            'address' => 'Alamat',
+            'name' => 'Nama Program Studi',
+            'degree' => 'Jenjang',
         ];
     }
 
@@ -80,18 +73,7 @@ class UpdateUserRequest extends FormRequest
             'required' => ':attribute wajib diisi.',
             'unique' => ':attribute sudah terdaftar.',
             'string' => ':attribute harus berupa teks.',
-            'integer' => ':attribute harus berupa angka.',
             'max' => ':attribute maksimal :max karakter.',
-            'exists' => ':attribute yang dipilih tidak valid.',
-
-            // Specific
-            'email.email' => 'Format email tidak valid.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.min' => 'Password minimal :min karakter.',
-            'status.boolean' => 'Nilai status tidak valid.',
-            'photo.image' => 'File harus berupa gambar.',
-            'photo.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
-            'photo.max' => 'Ukuran gambar maksimal 2MB.',
         ];
     }
 
@@ -108,6 +90,7 @@ class UpdateUserRequest extends FormRequest
         $allErrors = $validator->errors()->all();
 
         $notificationArray = [];
+
         foreach ($allErrors as $error) {
             $notificationArray[] = [
                 'type' => 'error',

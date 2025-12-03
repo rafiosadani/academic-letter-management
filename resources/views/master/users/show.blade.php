@@ -75,11 +75,11 @@
 
                 {{-- Timestamps --}}
                 <div class="mt-6 pt-4 border-t border-slate-200 dark:border-navy-500 space-y-2 text-xs text-slate-500 dark:text-navy-300">
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-calendar-plus"></i>
                         <span>Terdaftar: {{ $user->created_at_formatted }}</span>
                     </div>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-clock"></i>
                         <span>Terakhir Update: {{ $user->updated_at_formatted }}</span>
                     </div>
@@ -188,24 +188,6 @@
                             <span class="text-xs text-slate-500 dark:text-navy-300">Role</span>
                             <div class="mt-1">
                                 {!! $user->role_badge !!}
-                            </div>
-                        </div>
-
-                        {{-- Email Verified --}}
-                        <div>
-                            <span class="text-xs text-slate-500 dark:text-navy-300">Verifikasi Email</span>
-                            <div class="mt-1">
-                                @if($user->email_verified_at)
-                                    <span class="badge bg-success/10 text-success">
-                                        <i class="fa-solid fa-circle-check mr-1"></i>
-                                        Terverifikasi
-                                    </span>
-                                @else
-                                    <span class="badge bg-warning/10 text-warning">
-                                        <i class="fa-solid fa-circle-exclamation mr-1"></i>
-                                        Belum Terverifikasi
-                                    </span>
-                                @endif
                             </div>
                         </div>
                     </div>

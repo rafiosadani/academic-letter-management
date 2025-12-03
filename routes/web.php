@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Master\RoleController;
+use App\Http\Controllers\Master\StudyProgramController;
 use App\Http\Controllers\Master\UserController;
 
 Route::get('/', function () {
@@ -37,6 +38,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('roles/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
         Route::patch('users/{user}/update-status', [UserController::class, 'updateStatus'])->name('users.updateStatus');
         Route::resource('/users', UserController::class)->names('users');
+
+        // Study Programs
+        Route::post('study-programs/{id}/restore', [StudyProgramController::class, 'restore'])->name('study-programs.restore');
+        Route::post('study-programs/restore-all', [StudyProgramController::class, 'restoreAll'])->name('study-programs.restore.all');
+        Route::delete('study-programs/{id}/force-delete', [StudyProgramController::class, 'forceDelete'])->name('study-programs.force-delete');
+        Route::resource('/study-programs', StudyProgramController::class)->names('study-programs');
     });
     Route::post('/logout', LogoutController::class)->name('logout');
 });
