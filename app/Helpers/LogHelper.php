@@ -111,7 +111,7 @@ class LogHelper
         // Tambahkan informasi user jika sedang login
         if (auth()->check()) {
             $context['user_id'] = auth()->id();
-            $context['user_name'] = auth()->user()->name ?? null;
+            $context['user_name'] = auth()->user()?->profile?->full_name ?? null;
             $context['user_email'] = auth()->user()->email ?? null;
         }
 

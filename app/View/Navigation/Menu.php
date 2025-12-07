@@ -196,8 +196,7 @@ class Menu
 
         return [
             'text' => 'Notifikasi',
-//            'route' => route('notifikasi.index'),
-            'route' => '#',
+            'route' => route('notifications.index'),
             'icon' => '<i class="fa-solid fa-bell fa-xl"></i>',
             'active' => ['notifikasi.*'],
             'hasPanel' => false,
@@ -278,8 +277,7 @@ class Menu
             ],
             [
                 'text' => 'Pengaturan Notifikasi',
-//                'route' => route('pengaturan.notifikasi.index'),
-                'route' => '#',
+                'route' => route('notifications.settings'),
                 'active' => ['pengaturan.notifikasi.*'],
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::PENGATURAN_NOTIFIKASI_VIEW->value) ?? false,
             ],

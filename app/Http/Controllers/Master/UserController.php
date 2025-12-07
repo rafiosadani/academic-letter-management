@@ -11,17 +11,21 @@ use App\Http\Requests\Master\User\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\StudyProgram;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', User::class);
+
         $query = User::with(['createdByUser', 'profile', 'roles'])
             ->orderBy('code', 'desc');
 
@@ -41,6 +45,8 @@ class UserController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', User::class);
+
         $roles = Role::withoutTrashed()->orderBy('name')->get();
         $studyPrograms = $this->getStudyPrograms();
 
@@ -52,6 +58,8 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
+        $this->authorize('create', User::class);
+
         $user = null;
         try {
             DB::transaction(function () use ($request, &$user) {
@@ -123,6 +131,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize('view', $user);
+
         $groupedPermissions = PermissionHelper::getGroupedPermissions();
         $roles = Role::withoutTrashed()->orderBy('name')->get();
         $studyPrograms = $this->getStudyPrograms();
@@ -137,6 +147,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize('update', $user);
+
         $roles = Role::withoutTrashed()->orderBy('name')->get();
         $studyPrograms = $this->getStudyPrograms();
 
@@ -150,6 +162,8 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        $this->authorize('update', $user);
+
         $oldRoleName = $user->roles->first()?->name;
         $oldStatus = $user->status;
 
@@ -232,6 +246,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $this->authorize('delete', $user);
+
         $fullName = $user->profile ? $user->profile->full_name : 'ID ' . $user->id;
 
         try {
@@ -275,6 +291,9 @@ class UserController extends Controller
      */
     public function restore($id)
     {
+        $user = User::onlyTrashed()->with('profile')->findOrFail($id);
+        $this->authorize('restore', $user);
+
         try {
             $user = User::onlyTrashed()->with('profile')->findOrFail($id);
             $fullName = $user->profile ? $user->profile->full_name : 'ID ' . $user->id;
@@ -318,6 +337,10 @@ class UserController extends Controller
      */
     public function restoreAll()
     {
+        if (!auth()->user()->can('restore', User::class)) {
+            abort(403);
+        }
+
         try {
             $count = User::onlyTrashed()->count();
 
@@ -368,6 +391,9 @@ class UserController extends Controller
      */
     public function forceDelete($id)
     {
+        $user = User::onlyTrashed()->with('profile')->findOrFail($id);
+        $this->authorize('forceDelete', $user);
+
         try {
             $user = User::onlyTrashed()->with('profile')->findOrFail($id);
 
@@ -415,6 +441,8 @@ class UserController extends Controller
 
     public function updateStatus(Request $request, User $user)
     {
+        $this->authorize('update', $user);
+
         $request->validate([
             'status' => 'required|in:0,1'
         ]);
@@ -479,13 +507,6 @@ class UserController extends Controller
 
     public function getStudyPrograms()
     {
-//        return StudyProgram::withoutTrashed()
-//            ->select('id', 'degree', 'name')
-//            ->orderBy('degree')
-//            ->orderBy('name')
-//            ->get()
-//            ->mapWithKeys(fn($p) => [$p->id => $p->degree_name]);
-
         return StudyProgram::withoutTrashed()
             ->select('id', 'degree', 'name')
             ->orderBy('degree')

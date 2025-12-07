@@ -9,9 +9,12 @@ use App\Http\Requests\Master\AcademicYear\CreateAcademicYearRequest;
 use App\Http\Requests\Master\AcademicYear\UpdateAcademicYearRequest;
 use App\Models\AcademicYear;
 use App\Models\Semester;
+use App\Models\User;
+use App\Notifications\AcademicYearCreated;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class AcademicYearController extends Controller
 {
@@ -67,8 +70,8 @@ class AcademicYearController extends Controller
             });
 
             // Send notification to admins
-//            $admins = User::role(['administrator', 'kepala subbagian akademik'])->get();
-//            Notification::send($admins, new AcademicYearCreated($academicYear));
+            $admins = User::role(['administrator', 'kepala subbagian akademik'])->get();
+            Notification::send($admins, new AcademicYearCreated($academicYear));
 
             // LOG SUCCESS
             LogHelper::logSuccess('created', 'academic year', [
@@ -105,7 +108,7 @@ class AcademicYearController extends Controller
      */
     public function show(AcademicYear $academicYear)
     {
-        $academicYear->load(['createdByUser.profile', 'updatedByUser.profile', 'semesters']);
+        $academicYear->load(['semesters']);
 
         return view('master.academic-years.show', compact('academicYear'));
     }

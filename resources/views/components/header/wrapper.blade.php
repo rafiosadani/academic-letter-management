@@ -63,7 +63,7 @@
                 </button>
 
                 <!-- Notification Component-->
-                <x-header.notification/>
+                <x-header.notification-dropdown />
 
                 <!-- Profile -->
                 <x-ui.profile-dropdown location="header" size="md"/>

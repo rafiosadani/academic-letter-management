@@ -6,8 +6,11 @@ use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\Semester;
+use App\Models\User;
+use App\Notifications\SemesterActivated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class SemesterController extends Controller
 {
@@ -51,8 +54,8 @@ class SemesterController extends Controller
             });
 
             // Send notification to admins
-//            $admins = User::role(['administrator', 'kepala subbagian akademik'])->get();
-//            Notification::send($admins, new SemesterActivated($semester));
+            $admins = User::role(['administrator', 'kepala subbagian akademik'])->get();
+            Notification::send($admins, new SemesterActivated($semester));
 
             // LOG SUCCESS
             LogHelper::logSuccess('toggled active', 'semester', [
