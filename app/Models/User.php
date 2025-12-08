@@ -158,13 +158,25 @@ class User extends Authenticatable
                 'classes' => 'bg-error/10 text-error',
                 'icon' => 'fa-solid fa-user-shield',
             ],
-            'staf akademik' => [
-                'classes' => 'bg-info/10 text-info',
-                'icon' => 'fa-solid fa-chalkboard-user',
+            'dekan fakultas vokasi' => [
+                'classes' => 'bg-primary/10 text-primary border border-primary/20 dark:bg-accent/15 dark:text-accent-light',
+                'icon' => 'fa-solid fa-crown',
+            ],
+            'wakil dekan bidang akademik' => [
+                'classes' => 'bg-info/10 text-info border border-info/20 dark:bg-info/15',
+                'icon' => 'fa-solid fa-user-graduate',
             ],
             'kepala subbagian akademik' => [
-                'classes' => 'bg-warning/10 text-warning',
+                'classes' => 'bg-secondary/10 text-secondary border border-secondary/20 dark:bg-secondary/15',
+                'icon' => 'fa-solid fa-graduation-cap',
+            ],
+            'ketua program studi' => [
+                'classes' => 'bg-success/10 text-success border border-success/20 dark:bg-success/15',
                 'icon' => 'fa-solid fa-user-tie',
+            ],
+            'staf akademik' => [
+                'classes' => 'bg-warning/10 text-warning border border-warning/20 dark:bg-warning/15',
+                'icon' => 'fa-solid fa-chalkboard-user',
             ],
             'mahasiswa' => [
                 'classes' => 'bg-primary/10 text-primary',
@@ -182,7 +194,7 @@ class User extends Authenticatable
 
         $data = $roleMap[$roleName] ?? [
             'classes' => 'bg-success/10 text-success border border-success',
-            'icon' => 'fa-solid fa-check',
+            'icon' => 'fa-solid fa-user-circle',
         ];
 
         // Tambahkan nama role yang sebenarnya

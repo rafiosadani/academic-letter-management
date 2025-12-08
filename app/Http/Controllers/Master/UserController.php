@@ -34,7 +34,7 @@ class UserController extends Controller
         }
 
         $users = $query->filter($request->only('search'))
-            ->paginate(4)
+            ->paginate(10)
             ->withQueryString();
 
         return view('master.users.index', compact('users'));

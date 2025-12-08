@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Master\AcademicYearController;
+use App\Http\Controllers\Master\FacultyOfficialController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\SemesterController;
 use App\Http\Controllers\Master\StudyProgramController;
@@ -66,8 +67,16 @@ Route::middleware('auth')->group(function () {
         // Semesters
         //Route::get('/semesters', [SemesterController::class, 'index'])->name('semesters.index');
         Route::post('semesters/{semester}/toggle-active', [SemesterController::class, 'toggleActive'])->name('semesters.toggle-active');
-        Route::resource('semesters', SemesterController::class)->only(['index'])->names(['index' => 'semesters.index']);
         Route::resource('semesters', SemesterController::class)->only(['index'])->names('semesters');
+
+        // Faculty Officials - Require any faculty official permission
+        Route::middleware(['permission:master.faculty_official.view,master.faculty_official.create,master.faculty_official.update,master.faculty_official.delete'])
+            ->group(function () {
+                Route::post('faculty-officials/{id}/restore', [FacultyOfficialController::class, 'restore'])->name('faculty-officials.restore');
+                Route::post('faculty-officials/restore-all', [FacultyOfficialController::class, 'restoreAll'])->name('faculty-officials.restore.all');
+                Route::delete('faculty-officials/{id}/force-delete', [FacultyOfficialController::class, 'forceDelete'])->name('faculty-officials.force-delete');
+                Route::resource('/faculty-officials', FacultyOfficialController::class)->names('faculty-officials');
+            });
     });
 
     // ============================================================

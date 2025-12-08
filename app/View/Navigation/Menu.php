@@ -81,11 +81,10 @@ class Menu
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_TAHUN_AKADEMIK_VIEW->value) ?? false,
             ],
             [
-                'text' => 'Struktur Organisasi',
-//                'route' => route('master.organisasi.index'),
-                'route' => '#',
-                'active' => ['master.organisasi.*'],
-                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_ORGANISASI_VIEW->value) ?? false,
+                'text' => 'Penugasan Jabatan',
+                'route' => route('master.faculty-officials.index'),
+                'active' => ['master.faculty-officials.*'],
+                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::MASTER_FACULTY_OFFICIAL_VIEW->value) ?? false,
             ],
         ];
 

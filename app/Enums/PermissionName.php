@@ -37,6 +37,12 @@ enum PermissionName: string
     case MASTER_ORGANISASI_UPDATE = 'master.organisasi.update';
     case MASTER_ORGANISASI_DELETE = 'master.organisasi.delete';
 
+    // Faculty Officials Permissions
+    case MASTER_FACULTY_OFFICIAL_VIEW = 'master.faculty_official.view';
+    case MASTER_FACULTY_OFFICIAL_CREATE = 'master.faculty_official.create';
+    case MASTER_FACULTY_OFFICIAL_UPDATE = 'master.faculty_official.update';
+    case MASTER_FACULTY_OFFICIAL_DELETE = 'master.faculty_official.delete';
+
     // Surat Saya (Mahasiswa)
     case SURAT_SAYA_VIEW = 'surat.saya.view';
     case SURAT_SAYA_CREATE = 'surat.saya.create';

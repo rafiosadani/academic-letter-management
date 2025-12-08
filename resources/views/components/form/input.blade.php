@@ -26,11 +26,11 @@
     />
 
     @error($name)
-        <span class="text-tiny-plus text-error mt-1 ms-1">{{ $message }}</span>
+        <span class="text-tiny-plus text-error mt-1 ms-1 block">{{ $message }}</span>
     @enderror
 
     @if(!$errors->has($name) && $helper)
-        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1 ms-1">
+        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1 ms-1 block">
             {{ $helper }}
         </span>
     @endif

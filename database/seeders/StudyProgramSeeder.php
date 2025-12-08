@@ -46,7 +46,7 @@ class StudyProgramSeeder extends Seeder
                 'degree' => $data['degree']
             ]);
 
-            $this->command->info("  ✅ Created: {$data['degree']} - {$data['name']}");
+            $this->command->info("  ✅  Created: {$data['degree']} - {$data['name']}");
         }
 
         $this->command->info('  🎉 Study Programs seeding completed!');

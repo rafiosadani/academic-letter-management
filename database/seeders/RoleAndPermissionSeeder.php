@@ -21,12 +21,16 @@ class RoleAndPermissionSeeder extends Seeder
         DB::transaction(function () {
             $this->seedPermissions();
             $this->createAdministratorRole();
-            $this->createStaffRole();
-            $this->createKasubbagAkademikRole();
+            $this->createDekanRole();
+            $this->createWDAkademikRole();
             $this->createKetuaProgramStudiRole();
+            $this->createKasubbagAkademikRole();
             $this->createDosenRole();
+            $this->createStaffRole();
             $this->createMahasiswaRole();
         });
+
+        $this->command->info('  🎉 Role & Permissions seeding completed!');
     }
 
     private function seedPermissions(): void
@@ -58,13 +62,13 @@ class RoleAndPermissionSeeder extends Seeder
 
         $administrator->syncPermissions(Permission::all());
 
-        $this->command->info("  ✅ Created: {$administrator->name} " . ($administrator->is_editable ? '(YES)' : '(NO)') . "|" . ($administrator->is_deletable ? '(YES)' : '(NO)'));
+        $this->command->info("  ✅  Created: {$administrator->name} " . ($administrator->is_editable ? '(YES)' : '(NO)') . "|" . ($administrator->is_deletable ? '(YES)' : '(NO)'));
     }
 
-    private function createStaffRole(): void
+    private function createDekanRole(): void
     {
-        $staff = Role::firstOrCreate([
-            'name' => 'Staf Akademik',
+        $dekan = Role::firstOrCreate([
+            'name' => 'Dekan Fakultas Vokasi',
             'guard_name' => 'web',
         ], [
             'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
@@ -72,7 +76,7 @@ class RoleAndPermissionSeeder extends Seeder
             'is_deletable' => true,
         ]);
 
-        $staff->givePermissionTo([
+        $dekan->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
             // Transaksi Surat
@@ -94,13 +98,13 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_UPDATE->value,
         ]);
 
-        $this->command->info("  ✅ Created: {$staff->name} " . ($staff->is_editable ? '(YES)' : '(NO)') . "|" . ($staff->is_deletable ? '(YES)' : '(NO)'));
+        $this->command->info("  ✅  Created: {$dekan->name} " . ($dekan->is_editable ? '(YES)' : '(NO)') . "|" . ($dekan->is_deletable ? '(YES)' : '(NO)'));
     }
 
-    private function createKasubbagAkademikRole(): void
+    private function createWDAkademikRole(): void
     {
-        $kasubbagAkademik = Role::firstOrCreate([
-            'name' => 'Kepala Subbagian Akademik',
+        $wdAkademik = Role::firstOrCreate([
+            'name' => 'Wakil Dekan Bidang Akademik',
             'guard_name' => 'web',
         ], [
             'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
@@ -108,7 +112,7 @@ class RoleAndPermissionSeeder extends Seeder
             'is_deletable' => true,
         ]);
 
-        $kasubbagAkademik->givePermissionTo([
+        $wdAkademik->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
             // Transaksi Surat
@@ -130,7 +134,7 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_UPDATE->value,
         ]);
 
-        $this->command->info("  ✅ Created: {$kasubbagAkademik->name} " . ($kasubbagAkademik->is_editable ? '(YES)' : '(NO)') . "|" . ($kasubbagAkademik->is_deletable ? '(YES)' : '(NO)'));
+        $this->command->info("  ✅  Created: {$wdAkademik->name} " . ($wdAkademik->is_editable ? '(YES)' : '(NO)') . "|" . ($wdAkademik->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createKetuaProgramStudiRole(): void
@@ -166,7 +170,43 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_UPDATE->value,
         ]);
 
-        $this->command->info("  ✅ Created: {$ketuaProgramStudi->name} " . ($ketuaProgramStudi->is_editable ? '(YES)' : '(NO)') . "|" . ($ketuaProgramStudi->is_deletable ? '(YES)' : '(NO)'));
+        $this->command->info("  ✅  Created: {$ketuaProgramStudi->name} " . ($ketuaProgramStudi->is_editable ? '(YES)' : '(NO)') . "|" . ($ketuaProgramStudi->is_deletable ? '(YES)' : '(NO)'));
+    }
+
+    private function createKasubbagAkademikRole(): void
+    {
+        $kasubbagAkademik = Role::firstOrCreate([
+            'name' => 'Kepala Subbagian Akademik',
+            'guard_name' => 'web',
+        ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
+            'is_editable' => true,
+            'is_deletable' => true,
+        ]);
+
+        $kasubbagAkademik->givePermissionTo([
+            PermissionName::DASHBOARD_VIEW->value,
+
+            // Transaksi Surat
+            PermissionName::SURAT_MASUK_VIEW->value,
+            PermissionName::SURAT_KELOLA_VIEW->value,
+            PermissionName::SURAT_KELOLA_UPDATE->value,
+            PermissionName::SURAT_APPROVE->value,
+            PermissionName::SURAT_REJECT->value,
+
+            // Notifikasi
+            PermissionName::NOTIFIKASI_VIEW->value,
+
+            // Laporan
+            PermissionName::LAPORAN_STATISTIK_VIEW->value,
+            PermissionName::LAPORAN_TRACKING_VIEW->value,
+
+            // Profile
+            PermissionName::PROFILE_VIEW->value,
+            PermissionName::PROFILE_UPDATE->value,
+        ]);
+
+        $this->command->info("  ✅  Created: {$kasubbagAkademik->name} " . ($kasubbagAkademik->is_editable ? '(YES)' : '(NO)') . "|" . ($kasubbagAkademik->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createDosenRole(): void
@@ -202,7 +242,43 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_UPDATE->value,
         ]);
 
-        $this->command->info("  ✅ Created: {$dosen->name} " . ($dosen->is_editable ? '(YES)' : '(NO)') . "|" . ($dosen->is_deletable ? '(YES)' : '(NO)'));
+        $this->command->info("  ✅  Created: {$dosen->name} " . ($dosen->is_editable ? '(YES)' : '(NO)') . "|" . ($dosen->is_deletable ? '(YES)' : '(NO)'));
+    }
+
+    private function createStaffRole(): void
+    {
+        $staff = Role::firstOrCreate([
+            'name' => 'Staf Akademik',
+            'guard_name' => 'web',
+        ], [
+            'code' => (new CodeGeneration(Role::class, 'code', 'ROL'))->getGeneratedCode(),
+            'is_editable' => true,
+            'is_deletable' => true,
+        ]);
+
+        $staff->givePermissionTo([
+            PermissionName::DASHBOARD_VIEW->value,
+
+            // Transaksi Surat
+            PermissionName::SURAT_MASUK_VIEW->value,
+            PermissionName::SURAT_KELOLA_VIEW->value,
+            PermissionName::SURAT_KELOLA_UPDATE->value,
+            PermissionName::SURAT_APPROVE->value,
+            PermissionName::SURAT_REJECT->value,
+
+            // Notifikasi
+            PermissionName::NOTIFIKASI_VIEW->value,
+
+            // Laporan
+            PermissionName::LAPORAN_STATISTIK_VIEW->value,
+            PermissionName::LAPORAN_TRACKING_VIEW->value,
+
+            // Profile
+            PermissionName::PROFILE_VIEW->value,
+            PermissionName::PROFILE_UPDATE->value,
+        ]);
+
+        $this->command->info("  ✅  Created: {$staff->name} " . ($staff->is_editable ? '(YES)' : '(NO)') . "|" . ($staff->is_deletable ? '(YES)' : '(NO)'));
     }
 
     private function createMahasiswaRole(): void
@@ -231,6 +307,6 @@ class RoleAndPermissionSeeder extends Seeder
             PermissionName::PROFILE_UPDATE->value,
         ]);
 
-        $this->command->info("  ✅ Created: {$mhs->name} " . ($mhs->is_editable ? '(YES)' : '(NO)') . "|" . ($mhs->is_deletable ? '(YES)' : '(NO)'));
+        $this->command->info("  ✅  Created: {$mhs->name} " . ($mhs->is_editable ? '(YES)' : '(NO)') . "|" . ($mhs->is_deletable ? '(YES)' : '(NO)'));
     }
 }

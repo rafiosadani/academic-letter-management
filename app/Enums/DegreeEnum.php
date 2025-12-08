@@ -44,11 +44,11 @@ enum DegreeEnum: string
     public function getBadgeColor(): string
     {
         return match($this) {
-            self::D3 => 'bg-info/10 text-info border border-info/20',
-            self::D4 => 'bg-primary/10 text-primary border border-primary/20',
-            self::S1 => 'bg-success/10 text-success border border-success/20',
-            self::S2 => 'bg-warning/10 text-warning border border-warning/20',
-            self::S3 => 'bg-error/10 text-error border border-error/20',
+            self::D3 => 'bg-info/10 text-info border border-info/20 dark:bg-info/15',
+            self::D4 => 'bg-primary/10 text-primary border border-primary/20 dark:bg-accent/15 dark:text-accent-light',
+            self::S1 => 'bg-success/10 text-success border border-success/20 dark:bg-success/15',
+            self::S2 => 'bg-warning/10 text-warning border border-warning/20 dark:bg-warning/15',
+            self::S3 => 'bg-error/10 text-error border border-error/20 dark:bg-error/15',
         };
     }
 

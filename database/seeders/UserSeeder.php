@@ -20,12 +20,47 @@ class UserSeeder extends Seeder
                 'role' => 'Administrator',
             ],
             [
-                'full_name' => 'Kepala Subbagian Akademik',
+                'full_name' => 'Mukhammad Kholid Mawardi, S.Sos., M.A.B., Ph.D',
+                'email' => 'dekanfvub@gmail.com',
+                'role' => 'Dekan Fakultas Vokasi',
+            ],
+            [
+                'full_name' => 'Dr. A. Faidlal Rahman, SE.Par., M.Sc., CHE.',
+                'email' => 'wdakademikfvub@gmail.com',
+                'role' => 'Wakil Dekan Bidang Akademik',
+            ],
+            [
+                'full_name' => 'Wuri Cahya Handaru, S.ST.,M.Ds.',
+                'email' => 'kaprodidesgraf@gmail.com',
+                'role' => 'Ketua Program Studi',
+            ],
+            [
+                'full_name' => 'Erlangga Setyawan, SP., MM., CODP',
+                'email' => 'kaprodiperhotelan@gmail.com',
+                'role' => 'Ketua Program Studi',
+            ],
+            [
+                'full_name' => 'Tri Mega Asri, S.Sos.,M.I.Kom',
+                'email' => 'kaprodiadmbis@gmail.com',
+                'role' => 'Ketua Program Studi',
+            ],
+            [
+                'full_name' => 'Kusairi, SE.,ME.',
+                'email' => 'kaprodikeubank@gmail.com',
+                'role' => 'Ketua Program Studi',
+            ],
+            [
+                'full_name' => 'Salnan Ratih Asriningtias, ST.,MT, MCF',
+                'email' => 'kaproditi@gmail.com',
+                'role' => 'Ketua Program Studi',
+            ],
+            [
+                'full_name' => 'Pranatalia Pratami Nugraheni S.AB.',
                 'email' => 'kasubbagakademik@gmail.com',
                 'role' => 'Kepala Subbagian Akademik',
             ],
             [
-                'full_name' => 'Staf Akademik',
+                'full_name' => 'Muhammad Fajar Ismail, SE., M.M.',
                 'email' => 'stafakademik@gmail.com',
                 'role' => 'Staf Akademik',
             ],
@@ -50,7 +85,7 @@ class UserSeeder extends Seeder
 
             $user->assignRole($data['role']);
 
-            $this->command->info("   ✅ Created: {$data['full_name']} ({$data['role']})");
+            $this->command->info("  ✅  Created: {$data['full_name']} ({$data['role']})");
         }
         $this->command->info('  🎉 Users seeding completed!');
     }

@@ -68,7 +68,7 @@ class AcademicYearSeeder extends Seeder
 
             $this->generateSemesters($academicYear, $data['is_active']);
 
-            $this->command->info("  " . "✅ Created: {$academicYear->year_label}" . ($data['is_active'] ? ' (ACTIVE)' : ''));
+            $this->command->info("  " . "✅  Created: {$academicYear->year_label}" . ($data['is_active'] ? ' [🟢 ACTIVE]' : ''));
         }
 
         $this->command->info('  🎉 Academic Years seeding completed!');

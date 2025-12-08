@@ -45,8 +45,6 @@ class NotificationSettingController extends Controller
             'settings.*.email_daily_digest' => 'boolean',
         ]);
 
-        dd($request);
-
         try {
             // Additional validation: If email is ON, must choose at least one delivery method
             foreach ($request->settings as $category => $settings) {

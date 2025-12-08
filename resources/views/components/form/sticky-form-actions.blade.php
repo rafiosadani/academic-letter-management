@@ -8,7 +8,7 @@
     'isUpdate' => false,
 ])
 
-<div class="sticky bottom-0 z-10 bg-slate-50 dark:bg-navy-800 border-t border-slate-200 dark:border-navy-600 py-4 -mx-[var(--margin-x)] px-[var(--margin-x)] mt-auto -mb-8">
+<div class="sticky bottom-0 z-10 bg-slate-50 dark:bg-navy-800 border-t border-slate-200 dark:border-navy-600 py-4 -mx-[var(--margin-x)] px-[var(--margin-x)] mt-auto -mb-10">
     <div class="flex items-center justify-end space-x-3">
         {{-- Cancel Button --}}
         <a  href="{{ $cancelUrl }}"
