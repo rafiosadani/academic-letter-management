@@ -2,12 +2,13 @@
     'id' => null,
     'label',
     'name',
-    'options' => [],   // DIHARAPKAN: Array Asosiatif [value => label]
-    'value' => '',     // Nilai yang dipilih saat ini
+    'options' => [],
+    'value' => '',
     'placeholder' => 'Pilih opsi...',
     'required' => false,
     'helper' => null,
     'multiple' => false,
+    'disabled' => false,
 ])
 
 <label class="block" id="{{ $id }}">
@@ -23,33 +24,43 @@
             name="{{ $name }}{{ $multiple ? '[]' : '' }}"
 {{--            {{ $required ? 'required' : '' }}--}}
             {{ $multiple ? 'multiple' : '' }}
-
+            {{ $disabled ? 'disabled' : '' }}
             {{-- Class Styling --}}
-            {{ $attributes->merge(['class' => 'form-select mt-1.5 w-full w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent']) }}
+            {{ $attributes->merge(['class' => 'form-select mt-1.5 w-full w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600']) }}
     >
         @if($placeholder && !$multiple)
             <option value="">{{ $placeholder }}</option>
         @endif
 
-        {{-- Logika Tunggal: Hanya memproses Array Asosiatif (Kasus Pluck/MapWithKeys) --}}
         @foreach($options as $optionValue => $optionLabel)
             @php
-                // Pastikan label adalah string yang bisa ditampilkan
                 $labelToDisplay = is_object($optionLabel) ? ($optionLabel->name ?? $optionLabel->title ?? '') : $optionLabel;
-
-                // Tentukan nilai yang akan dibandingkan (nilai lama atau nilai default)
                 $oldValue = old($name, $value);
             @endphp
 
             <option
                     value="{{ $optionValue }}"
-                    {{-- Pengecekan untuk single select (==) atau multi select (in_array) --}}
                     {{ (is_array($oldValue) ? in_array($optionValue, $oldValue) : $oldValue == $optionValue) ? 'selected' : '' }}
             >
                 {{ $labelToDisplay }}
             </option>
         @endforeach
     </select>
+
+    @if($disabled)
+        @php
+            $currentValue = old($name, $value);
+            $fieldName = $multiple ? "{$name}[]" : $name;
+        @endphp
+
+        @if($multiple)
+            @foreach((array)$currentValue as $v)
+                <input type="hidden" name="{{ $fieldName }}" value="{{ $v }}">
+            @endforeach
+        @else
+            <input type="hidden" name="{{ $fieldName }}" value="{{ $currentValue }}">
+        @endif
+    @endif
 
     @error($name)
         <span class="text-tiny-plus text-error mt-1 ms-1">{{ $message }}</span>

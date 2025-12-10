@@ -10,6 +10,7 @@ use App\Http\Controllers\Master\StudyProgramController;
 use App\Http\Controllers\Master\UserController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Notification\NotificationSettingController;
+use App\Http\Controllers\Setting\ApprovalFlowController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -76,6 +77,14 @@ Route::middleware('auth')->group(function () {
                 Route::post('faculty-officials/restore-all', [FacultyOfficialController::class, 'restoreAll'])->name('faculty-officials.restore.all');
                 Route::delete('faculty-officials/{id}/force-delete', [FacultyOfficialController::class, 'forceDelete'])->name('faculty-officials.force-delete');
                 Route::resource('/faculty-officials', FacultyOfficialController::class)->names('faculty-officials');
+            });
+    });
+
+    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+        // Approval Flow Settings
+        Route::middleware(['permission:settings.approval_flow.view,settings.approval_flow.create,settings.approval_flow.update,settings.approval_flow.delete'])
+            ->group(function () {
+                Route::resource('/approval-flows', ApprovalFlowController::class)->names('approval-flows');
             });
     });
 

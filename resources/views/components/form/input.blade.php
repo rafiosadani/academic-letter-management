@@ -5,6 +5,7 @@
     'value' => '',
     'placeholder' => '',
     'required' => false,
+    'disabled' => false,
     'helper' => null
 ])
 
@@ -21,9 +22,14 @@
             name="{{ $name }}"
             value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}"
-{{--            {{ $required ? 'required' : '' }}--}}
-            {{ $attributes->merge(['class' => 'form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent']) }}
+            {{ $disabled ? 'disabled' : '' }}
+            {{-- {{ $required ? 'required' : '' }}--}}
+            {{ $attributes->merge(['class' => 'form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600']) }}
     />
+
+    @if($disabled)
+        <input type="hidden" name="{{ $name }}" value="{{ old($name, $value) }}">
+    @endif
 
     @error($name)
         <span class="text-tiny-plus text-error mt-1 ms-1 block">{{ $message }}</span>

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StudyProgramSeeder::class);
         $this->call(AcademicYearSeeder::class);
         $this->call(FacultyOfficialSeeder::class);
+        $this->call(ApprovalFlowSeeder::class);
 
     }
 }

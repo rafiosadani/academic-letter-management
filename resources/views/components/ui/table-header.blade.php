@@ -46,6 +46,9 @@
                 </form>
             @endif
 
+            {{-- Custom Action Buttons Slot --}}
+            {{ $slot }}
+
             {{-- Action Buttons --}}
             @if($isDeletedView)
                 {{-- Deleted View: Back to All + Restore All --}}
@@ -84,9 +87,6 @@
                     </a>
                 @endif
             @endif
-
-            {{-- Custom Action Buttons Slot --}}
-            {{ $slot }}
         </div>
     </div>
 </div>

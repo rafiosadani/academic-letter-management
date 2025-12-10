@@ -67,6 +67,11 @@ enum OfficialPosition: string
         };
     }
 
+    public function isDynamic(): bool
+    {
+        return $this === self::KETUA_PROGRAM_STUDI;
+    }
+
     /**
      * Get hierarchical level (for sorting/display)
      */

@@ -276,6 +276,9 @@ class RoleAndPermissionSeeder extends Seeder
             // Profile
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
+
+            // Settings
+            PermissionName::APPROVAL_FLOW_VIEW->value,
         ]);
 
         $this->command->info("  ✅  Created: {$staff->name} " . ($staff->is_editable ? '(YES)' : '(NO)') . "|" . ($staff->is_deletable ? '(YES)' : '(NO)'));

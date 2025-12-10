@@ -72,6 +72,12 @@ enum PermissionName: string
     case PENGATURAN_NOTIFIKASI_VIEW = 'pengaturan.notifikasi.view';
     case PENGATURAN_NOTIFIKASI_UPDATE = 'pengaturan.notifikasi.update';
 
+    // Approval Flow Management
+    case APPROVAL_FLOW_VIEW = 'settings.approval_flow.view';
+    case APPROVAL_FLOW_CREATE = 'settings.approval_flow.create';
+    case APPROVAL_FLOW_UPDATE = 'settings.approval_flow.update';
+    case APPROVAL_FLOW_DELETE = 'settings.approval_flow.delete';
+
     // Profile
     case PROFILE_VIEW = 'profile.view';
     case PROFILE_UPDATE = 'profile.update';
@@ -87,6 +93,7 @@ enum PermissionName: string
             'notifikasi' => 'Notifikasi',
             'laporan'    => 'Laporan',
             'pengaturan' => 'Pengaturan',
+            'setting'    => 'Setting',
             'profile'    => 'Profile',
             default      => ucfirst($main)
         };
