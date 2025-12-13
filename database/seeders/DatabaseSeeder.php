@@ -14,12 +14,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RoleAndPermissionSeeder::class);
-        $this->call(UserSeeder::class);
-        $this->call(StudyProgramSeeder::class);
-        $this->call(AcademicYearSeeder::class);
-        $this->call(FacultyOfficialSeeder::class);
-        $this->call(ApprovalFlowSeeder::class);
+        $this->call([
+            RoleAndPermissionSeeder::class,
+            UserSeeder::class,
+            StudyProgramSeeder::class,
+            AcademicYearSeeder::class,
+            FacultyOfficialSeeder::class,
+            ApprovalFlowSeeder::class,
+            LetterNumberConfigSeeder::class,
+        ]);
 
+        $this->command->info('  🎉 All seeders completed successfully!');
     }
 }

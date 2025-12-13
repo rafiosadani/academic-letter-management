@@ -39,8 +39,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Record Signature
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 
             // Indexes
             $table->unique(['letter_type', 'step'], 'unique_letter_type_step');

@@ -78,6 +78,12 @@ enum PermissionName: string
     case APPROVAL_FLOW_UPDATE = 'settings.approval_flow.update';
     case APPROVAL_FLOW_DELETE = 'settings.approval_flow.delete';
 
+    // Letter Number Config
+    case LETTER_NUMBER_CONFIG_VIEW = 'settings.letter_number_config.view';
+    case LETTER_NUMBER_CONFIG_CREATE = 'settings.letter_number_config.create';
+    case LETTER_NUMBER_CONFIG_UPDATE = 'settings.letter_number_config.update';
+    case LETTER_NUMBER_CONFIG_DELETE = 'settings.letter_number_config.delete';
+
     // Profile
     case PROFILE_VIEW = 'profile.view';
     case PROFILE_UPDATE = 'profile.update';

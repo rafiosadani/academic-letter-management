@@ -51,40 +51,88 @@
 
             {{-- Action Buttons --}}
             @if($isDeletedView)
-                {{-- Deleted View: Back to All + Restore All --}}
-                @if($indexRoute)
-                    <a href="{{ $indexRoute }}"
-                       class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">
-                        <i class="fa-solid fa-list mr-2 text-tiny sm:text-xs"></i>
-                        <span class="text-tiny sm:text-xs">Lihat Semua</span>
-                    </a>
-                @endif
+                @if(!empty($policyModel))
+                    {{-- With Policy --}}
+                    {{-- Deleted View: Back to All + Restore All --}}
+                    @if($indexRoute)
+                        @can('viewAny', $policyModel)
+                            <a href="{{ $indexRoute }}"
+                               class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">
+                                <i class="fa-solid fa-list mr-2 text-tiny sm:text-xs"></i>
+                                <span class="text-tiny sm:text-xs">Lihat Semua</span>
+                            </a>
+                        @endcan
+                    @endif
 
-                @if($deletedCount > 0 && $restoreAllModalId)
-                    <button type="button"
-                            data-toggle="modal"
-                            data-target="#{{ $restoreAllModalId }}"
-                            class="btn w-full sm:w-auto justify-center bg-success font-normal text-white hover:bg-success/90 focus:bg-success/90 active:bg-success/80">
-                        <i class="fa-solid fa-undo mr-2 text-tiny sm:text-xs"></i>
-                        <span class="text-tiny sm:text-xs">Restore All ({{ $deletedCount }})</span>
-                    </button>
+                    @if($deletedCount > 0 && $restoreAllModalId)
+                        @can('restore', $policyModel)
+                            <button type="button"
+                                    data-toggle="modal"
+                                    data-target="#{{ $restoreAllModalId }}"
+                                    class="btn w-full sm:w-auto justify-center bg-success font-normal text-white hover:bg-success/90 focus:bg-success/90 active:bg-success/80">
+                                <i class="fa-solid fa-undo mr-2 text-tiny sm:text-xs"></i>
+                                <span class="text-tiny sm:text-xs">Restore All ({{ $deletedCount }})</span>
+                            </button>
+                        @endcan
+                    @endif
+                @else
+                    {{-- Deleted View: Back to All + Restore All --}}
+                    @if($indexRoute)
+                        <a href="{{ $indexRoute }}"
+                           class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">
+                            <i class="fa-solid fa-list mr-2 text-tiny sm:text-xs"></i>
+                            <span class="text-tiny sm:text-xs">Lihat Semua</span>
+                        </a>
+                    @endif
+
+                    @if($deletedCount > 0 && $restoreAllModalId)
+                        <button type="button"
+                                data-toggle="modal"
+                                data-target="#{{ $restoreAllModalId }}"
+                                class="btn w-full sm:w-auto justify-center bg-success font-normal text-white hover:bg-success/90 focus:bg-success/90 active:bg-success/80">
+                            <i class="fa-solid fa-undo mr-2 text-tiny sm:text-xs"></i>
+                            <span class="text-tiny sm:text-xs">Restore All ({{ $deletedCount }})</span>
+                        </button>
+                    @endif
                 @endif
             @else
                 {{-- Normal View: Deleted Records + Create --}}
                 @if($hasDeletedView && $indexRoute)
-                    <a href="{{ $indexRoute }}?view_deleted=1"
-                       class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">
-                        <i class="fa-solid fa-trash-alt mr-2 text-tiny sm:text-xs"></i>
-                        <span class="text-tiny sm:text-xs">Deleted Records</span>
-                    </a>
+                    @if(!empty($policyModel))
+                        {{-- With Policy --}}
+                        @can('viewAny', $policyModel)
+                            <a href="{{ $indexRoute }}?view_deleted=1"
+                               class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">
+                                <i class="fa-solid fa-trash-alt mr-2 text-tiny sm:text-xs"></i>
+                                <span class="text-tiny sm:text-xs">Deleted Records</span>
+                            </a>
+                        @endcan
+                    @else
+                        <a href="{{ $indexRoute }}?view_deleted=1"
+                           class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">
+                            <i class="fa-solid fa-trash-alt mr-2 text-tiny sm:text-xs"></i>
+                            <span class="text-tiny sm:text-xs">Deleted Records</span>
+                        </a>
+                    @endif
                 @endif
 
                 @if($createRoute)
-                    <a href="{{ $createRoute }}"
-                       class="btn w-full sm:w-auto justify-center bg-primary font-normal text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                        <i class="fa-solid fa-plus mr-2 text-tiny sm:text-xs"></i>
-                        <span class="text-tiny sm:text-xs">{{ $createText }}</span>
-                    </a>
+                    @if(!empty($policyModel))
+                        {{-- With Policy --}}
+                        @can('create', $policyModel)
+                            <a href="{{ $createRoute }}"
+                               class="btn w-full sm:w-auto justify-center bg-primary font-normal text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                                <i class="fa-solid fa-plus mr-2 text-tiny sm:text-xs"></i>
+                                <span class="text-tiny sm:text-xs">{{ $createText }}</span>
+                            </a>
+                        @endcan
+                    @else
+                        <a href="{{ $createRoute }}"
+                           class="btn w-full sm:w-auto justify-center bg-primary font-normal text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                            <i class="fa-solid fa-plus mr-2 text-tiny sm:text-xs"></i>
+                            <span class="text-tiny sm:text-xs">{{ $createText }}</span>
+                        </a>
+                    @endif
                 @endif
             @endif
         </div>

@@ -11,8 +11,8 @@ use App\Http\Controllers\Master\UserController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Notification\NotificationSettingController;
 use App\Http\Controllers\Setting\ApprovalFlowController;
+use App\Http\Controllers\Setting\LetterNumberConfigController;
 use Illuminate\Support\Facades\Route;
-
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -85,6 +85,12 @@ Route::middleware('auth')->group(function () {
         Route::middleware(['permission:settings.approval_flow.view,settings.approval_flow.create,settings.approval_flow.update,settings.approval_flow.delete'])
             ->group(function () {
                 Route::resource('/approval-flows', ApprovalFlowController::class)->names('approval-flows');
+            });
+
+        // Letter Number Settings
+        Route::middleware(['permission:settings.letter_number_config.view,settings.letter_number_config.create,settings.letter_number_config.update,settings.letter_number_config.delete'])
+            ->group(function () {
+                Route::resource('/letter-number-configs', LetterNumberConfigController::class)->except(['show'])->names('letter-number-configs');
             });
     });
 

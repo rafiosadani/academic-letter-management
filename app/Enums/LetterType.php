@@ -104,4 +104,27 @@ enum LetterType: string
             self::DISPENSASI_MAHASISWA => 'Surat dispensasi untuk keperluan mahasiswa lainnya',
         };
     }
+
+    /**
+     * Check if letter type needs auto numbering
+     * Only PDF types (internal system) need auto numbering
+     * Word types (external system) get number from external
+     */
+    public function needsAutoNumbering(): bool
+    {
+        return !$this->isExternal();
+    }
+
+    /**
+     * Get default letter code for numbering
+     */
+    public function defaultCode(): string
+    {
+        return match($this) {
+            self::PENELITIAN => 'LL',
+            self::DISPENSASI_KULIAH => 'DK',
+            self::DISPENSASI_MAHASISWA => 'DM',
+            default => '',
+        };
+    }
 }

@@ -15,6 +15,8 @@ class TableHeader extends Component
     public ?string $searchValue;
     public bool $hasDeletedView;
     public bool $isDeletedView;
+
+    public ?string $policyModel;
     public ?string $createRoute;
     public ?string $createText;
     public ?string $indexRoute;
@@ -29,10 +31,15 @@ class TableHeader extends Component
         bool $showSearch = true,
         string $searchPlaceholder = 'Search...',
         ?string $searchValue = null,
+
         bool $hasDeletedView = true,
         bool $isDeletedView = false,
+
+        ?string $policyModel = null,
+
         ?string $createRoute = null,
         ?string $createText = 'Tambah Data',
+
         ?string $indexRoute = null,
         ?int $deletedCount = 0,
         ?string $restoreAllModalId = 'restore-all-modal'
@@ -42,10 +49,15 @@ class TableHeader extends Component
         $this->showSearch = $showSearch;
         $this->searchPlaceholder = $searchPlaceholder;
         $this->searchValue = $searchValue ?? request('search');
+
         $this->hasDeletedView = $hasDeletedView;
         $this->isDeletedView = $isDeletedView;
+
+        $this->policyModel = $policyModel;
+
         $this->createRoute = $createRoute;
         $this->createText = $createText;
+
         $this->indexRoute = $indexRoute;
         $this->deletedCount = $deletedCount;
         $this->restoreAllModalId = $restoreAllModalId;

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreignId('study_program_id')
                 ->nullable()
                 ->constrained('study_programs')
-                ->onDelete('set null')
+                ->nullOnDelete()
                 ->comment('Program studi terkait (wajib jika Kaprodi)');
 
             // Period

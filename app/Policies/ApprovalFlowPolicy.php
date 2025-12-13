@@ -14,7 +14,7 @@ class ApprovalFlowPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_VIEW);
+        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_VIEW->value);
     }
 
     /**
@@ -22,7 +22,7 @@ class ApprovalFlowPolicy
      */
     public function view(User $user, ApprovalFlow $approvalFlow): bool
     {
-        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_VIEW);
+        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_VIEW->value);
     }
 
     /**
@@ -30,7 +30,7 @@ class ApprovalFlowPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_CREATE);
+        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_CREATE->value);
     }
 
     /**
@@ -38,7 +38,7 @@ class ApprovalFlowPolicy
      */
     public function update(User $user, ApprovalFlow $approvalFlow): bool
     {
-        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_UPDATE);
+        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_UPDATE->value);
     }
 
     /**
@@ -46,6 +46,6 @@ class ApprovalFlowPolicy
      */
     public function delete(User $user, ApprovalFlow $approvalFlow): bool
     {
-        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_DELETE);
+        return $user->hasPermissionTo(PermissionName::APPROVAL_FLOW_DELETE->value);
     }
 }
