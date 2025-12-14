@@ -39,7 +39,14 @@ class LetterNumberConfigController extends Controller
             $sequences[$config->letter_type->value] = $this->letterNumberService->getCurrentSequence($config->letter_type);
         }
 
-        return view('settings.letter-number-configs.index', compact('configs', 'sequences'));
+        // Check if can create more configs (ada jenis surat yang belum dikonfigurasi)
+        $availableTypes = collect(LetterType::cases())
+            ->filter(fn($type) => $type->needsAutoNumbering())
+            ->filter(fn($type) => !LetterNumberConfig::where('letter_type', $type->value)->exists());
+
+        $canCreate = $availableTypes->isNotEmpty();
+
+        return view('settings.letter-number-configs.index', compact('configs', 'sequences', 'canCreate'));
     }
 
     /**
@@ -55,6 +62,17 @@ class LetterNumberConfigController extends Controller
         // Get existing configs to exclude
         $existingTypes = LetterNumberConfig::pluck('letter_type')->map(fn($type) => $type->value)->toArray();
         $letterTypes = $letterTypes->filter(fn($type) => !in_array($type->value, $existingTypes));
+
+        // Redirect if no available types
+        if ($letterTypes->isEmpty()) {
+            return redirect()->route('settings.letter-number-configs.index')
+                ->with('notification_data', [
+                    'type' => 'info',
+                    'text' => 'Semua jenis surat sudah dikonfigurasi.',
+                    'position' => 'center-top',
+                    'duration' => 4000
+                ]);
+        }
 
         return view('settings.letter-number-configs.form', compact('letterTypes'));
     }

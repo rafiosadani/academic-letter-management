@@ -230,6 +230,7 @@
                             name="photo"
                             accept="image/*"
                             showPreview
+                            centered
                             helper="Max 2MB (JPG, PNG)"
                     />
                 </div>

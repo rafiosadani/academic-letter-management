@@ -68,7 +68,6 @@ function createImagePreview(src, filename, fileIdentifier) {
         />
         <button
             type="button"
-            // Mencegah penyebaran event ke elemen di bawahnya
             onclick="event.preventDefault(); event.stopPropagation(); window.FilePreviewHandler.removePreview(this)"
             class="absolute -top-2 -right-2 size-7 rounded-full bg-error text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-sm hover:bg-error-focus"
             title="Hapus preview"
@@ -100,7 +99,6 @@ function createFileNotification(file, fileIdentifier) {
         
         <button
             type="button"
-            // Mencegah event default (link) dan propagation (input file)
             onclick="event.preventDefault(); event.stopPropagation(); window.FilePreviewHandler.removePreview(this);"
             class="text-error hover:text-error-focus ml-auto p-1"
             title="Hapus file"
@@ -148,10 +146,13 @@ function handleFileChange(event) {
 
     const isImageFile = files[0].type.match('image.*');
 
+    const isCentered = previewContainer.classList.contains('justify-center');
+    const alignmentClass = isCentered ? 'justify-center' : 'justify-start';
+
     if (isImageFile) {
         // --- KASUS A: Gambar (Image Preview) ---
         let previewGrid = document.createElement('div');
-        previewGrid.className = 'flex flex-wrap justify-center gap-3';
+        previewGrid.className = `flex flex-wrap ${alignmentClass} gap-3`;
         previewContainer.appendChild(previewGrid);
 
         currentFiles.forEach((file) => {
@@ -192,7 +193,7 @@ export function removePreview(button) {
     const fileIdentifier = button.dataset.fileId;
     const previewContainer = button.closest('[id$="_preview"]');
 
-    const imageGrid = wrapper.closest('.flex.flex-wrap.justify-center');
+    const imageGrid = wrapper.closest('.flex.flex-wrap');
 
     const input = document.querySelector(`input[data-preview-target="${previewContainer.id}"]`);
 

@@ -14,7 +14,7 @@ class LetterNumberConfigPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo(PermissionName::LETTER_NUMBER_CONFIG_VIEW->value);
+        return $user->hasPermissionTo(PermissionName::SETTINGS_LETTER_NUMBER_VIEW->value);
     }
 
     /**
@@ -22,7 +22,7 @@ class LetterNumberConfigPolicy
      */
     public function view(User $user, LetterNumberConfig $letterNumberConfig): bool
     {
-        return $user->hasPermissionTo(PermissionName::LETTER_NUMBER_CONFIG_VIEW->value);
+        return $user->hasPermissionTo(PermissionName::SETTINGS_LETTER_NUMBER_VIEW->value);
     }
 
     /**
@@ -30,7 +30,7 @@ class LetterNumberConfigPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(PermissionName::LETTER_NUMBER_CONFIG_CREATE->value);
+        return $user->hasPermissionTo(PermissionName::SETTINGS_LETTER_NUMBER_CREATE->value);
     }
 
     /**
@@ -38,7 +38,7 @@ class LetterNumberConfigPolicy
      */
     public function update(User $user, LetterNumberConfig $letterNumberConfig): bool
     {
-        return $user->hasPermissionTo(PermissionName::LETTER_NUMBER_CONFIG_UPDATE->value);
+        return $user->hasPermissionTo(PermissionName::SETTINGS_LETTER_NUMBER_UPDATE->value);
     }
 
     /**
@@ -46,6 +46,6 @@ class LetterNumberConfigPolicy
      */
     public function delete(User $user, LetterNumberConfig $letterNumberConfig): bool
     {
-        return $user->hasPermissionTo(PermissionName::LETTER_NUMBER_CONFIG_DELETE->value);
+        return $user->hasPermissionTo(PermissionName::SETTINGS_LETTER_NUMBER_DELETE->value);
     }
 }

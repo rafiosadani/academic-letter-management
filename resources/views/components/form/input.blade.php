@@ -1,5 +1,5 @@
 @props([
-    'label',
+    'label' => '',
     'name',
     'type' => 'text',
     'value' => '',
@@ -10,21 +10,23 @@
 ])
 
 <label class="block">
-    <span class="font-medium text-slate-600 dark:text-navy-100">
-        {{ $label }}
-        @if($required)
-            <span class="text-error">*</span>
-        @endif
-    </span>
+    @if($label)
+        <span class="font-medium text-slate-600 dark:text-navy-100">
+            {{ $label }}
+            @if($required)
+                <span class="text-error">*</span>
+            @endif
+        </span>
+    @endif
 
     <input
-            type="{{ $type }}"
-            name="{{ $name }}"
-            value="{{ old($name, $value) }}"
-            placeholder="{{ $placeholder }}"
-            {{ $disabled ? 'disabled' : '' }}
-            {{-- {{ $required ? 'required' : '' }}--}}
-            {{ $attributes->merge(['class' => 'form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600']) }}
+        type="{{ $type }}"
+        name="{{ $name }}"
+        value="{{ old($name, $value) }}"
+        placeholder="{{ $placeholder }}"
+        {{ $disabled ? 'disabled' : '' }}
+        {{-- {{ $required ? 'required' : '' }}--}}
+        {{ $attributes->merge(['class' => 'form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary disabled:pointer-events-none disabled:select-none disabled:border-none disabled:bg-zinc-100 dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent dark:disabled:bg-navy-600']) }}
     />
 
     @if($disabled)

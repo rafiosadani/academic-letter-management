@@ -16,7 +16,7 @@
 
                 :policyModel="App\Models\LetterNumberConfig::class"
 
-                :createRoute="route('settings.letter-number-configs.create')"
+                :createRoute="$canCreate ? route('settings.letter-number-configs.create') : null"
                 createText="Tambah Konfigurasi"
             />
 

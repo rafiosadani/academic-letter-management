@@ -12,6 +12,7 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Notification\NotificationSettingController;
 use App\Http\Controllers\Setting\ApprovalFlowController;
 use App\Http\Controllers\Setting\LetterNumberConfigController;
+use App\Http\Controllers\Setting\SettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -81,6 +82,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+        // General Settings
+        Route::get('general', [SettingController::class, 'edit'])->name('general.edit');
+        Route::put('general', [SettingController::class, 'update'])->name('general.update');
+
         // Approval Flow Settings
         Route::middleware(['permission:settings.approval_flow.view,settings.approval_flow.create,settings.approval_flow.update,settings.approval_flow.delete'])
             ->group(function () {
@@ -88,7 +93,7 @@ Route::middleware('auth')->group(function () {
             });
 
         // Letter Number Settings
-        Route::middleware(['permission:settings.letter_number_config.view,settings.letter_number_config.create,settings.letter_number_config.update,settings.letter_number_config.delete'])
+        Route::middleware(['permission:settings.letter_number.view,settings.letter_number.create,settings.letter_number.update,settings.letter_number.delete'])
             ->group(function () {
                 Route::resource('/letter-number-configs', LetterNumberConfigController::class)->except(['show'])->names('letter-number-configs');
             });

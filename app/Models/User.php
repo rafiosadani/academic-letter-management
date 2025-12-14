@@ -114,9 +114,9 @@ class User extends Authenticatable
     public function getStatusBadgeAttribute()
     {
         return match($this->status) {
-            true => '<span class="badge bg-success/10 text-success"><i class="fa-solid fa-circle-check mr-1"></i>Aktif</span>',
-            false => '<span class="badge bg-error/10 text-error"><i class="fa-solid fa-circle-xmark mr-1"></i>Nonaktif</span>',
-            default => '<span class="badge bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100"><i class="fa-solid fa-question-circle mr-1"></i>Status Tidak Diketahui</span>',
+            true => '<span class="badge bg-success/10 py-1 px-1 text-[9px] text-success"><i class="fa-solid fa-circle-check mr-1"></i>Aktif</span>',
+            false => '<span class="badge bg-error/10 text-[9px] text-error"><i class="fa-solid fa-circle-xmark mr-1"></i>Nonaktif</span>',
+            default => '<span class="badge bg-slate-150 text-[9px] text-slate-800 dark:bg-navy-500 dark:text-navy-100"><i class="fa-solid fa-question-circle mr-1"></i>Status Tidak Diketahui</span>',
         };
     }
 
@@ -163,23 +163,23 @@ class User extends Authenticatable
                 'icon' => 'fa-solid fa-crown',
             ],
             'wakil dekan bidang akademik' => [
-                'classes' => 'bg-info/10 text-info border border-info/20 dark:bg-info/15',
+                'classes' => 'bg-info/10 text-info text-[9px] border border-info/20 dark:bg-info/15',
                 'icon' => 'fa-solid fa-user-graduate',
             ],
             'kepala subbagian akademik' => [
-                'classes' => 'bg-secondary/10 text-secondary border border-secondary/20 dark:bg-secondary/15',
+                'classes' => 'bg-secondary/10 text-secondary text-[9px] border border-secondary/20 dark:bg-secondary/15',
                 'icon' => 'fa-solid fa-graduation-cap',
             ],
             'ketua program studi' => [
-                'classes' => 'bg-success/10 text-success border border-success/20 dark:bg-success/15',
+                'classes' => 'bg-success/10 text-success text-[9px] border border-success/20 dark:bg-success/15',
                 'icon' => 'fa-solid fa-user-tie',
             ],
             'staf akademik' => [
-                'classes' => 'bg-warning/10 text-warning border border-warning/20 dark:bg-warning/15',
+                'classes' => 'bg-warning/10 text-warning text-[9px] border border-warning/20 dark:bg-warning/15',
                 'icon' => 'fa-solid fa-chalkboard-user',
             ],
             'mahasiswa' => [
-                'classes' => 'bg-primary/10 text-primary',
+                'classes' => 'bg-primary/10 text-primary text-[9px]',
                 'icon' => 'fa-solid fa-user',
             ],
         ];

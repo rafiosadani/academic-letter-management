@@ -37,6 +37,31 @@
             </x-slot>
 
             {{-- Panel Sidebar Slot (Conditional) --}}
+{{--            @if($hasPanel && !empty($currentPanelMenus))--}}
+{{--                <x-slot name="panel">--}}
+{{--                    <x-sidebar.panel :title="$panelTitle">--}}
+{{--                        @foreach($currentPanelMenus as $submenu)--}}
+{{--                            @php--}}
+{{--                                // Check if submenu is active--}}
+{{--                                $isActive = collect((array) ($submenu['active'] ?? []))--}}
+{{--                                    ->contains(fn($pattern) => request()->routeIs($pattern));--}}
+{{--                            @endphp--}}
+{{--                            <li>--}}
+{{--                                <a href="{{ $submenu['route'] }}"--}}
+{{--                                   class="nav-link flex py-2 text-xs-plus tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{--}}
+{{--                                            $isActive--}}
+{{--                                            ? 'font-medium text-primary dark:text-accent-light'--}}
+{{--                                            : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50'--}}
+{{--                                        }}">--}}
+{{--                                    {{ $submenu['text'] }}--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        @endforeach--}}
+{{--                    </x-sidebar.panel>--}}
+{{--                </x-slot>--}}
+{{--            @endif--}}
+
+            {{-- Panel Sidebar Slot (Conditional) --}}
             @if($hasPanel && !empty($currentPanelMenus))
                 <x-slot name="panel">
                     <x-sidebar.panel :title="$panelTitle">
@@ -46,14 +71,32 @@
                                 $isActive = collect((array) ($submenu['active'] ?? []))
                                     ->contains(fn($pattern) => request()->routeIs($pattern));
                             @endphp
-                            <li>
+                            <li class="border border-slate-200 dark:border-navy-500/60 rounded-lg">
                                 <a href="{{ $submenu['route'] }}"
-                                   class="nav-link flex py-2 text-xs-plus tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{
-                                            $isActive
-                                            ? 'font-medium text-primary dark:text-accent-light'
-                                            : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50'
-                                        }}">
-                                    {{ $submenu['text'] }}
+                                    class="group flex items-center space-x-2 rounded-lg px-2.5 py-2.5 text-xs tracking-wide outline-hidden transition-all
+                                    {{ $isActive
+                                        ? 'text-white bg-slate-150 bg-gradient-to-r from-primary to-accent'
+                                        : 'hover:bg-slate-100 hover:text-slate-800
+                                           focus:bg-slate-100 focus:text-slate-800
+                                           dark:hover:bg-navy-600 dark:hover:text-navy-100
+                                           dark:focus:bg-navy-600 dark:focus:text-navy-100'
+                                    }}">
+                                    {{-- Icon --}}
+                                    <span class="flex h-3 w-3 items-center justify-center">
+                                        <i class="fa-solid {{ $submenu['icon'] ?? 'fa-circle' }} text-xs
+                                            {{ $isActive
+                                                ? 'text-white'
+                                                : 'text-slate-400 transition-colors
+                                                   group-hover:text-slate-500
+                                                   group-focus:text-slate-500
+                                                   dark:text-navy-300
+                                                   dark:group-hover:text-navy-200
+                                                   dark:group-focus:text-navy-200'
+                                            }}">
+                                        </i>
+                                    </span>
+                                    {{-- Text --}}
+                                    <span class="">{{ $submenu['text'] }}</span>
                                 </a>
                             </li>
                         @endforeach

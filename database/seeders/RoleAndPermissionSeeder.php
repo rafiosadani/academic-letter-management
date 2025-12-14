@@ -79,19 +79,19 @@ class RoleAndPermissionSeeder extends Seeder
         $dekan->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
-            // Transaksi Surat
-            PermissionName::SURAT_MASUK_VIEW->value,
-            PermissionName::SURAT_KELOLA_VIEW->value,
-            PermissionName::SURAT_KELOLA_UPDATE->value,
-            PermissionName::SURAT_APPROVE->value,
-            PermissionName::SURAT_REJECT->value,
+            // Letter
+            PermissionName::LETTER_INCOMING_VIEW->value,
+            PermissionName::LETTER_MANAGE_VIEW->value,
+            PermissionName::LETTER_MANAGE_UPDATE->value,
+            PermissionName::LETTER_APPROVE->value,
+            PermissionName::LETTER_REJECT->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
-            // Laporan
-            PermissionName::LAPORAN_STATISTIK_VIEW->value,
-            PermissionName::LAPORAN_TRACKING_VIEW->value,
+            // Report
+            PermissionName::REPORT_STATISTIC_VIEW->value,
+            PermissionName::REPORT_TRACKING_VIEW->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,
@@ -115,19 +115,19 @@ class RoleAndPermissionSeeder extends Seeder
         $wdAkademik->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
-            // Transaksi Surat
-            PermissionName::SURAT_MASUK_VIEW->value,
-            PermissionName::SURAT_KELOLA_VIEW->value,
-            PermissionName::SURAT_KELOLA_UPDATE->value,
-            PermissionName::SURAT_APPROVE->value,
-            PermissionName::SURAT_REJECT->value,
+            // Letter
+            PermissionName::LETTER_INCOMING_VIEW->value,
+            PermissionName::LETTER_MANAGE_VIEW->value,
+            PermissionName::LETTER_MANAGE_UPDATE->value,
+            PermissionName::LETTER_APPROVE->value,
+            PermissionName::LETTER_REJECT->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
-            // Laporan
-            PermissionName::LAPORAN_STATISTIK_VIEW->value,
-            PermissionName::LAPORAN_TRACKING_VIEW->value,
+            // Report
+            PermissionName::REPORT_STATISTIC_VIEW->value,
+            PermissionName::REPORT_TRACKING_VIEW->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,
@@ -149,21 +149,19 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         $ketuaProgramStudi->givePermissionTo([
-            PermissionName::DASHBOARD_VIEW->value,
+            // Letter
+            PermissionName::LETTER_INCOMING_VIEW->value,
+            PermissionName::LETTER_MANAGE_VIEW->value,
+            PermissionName::LETTER_MANAGE_UPDATE->value,
+            PermissionName::LETTER_APPROVE->value,
+            PermissionName::LETTER_REJECT->value,
 
-            // Transaksi Surat
-            PermissionName::SURAT_MASUK_VIEW->value,
-            PermissionName::SURAT_KELOLA_VIEW->value,
-            PermissionName::SURAT_KELOLA_UPDATE->value,
-            PermissionName::SURAT_APPROVE->value,
-            PermissionName::SURAT_REJECT->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
-
-            // Laporan
-            PermissionName::LAPORAN_STATISTIK_VIEW->value,
-            PermissionName::LAPORAN_TRACKING_VIEW->value,
+            // Report
+            PermissionName::REPORT_STATISTIC_VIEW->value,
+            PermissionName::REPORT_TRACKING_VIEW->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,
@@ -187,19 +185,19 @@ class RoleAndPermissionSeeder extends Seeder
         $kasubbagAkademik->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
-            // Transaksi Surat
-            PermissionName::SURAT_MASUK_VIEW->value,
-            PermissionName::SURAT_KELOLA_VIEW->value,
-            PermissionName::SURAT_KELOLA_UPDATE->value,
-            PermissionName::SURAT_APPROVE->value,
-            PermissionName::SURAT_REJECT->value,
+            // Letter
+            PermissionName::LETTER_INCOMING_VIEW->value,
+            PermissionName::LETTER_MANAGE_VIEW->value,
+            PermissionName::LETTER_MANAGE_UPDATE->value,
+            PermissionName::LETTER_APPROVE->value,
+            PermissionName::LETTER_REJECT->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
-            // Laporan
-            PermissionName::LAPORAN_STATISTIK_VIEW->value,
-            PermissionName::LAPORAN_TRACKING_VIEW->value,
+            // Report
+            PermissionName::REPORT_STATISTIC_VIEW->value,
+            PermissionName::REPORT_TRACKING_VIEW->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,
@@ -223,19 +221,19 @@ class RoleAndPermissionSeeder extends Seeder
         $dosen->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
-            // Transaksi Surat
-            PermissionName::SURAT_MASUK_VIEW->value,
-            PermissionName::SURAT_KELOLA_VIEW->value,
-            PermissionName::SURAT_KELOLA_UPDATE->value,
-            PermissionName::SURAT_APPROVE->value,
-            PermissionName::SURAT_REJECT->value,
+            // Letter
+            PermissionName::LETTER_INCOMING_VIEW->value,
+            PermissionName::LETTER_MANAGE_VIEW->value,
+            PermissionName::LETTER_MANAGE_UPDATE->value,
+            PermissionName::LETTER_APPROVE->value,
+            PermissionName::LETTER_REJECT->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
-            // Laporan
-            PermissionName::LAPORAN_STATISTIK_VIEW->value,
-            PermissionName::LAPORAN_TRACKING_VIEW->value,
+            // Report
+            PermissionName::REPORT_STATISTIC_VIEW->value,
+            PermissionName::REPORT_TRACKING_VIEW->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,
@@ -259,26 +257,35 @@ class RoleAndPermissionSeeder extends Seeder
         $staff->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
-            // Transaksi Surat
-            PermissionName::SURAT_MASUK_VIEW->value,
-            PermissionName::SURAT_KELOLA_VIEW->value,
-            PermissionName::SURAT_KELOLA_UPDATE->value,
-            PermissionName::SURAT_APPROVE->value,
-            PermissionName::SURAT_REJECT->value,
+            // Letter
+            PermissionName::LETTER_INCOMING_VIEW->value,
+            PermissionName::LETTER_MANAGE_VIEW->value,
+            PermissionName::LETTER_MANAGE_UPDATE->value,
+            PermissionName::LETTER_APPROVE->value,
+            PermissionName::LETTER_REJECT->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
-            // Laporan
-            PermissionName::LAPORAN_STATISTIK_VIEW->value,
-            PermissionName::LAPORAN_TRACKING_VIEW->value,
+            // Report
+            PermissionName::REPORT_STATISTIC_VIEW->value,
+            PermissionName::REPORT_TRACKING_VIEW->value,
+
+            // Settings
+            PermissionName::SETTINGS_GENERAL_VIEW->value,
+            PermissionName::SETTINGS_GENERAL_UPDATE->value,
+            PermissionName::SETTINGS_APPROVAL_FLOW_VIEW->value,
+            PermissionName::SETTINGS_APPROVAL_FLOW_CREATE->value,
+            PermissionName::SETTINGS_APPROVAL_FLOW_UPDATE->value,
+            PermissionName::SETTINGS_APPROVAL_FLOW_DELETE->value,
+            PermissionName::SETTINGS_LETTER_NUMBER_VIEW->value,
+            PermissionName::SETTINGS_LETTER_NUMBER_CREATE->value,
+            PermissionName::SETTINGS_LETTER_NUMBER_UPDATE->value,
+            PermissionName::SETTINGS_LETTER_NUMBER_DELETE->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,
             PermissionName::PROFILE_UPDATE->value,
-
-            // Settings
-            PermissionName::APPROVAL_FLOW_VIEW->value,
         ]);
 
         $this->command->info("  ✅  Created: {$staff->name} " . ($staff->is_editable ? '(YES)' : '(NO)') . "|" . ($staff->is_deletable ? '(YES)' : '(NO)'));
@@ -298,12 +305,12 @@ class RoleAndPermissionSeeder extends Seeder
         $mhs->givePermissionTo([
             PermissionName::DASHBOARD_VIEW->value,
 
-            // Surat Saya
-            PermissionName::SURAT_SAYA_VIEW->value,
-            PermissionName::SURAT_SAYA_CREATE->value,
+            // My Letters
+            PermissionName::LETTER_MY_VIEW->value,
+            PermissionName::LETTER_MY_CREATE->value,
 
-            // Notifikasi
-            PermissionName::NOTIFIKASI_VIEW->value,
+            // Notification
+            PermissionName::NOTIFICATION_VIEW->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,

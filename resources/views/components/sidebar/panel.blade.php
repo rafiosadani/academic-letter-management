@@ -5,7 +5,7 @@
 
         <!-- Sidebar Panel Header -->
         @if(!empty($title))
-            <div class="flex h-18 w-full items-center justify-between pl-4 pr-1">
+            <div class="flex h-18 w-full items-center justify-between pl-3 pr-1">
                 <p class="text-base tracking-wider text-slate-800 dark:text-navy-100">
                     {{ $title }}
                 </p>
@@ -21,7 +21,7 @@
 
         <!-- Sidebar Panel Body -->
         <div class="nav-wrapper h-[calc(100%-4.5rem)] overflow-x-hidden pb-6" data-simplebar>
-            <ul class="flex flex-1 flex-col px-4 font-inter">
+            <ul class="flex flex-1 flex-col px-2 gap-1.5 font-inter font-medium">
                 {{ $slot }}
             </ul>
         </div>

@@ -9,9 +9,9 @@
     />
 
     <x-ui.page-header
-            :title="isset($letterNumberConfig) ? 'Edit Konfigurasi Nomor Surat' : 'Tambah Konfigurasi Nomor Surat'"
-            :description="isset($letterNumberConfig) ? 'Perbarui format penomoran surat' : 'Buat konfigurasi format penomoran baru'"
-            :backUrl="route('settings.letter-number-configs.index')"
+        :title="isset($letterNumberConfig) ? 'Edit Konfigurasi Nomor Surat' : 'Tambah Konfigurasi Nomor Surat'"
+        :description="isset($letterNumberConfig) ? 'Perbarui format penomoran surat' : 'Buat konfigurasi format penomoran baru'"
+        :backUrl="route('settings.letter-number-configs.index')"
     >
         <x-slot:icon>
             @if(isset($letterNumberConfig))
@@ -28,10 +28,10 @@
 
     {{-- FORM --}}
     <form
-            method="POST"
-            action="{{ isset($letterNumberConfig) ? route('settings.letter-number-configs.update', $letterNumberConfig) : route('settings.letter-number-configs.store') }}"
-            class="space-y-5 grow flex flex-col"
-            x-data="{
+        method="POST"
+        action="{{ isset($letterNumberConfig) ? route('settings.letter-number-configs.update', $letterNumberConfig) : route('settings.letter-number-configs.store') }}"
+        class="space-y-5 grow flex flex-col"
+        x-data="{
             prefix: '{{ old('prefix', $letterNumberConfig->prefix ?? 'UN10.F1601') }}',
             code: '{{ old('code', $letterNumberConfig->code ?? '') }}',
             padding: {{ old('padding', $letterNumberConfig->padding ?? 3) }},
@@ -73,8 +73,10 @@
                                 :value="old('letter_type', $letterNumberConfig->letter_type->value ?? '')"
                                 placeholder="Pilih jenis surat"
                                 required
-                                :readonly="isset($letterNumberConfig)"
-                                helper="Hanya jenis surat PDF yang perlu konfigurasi (bukan Word/SKAK)"
+                                :disabled="isset($letterNumberConfig)"
+                                :helper="isset($letterNumberConfig)
+                                    ? 'Jenis surat tidak dapat diubah setelah dibuat'
+                                    : 'Hanya jenis surat PDF yang perlu konfigurasi (bukan Word/SKAK)'"
                         />
 
                         {{-- Prefix --}}

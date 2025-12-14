@@ -1,5 +1,5 @@
 @props([
-    'label',
+    'label' => '',
     'name',
     'value' => '',
     'placeholder' => '',
@@ -9,12 +9,14 @@
 ])
 
 <label class="block">
-    <span class="font-medium text-slate-600 dark:text-navy-100">
-        {{ $label }}
-        @if($required)
-            <span class="text-error">*</span>
-        @endif
-    </span>
+    @if($label)
+        <span class="font-medium text-slate-600 dark:text-navy-100">
+            {{ $label }}
+            @if($required)
+                <span class="text-error">*</span>
+            @endif
+        </span>
+    @endif
 
     <textarea
             name="{{ $name }}"
@@ -25,7 +27,7 @@
     >{{ old($name, $value) }}</textarea>
 
     @error($name)
-    <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>
+        <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>
     @enderror
 
     @if($helper)

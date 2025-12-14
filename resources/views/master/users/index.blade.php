@@ -53,7 +53,7 @@
                                                 {{ $user->profile->full_name ?? 'No Name' }}
                                             </p>
                                             @if($user->profile && $user->profile->student_or_employee_id)
-                                                <p class="text-xs text-slate-400 dark:text-navy-300">
+                                                <p class="text-tiny-plus text-slate-400 dark:text-navy-300">
                                                     ID: {{ $user->profile->student_or_employee_id }}
                                                 </p>
                                             @endif
@@ -64,15 +64,15 @@
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5">
-                                    <span class="text-slate-600 dark:text-navy-100">{{ $user->email }}</span>
+                                    <span class="text-xs text-slate-600 dark:text-navy-100">{{ $user->email }}</span>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-tiny text-center">
+                                <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
                                     @if($user->roles->isNotEmpty())
                                         {!! $user->role_badge !!}
                                     @endif
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
-                                    <label class="flex flex-col items-center justify-center gap-1">
+                                    <label class="flex flex-col items-center justify-center gap-2">
                                         <input
                                             type="checkbox"
                                             data-original-state="{{ $user->status ? '1' : '0' }}"
@@ -81,18 +81,16 @@
                                             class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-primary checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-accent dark:checked:before:bg-white status-toggle"
                                             {{ $user->status ? 'checked' : '' }}
                                         />
-                                        <span class="text-tiny {{ $user->status ? 'text-success' : 'text-warning' }}">
-                                            {{ $user->status_text }}
-                                        </span>
+                                        {!! $user?->status_badge !!}
                                     </label>
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs leading-4">
                                     <div class="flex items-center gap-3">
                                         <div class="flex flex-col">
-                                            <span class="text-slate-700 dark:text-navy-100">
+                                            <span class="text-xs text-slate-700 dark:text-navy-100">
                                                 {{ request()->has('view_deleted') ? $user->deleted_by_name : $user->created_by_name }}
                                             </span>
-                                            <span class="text-slate-700 dark:text-navy-100">
+                                            <span class="text-xs text-slate-700 dark:text-navy-100">
                                                 {{ request()->has('view_deleted') ? $user->deleted_at_formatted : $user->created_at_formatted }}
                                         </span>
                                         </div>
