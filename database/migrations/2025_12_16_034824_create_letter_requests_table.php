@@ -23,6 +23,9 @@ return new class extends Migration
             // Form Data (JSON - dynamic per letter type)
             $table->json('data_input')->comment('Form fields sesuai jenis surat');
 
+            // Letter number
+            $table->string('letter_number', 100)->nullable()->unique()->comment('Nomor surat setelah approved');
+
             // Status tracking
             $table->enum('status', [
                 'in_progress',          // Sedang proses approval internal

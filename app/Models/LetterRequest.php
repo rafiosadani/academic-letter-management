@@ -24,6 +24,7 @@ class LetterRequest extends Model
         'semester_id',
         'academic_year_id',
         'data_input',
+        'letter_number',
         'status',
         'external_system_status',
         'rejected_reason',

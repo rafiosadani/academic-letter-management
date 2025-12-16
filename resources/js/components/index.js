@@ -8,3 +8,4 @@ export { initModalErrorReopener } from './modal-error-reopener.js';
 export { initModalFormReset } from './modal-form-reset.js';
 export { initFormComponents, reinitFormComponents } from './form/form-handler.js';
 export { initStatusToggle } from './status-toggle.js';
+export { initDocumentUpload } from './documents/document-upload.js';

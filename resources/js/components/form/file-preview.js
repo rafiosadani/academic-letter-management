@@ -178,6 +178,20 @@ function handleFileChange(event) {
 
         const fileNotification = createFileNotification(file, fileIdentifier);
         previewContainer.appendChild(fileNotification);
+
+        // let fileList = document.createElement('div');
+        // fileList.className = 'flex flex-col gap-2 w-full';
+        // previewContainer.appendChild(fileList);
+        //
+        // currentFiles.forEach((file) => {
+        //     const fileIdentifier = `${file.name}-${file.size}-${file.lastModified}`;
+        //     if (storedData.previewed.has(fileIdentifier)) return;
+        //
+        //     storedData.previewed.add(fileIdentifier);
+        //
+        //     const fileNotification = createFileNotification(file, fileIdentifier);
+        //     fileList.appendChild(fileNotification);
+        // });
     }
 
     fileDataStore.set(fileKey, storedData);

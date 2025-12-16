@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Document\DocumentController;
 use App\Http\Controllers\Letter\LetterRequestController;
 use App\Http\Controllers\Master\AcademicYearController;
 use App\Http\Controllers\Master\FacultyOfficialController;
@@ -120,6 +121,25 @@ Route::middleware('auth')->group(function () {
         Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('api.notifications.mark-as-read');
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('api.notifications.mark-all-as-read');
     });
+
+    // ============================================================
+    // DOCUMENT ROUTES
+    // ============================================================
+
+    // Upload supporting documents (AJAX)
+    Route::post('documents/upload', [DocumentController::class, 'upload'])->name('documents.upload');
+
+    // Upload external document (e.g., SKAK from UB Pusat)
+    Route::post('documents/upload-external', [DocumentController::class, 'uploadExternal'])->name('documents.upload-external');
+
+    // Download document
+    Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+    // Stream document for preview
+    Route::get('documents/{document}/stream', [DocumentController::class, 'stream'])->name('documents.stream');
+
+    // Delete document
+    Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     // Letter requests (full resource)
     Route::resource('letters', LetterRequestController::class)->except(['destroy']);
