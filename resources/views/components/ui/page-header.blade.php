@@ -25,7 +25,7 @@
         @endif
 
         <div>
-            <h2 class="text-base sm:text-xl font-medium text-slate-700 line-clamp-1 dark:text-navy-50">
+            <h2 class="text-base sm:text-xl font-medium text-slate-700 line-clamp-2 dark:text-navy-50">
                 {{ $title }}
             </h2>
             @if($description)

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Letter\LetterRequestController;
 use App\Http\Controllers\Master\AcademicYearController;
 use App\Http\Controllers\Master\FacultyOfficialController;
 use App\Http\Controllers\Master\RoleController;
@@ -119,6 +120,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('api.notifications.mark-as-read');
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('api.notifications.mark-all-as-read');
     });
+
+    // Letter requests (full resource)
+    Route::resource('letters', LetterRequestController::class)->except(['destroy']);
+
+    // Cancel letter
+    Route::post('letters/{letter}/cancel', [LetterRequestController::class, 'cancel'])->name('letters.cancel');
+
+    // Delete letter
+    Route::delete('letters/{letter}', [LetterRequestController::class, 'destroy'])->name('letters.destroy');
 
     // Logout
     Route::post('/logout', LogoutController::class)->name('logout');

@@ -114,18 +114,20 @@ class Menu
     {
         $submenus = [
             [
-                'text' => 'Ajukan Surat Baru',
-                'route' => '#', // TODO: Implement route
-                'active' => ['letter.my.create'],
-                'icon' => 'fa-plus-circle',
-                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MY_CREATE->value) ?? false,
-            ],
-            [
                 'text' => 'Daftar Pengajuan Saya',
-                'route' => '#', // TODO: Implement route
-                'active' => ['letter.my.*'],
+                'route' => route('letters.index'),
+//                'active' => ['letter.my.*'],
+                'active' => ['letters.index'],
                 'icon' => 'fa-list-alt',
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MY_VIEW->value) ?? false,
+            ],
+            [
+                'text' => 'Ajukan Surat Baru',
+                'route' => route('letters.create'),
+//                'active' => ['letter.my.create'],
+                'active' => ['letters.create'],
+                'icon' => 'fa-plus-circle',
+                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MY_CREATE->value) ?? false,
             ],
         ];
 
@@ -140,9 +142,11 @@ class Menu
 
         return [
             'text' => 'Surat Saya',
-            'route' => '#',
+//            'route' => route('letter.my.index'),
+            'route' => route('letters.index'),
             'icon' => self::iconSuratSaya(),
-            'active' => ['letter.my.*'],
+//            'active' => ['letter.my.*'],
+            'active' => ['letters.*'],
             'hasPanel' => true,
             'panelTitle' => 'Surat Saya',
             'submenu' => $authorizedSubmenus,

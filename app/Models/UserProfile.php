@@ -24,10 +24,15 @@ class UserProfile extends Model
     ];
 
     protected $casts = [
+        'date_of_birth' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    // ==========================================================
+    // RELATIONSHIPS
+    // ==========================================================
 
     public function user(): BelongsTo
     {
@@ -36,7 +41,105 @@ class UserProfile extends Model
 
     public function studyProgram(): BelongsTo
     {
-        return $this->belongsTo(StudyProgram::class, 'study_program_id');
+        return $this->belongsTo(StudyProgram::class);
+    }
+
+    // ==========================================================
+    // ACCESSORS (MUTATORS)
+    // ==========================================================
+
+    /**
+     * Check if profile is complete for basic letters.
+     */
+    public function isCompleteForBasicLetters(): bool
+    {
+        return !empty($this->place_of_birth)
+            && !empty($this->date_of_birth);
+    }
+
+    /**
+     * Check if profile is complete for SKAK Tunjangan.
+     */
+    public function isCompleteForSkakTunjangan(): bool
+    {
+        return $this->isCompleteForBasicLetters()
+            && !empty($this->parent_name)
+            && !empty($this->parent_nip)
+            && !empty($this->parent_rank)
+            && !empty($this->parent_institution)
+            && !empty($this->parent_institution_address);
+    }
+
+    /**
+     * Get missing fields for basic letters.
+     */
+    public function getMissingFieldsForBasicLetters(): array
+    {
+        $missing = [];
+
+        if (empty($this->place_of_birth)) {
+            $missing[] = 'Tempat Lahir';
+        }
+
+        if (empty($this->date_of_birth)) {
+            $missing[] = 'Tanggal Lahir';
+        }
+
+        return $missing;
+    }
+
+    /**
+     * Get missing fields for SKAK Tunjangan.
+     */
+    public function getMissingFieldsForSkakTunjangan(): array
+    {
+        $missing = $this->getMissingFieldsForBasicLetters();
+
+        if (empty($this->parent_name)) {
+            $missing[] = 'Nama Orang Tua';
+        }
+
+        if (empty($this->parent_nip)) {
+            $missing[] = 'NIP Orang Tua';
+        }
+
+        if (empty($this->parent_rank)) {
+            $missing[] = 'Pangkat/Golongan Orang Tua';
+        }
+
+        if (empty($this->parent_institution)) {
+            $missing[] = 'Nama Instansi Orang Tua';
+        }
+
+        if (empty($this->parent_institution_address)) {
+            $missing[] = 'Alamat Instansi Orang Tua';
+        }
+
+        return $missing;
+    }
+
+    /**
+     * Get formatted date of birth (Indonesian format).
+     */
+    public function getFormattedDateOfBirthAttribute(): ?string
+    {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+
+        return $this->date_of_birth->translatedFormat('d F Y');
+    }
+
+    /**
+     * Get full birth info (Place, Date).
+     */
+    public function getFullBirthInfoAttribute(): ?string
+    {
+        if (!$this->place_of_birth || !$this->date_of_birth) {
+            return null;
+        }
+
+        return $this->place_of_birth . ', ' . $this->formatted_date_of_birth;
     }
 
     protected function shortName(): Attribute
@@ -88,11 +191,6 @@ class UserProfile extends Model
                     }
                 }
 
-                // Jika tidak ada foto, gunakan default avatar dengan initial/nama lengkap
-                $name = $this->full_name ?? 'User';
-
-                // Gunakan URL ui-avatars.com untuk default avatar
-//                return "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=random&color=fff&size=200";
                 return asset('assets/images/default.png');
             }
         );

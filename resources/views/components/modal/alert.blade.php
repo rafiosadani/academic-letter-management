@@ -5,12 +5,12 @@
 {{--    <div class="modal-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>--}}
     <div class="modal-overlay absolute inset-0 bg-slate-900/60"></div>
 
-    <div class="modal-content scrollbar-sm relative flex w-full max-w-xl flex-col items-center overflow-y-auto rounded-lg bg-white px-4 py-10 text-center dark:bg-navy-700 sm:px-5">
+    <div class="modal-content scrollbar-sm relative flex w-full max-w-lg flex-col items-center overflow-y-auto rounded-lg bg-white px-4 py-10 text-center dark:bg-navy-700 sm:px-5">
 
         {!! $getDisplayIcon() !!}
 
         <div class="mt-4">
-            <h2 class="text-2xl text-slate-700 dark:text-navy-100">
+            <h2 class="text-xl text-slate-700 dark:text-navy-100">
                 {{ $title }}
             </h2>
 

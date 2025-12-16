@@ -33,7 +33,7 @@
                         <input
                                 name="search"
                                 value="{{ $searchValue }}"
-                                class="form-input peer h-8 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pl-9 text-tiny sm:text-xs placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                                class="form-input peer h-8 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pl-9 text-tiny-plus sm:text-xs placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
                                 placeholder="{{ $searchPlaceholder }}"
                                 type="text"
                         />
@@ -122,15 +122,15 @@
                         @can('create', $policyModel)
                             <a href="{{ $createRoute }}"
                                class="btn w-full sm:w-auto justify-center bg-primary font-normal text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                                <i class="fa-solid fa-plus mr-2 text-tiny sm:text-xs"></i>
-                                <span class="text-tiny sm:text-xs">{{ $createText }}</span>
+                                <i class="fa-solid fa-plus mr-2 text-tiny-plus sm:text-xs"></i>
+                                <span class="text-tiny-plus sm:text-xs">{{ $createText }}</span>
                             </a>
                         @endcan
                     @else
                         <a href="{{ $createRoute }}"
                            class="btn w-full sm:w-auto justify-center bg-primary font-normal text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                            <i class="fa-solid fa-plus mr-2 text-tiny sm:text-xs"></i>
-                            <span class="text-tiny sm:text-xs">{{ $createText }}</span>
+                            <i class="fa-solid fa-plus mr-2 text-tiny-plus sm:text-xs"></i>
+                            <span class="text-tiny-plus sm:text-xs">{{ $createText }}</span>
                         </a>
                     @endif
                 @endif

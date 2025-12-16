@@ -1,0 +1,461 @@
+@php
+    $isEdit = isset($letter);
+    $formAction = $isEdit ? route('letters.update', $letter) : route('letters.store');
+    $formMethod = $isEdit ? 'PUT' : 'POST';
+    $pageTitle = $isEdit ? 'Edit Pengajuan Surat' : 'Ajukan Surat Baru';
+@endphp
+
+<x-layouts.app :title="$pageTitle">
+    <x-ui.breadcrumb
+            :title="$pageTitle"
+            :items="[
+            ['label' => 'Pengajuan Surat', 'url' => route('letters.index')],
+            ['label' => $isEdit ? 'Edit' : 'Tambah']
+        ]"
+    />
+
+    <x-ui.page-header
+            :title="$pageTitle . ' - ' . $letterType->label()"
+            :description="$letterType->description()"
+            :backUrl="$isEdit ? route('letters.show', $letter) : route('letters.create')"
+    >
+        <x-slot:icon>
+            @if($isEdit)
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+            @else
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+            @endif
+        </x-slot:icon>
+    </x-ui.page-header>
+
+    {{-- FORM --}}
+    <form method="POST" action="{{ $formAction }}" enctype="multipart/form-data" class="space-y-5 grow flex flex-col">
+        @csrf
+        @if($isEdit)
+            @method('PUT')
+        @endif
+
+        <input type="hidden" name="letter_type" value="{{ $letterType->value }}">
+
+        <div class="grid grid-cols-12 gap-4 sm:gap-5 lg:gap-6 grow">
+            {{-- Main Form --}}
+            <div class="col-span-12 space-y-5 sm:hidden">
+
+                {{-- Info Card --}}
+                <div class="card">
+                    <div class="border-b border-slate-200 p-4 dark:border-navy-500">
+                        <div class="flex items-center space-x-2">
+                            <div class="flex size-7 items-center justify-center rounded-lg bg-info/10 p-1 text-info">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+                            <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                                Panduan
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="p-4 space-y-3 text-xs text-slate-600 dark:text-navy-200">
+                        <p class="text-xs text-slate-500 dark:text-navy-300 mb-3">
+                            {{ $isEdit ? 'Tips mengubah pengajuan surat' : 'Tips mengajukan surat' }}
+                        </p>
+
+                        @if(!$isEdit)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-success mt-0.5"></i>
+                                <p>Pastikan semua data yang diisi sudah benar dan lengkap</p>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-success mt-0.5"></i>
+                                <p>Data profil (nama, NIM, prodi) akan otomatis terisi dari sistem</p>
+                            </div>
+                        @endif
+
+                        <div class="flex items-start space-x-2">
+                            <i class="fa-solid fa-lightbulb text-warning mt-0.5"></i>
+                            <p>Isi <strong>Keterangan Tambahan</strong> jika ada informasi penting yang perlu disampaikan</p>
+                        </div>
+
+                        @if(count($requiredDocuments) > 0)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-lightbulb text-warning mt-0.5"></i>
+                                <p>Upload dokumen pendukung sesuai format yang diminta</p>
+                            </div>
+                        @endif
+
+                        @if($letterType === App\Enums\LetterType::SKAK_TUNJANGAN)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-lightbulb text-warning mt-0.5"></i>
+                                <p>Data orang tua akan tersimpan di profil untuk pengajuan selanjutnya</p>
+                            </div>
+                        @endif
+
+                        @if($isEdit)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-exclamation-triangle text-error mt-0.5"></i>
+                                <p>Perubahan data akan direview ulang oleh pihak terkait</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    @if($isEdit)
+                        <div class="p-4 border-t border-slate-200 dark:border-navy-500">
+                            <div class="space-y-2 text-xs text-slate-500 dark:text-navy-300">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <span>Diajukan: {{ $letter->created_at->format('d M Y, H:i') }}</span>
+                                </div>
+                                @if($letter->updated_at != $letter->created_at)
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fa-solid fa-clock"></i>
+                                        <span>Update: {{ $letter->updated_at->format('d M Y, H:i') }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Status Info (Edit mode only) --}}
+                @if($isEdit)
+                    <div class="card">
+                        <div class="border-b border-slate-200 p-4 dark:border-navy-500">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex size-7 items-center justify-center rounded-lg bg-{{ $letter->status_badge }}/10 p-1 text-{{ $letter->status_badge }}">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </div>
+                                <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                                    Status Surat
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-500 dark:text-navy-300">Status Saat Ini:</span>
+                                <div class="badge rounded-full bg-{{ $letter->status_badge }}/10 text-{{ $letter->status_badge }}">
+                                    {{ $letter->status_label }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <div class="col-span-12 lg:col-span-8 space-y-5">
+
+                {{-- Auto-filled Info Banner --}}
+                <div class="card">
+                    <div class="rounded-lg bg-info/10 border border-info/20 p-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-circle-info text-info text-lg mt-0.5"></i>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-medium text-slate-700 dark:text-navy-100">Informasi Otomatis dari Profil</h4>
+                                <p class="text-xs text-slate-500 dark:text-navy-300 mt-1">
+                                    Data berikut diambil otomatis: <strong>Nama, NIM, Program Studi, Semester, Tahun Akademik</strong>
+                                    @if($letterType === App\Enums\LetterType::SKAK || $letterType === App\Enums\LetterType::SKAK_TUNJANGAN)
+                                        <strong>, Tempat & Tanggal Lahir</strong>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Form Data Surat --}}
+                <div class="card">
+                    <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
+                        <div class="flex items-center space-x-2">
+                            <div class="flex size-7 items-center justify-center rounded-lg bg-primary/10 p-1 text-primary dark:bg-accent-light/10 dark:text-accent-light">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                                Data Surat
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 space-y-4">
+                        {{-- Dynamic Form Fields --}}
+                        @foreach($formFields as $fieldName => $config)
+                            @if($config['type'] === 'select')
+                                <x-form.select
+                                        :label="$config['label']"
+                                        :name="$fieldName"
+                                        :options="$config['options']"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? ''))"
+                                        :placeholder="$config['placeholder'] ?? '-- Pilih --'"
+                                        :required="$config['required']"
+                                        :helper="$config['helper'] ?? ''"
+                                />
+
+                            @elseif($config['type'] === 'textarea')
+                                <x-form.textarea
+                                        :label="$config['label']"
+                                        :name="$fieldName"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? ''))"
+                                        :placeholder="$config['placeholder'] ?? ''"
+                                        :rows="$config['rows'] ?? 3"
+                                        :required="$config['required']"
+                                        :helper="$config['helper'] ?? ''"
+                                        :readonly="$config['readonly'] ?? false"
+                                />
+
+                            @elseif($config['type'] === 'date')
+                                <x-form.input
+                                        type="date"
+                                        :label="$config['label']"
+                                        :name="$fieldName"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '')"
+                                        :required="$config['required']"
+                                        :helper="$config['helper'] ?? ''"
+                                />
+
+                            @elseif($config['type'] === 'time')
+                                <x-form.input
+                                        type="time"
+                                        :label="$config['label']"
+                                        :name="$fieldName"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '')"
+                                        :required="$config['required']"
+                                        :helper="$config['helper'] ?? ''"
+                                />
+
+                            @else
+                                <x-form.input
+                                        type="text"
+                                        :label="$config['label']"
+                                        :name="$fieldName"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? ''))"
+                                        :placeholder="$config['placeholder'] ?? ''"
+                                        :required="$config['required']"
+                                        :helper="$config['helper'] ?? ''"
+                                        :readonly="$config['readonly'] ?? false"
+                                />
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Parent Info for SKAK Tunjangan --}}
+                @if($letterType === App\Enums\LetterType::SKAK_TUNJANGAN)
+                    <div class="card">
+                        <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex size-7 items-center justify-center rounded-lg bg-success/10 p-1 text-success">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                                    Data Orang Tua
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="p-4 sm:p-5 space-y-4">
+                            <x-form.input
+                                    label="Nama Orang Tua"
+                                    name="parent_name"
+                                    :value="old('parent_name', auth()->user()->profile->parent_name ?? '')"
+                                    placeholder="Nama lengkap orang tua"
+                                    required
+                            />
+
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <x-form.input
+                                        label="NIP Orang Tua"
+                                        name="parent_nip"
+                                        :value="old('parent_nip', auth()->user()->profile->parent_nip ?? '')"
+                                        placeholder="Nomor Induk Pegawai"
+                                        required
+                                />
+
+                                <x-form.input
+                                        label="Pangkat/Golongan"
+                                        name="parent_rank"
+                                        :value="old('parent_rank', auth()->user()->profile->parent_rank ?? '')"
+                                        placeholder="Contoh: Pembina Tingkat I / IV b"
+                                        required
+                                />
+                            </div>
+
+                            <x-form.input
+                                    label="Nama Instansi Orang Tua"
+                                    name="parent_institution"
+                                    :value="old('parent_institution', auth()->user()->profile->parent_institution ?? '')"
+                                    placeholder="Nama instansi tempat bekerja"
+                                    required
+                            />
+
+                            <x-form.textarea
+                                    label="Alamat Instansi"
+                                    name="parent_institution_address"
+                                    :value="old('parent_institution_address', auth()->user()->profile->parent_institution_address ?? '')"
+                                    placeholder="Alamat lengkap instansi"
+                                    rows="2"
+                                    required
+                            />
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Document Upload (if required) --}}
+                @if(count($requiredDocuments) > 0)
+                    <div class="card">
+                        <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex size-7 items-center justify-center rounded-lg bg-warning/10 p-1 text-warning">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </div>
+                                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                                    Dokumen Pendukung
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="p-4 sm:p-5 space-y-4">
+                            @foreach($requiredDocuments as $docKey => $docConfig)
+                                <div class="rounded-lg border border-slate-200 p-4 dark:border-navy-500">
+                                    <label class="block">
+                                        <span class="font-medium text-slate-600 dark:text-navy-100">
+                                            {{ $docConfig['label'] }}
+                                            @if($docConfig['required'])
+                                                <span class="text-error">*</span>
+                                            @endif
+                                        </span>
+                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 mb-3">
+                                            {{ $docConfig['helper'] }}
+                                        </p>
+                                        <input
+                                                type="file"
+                                                name="documents[{{ $docKey }}]"
+                                                accept="{{ collect($docConfig['types'])->map(fn($t) => '.' . $t)->join(',') }}"
+                                                class="form-input w-full"
+                                                {{ $docConfig['required'] && !$isEdit ? 'required' : '' }}
+                                        >
+                                        @error('documents.' . $docKey)
+                                        <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>
+                                        @enderror
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+            </div>
+
+            {{-- Right Column - Info & Actions --}}
+            <div class="col-span-12 lg:col-span-4 space-y-5 hidden sm:block">
+
+                {{-- Info Card --}}
+                <div class="card">
+                    <div class="border-b border-slate-200 p-4 dark:border-navy-500">
+                        <div class="flex items-center space-x-2">
+                            <div class="flex size-7 items-center justify-center rounded-lg bg-info/10 p-1 text-info">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+                            <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                                Panduan
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="p-4 space-y-3 text-xs text-slate-600 dark:text-navy-200">
+                        <p class="text-xs text-slate-500 dark:text-navy-300 mb-3">
+                            {{ $isEdit ? 'Tips mengubah pengajuan surat' : 'Tips mengajukan surat' }}
+                        </p>
+
+                        @if(!$isEdit)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-success mt-0.5"></i>
+                                <p>Pastikan semua data yang diisi sudah benar dan lengkap</p>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-success mt-0.5"></i>
+                                <p>Data profil (nama, NIM, prodi) akan otomatis terisi dari sistem</p>
+                            </div>
+                        @endif
+
+                        <div class="flex items-start space-x-2">
+                            <i class="fa-solid fa-lightbulb text-warning mt-0.5"></i>
+                            <p>Isi <strong>Keterangan Tambahan</strong> jika ada informasi penting yang perlu disampaikan</p>
+                        </div>
+
+                        @if(count($requiredDocuments) > 0)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-lightbulb text-warning mt-0.5"></i>
+                                <p>Upload dokumen pendukung sesuai format yang diminta</p>
+                            </div>
+                        @endif
+
+                        @if($letterType === App\Enums\LetterType::SKAK_TUNJANGAN)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-lightbulb text-warning mt-0.5"></i>
+                                <p>Data orang tua akan tersimpan di profil untuk pengajuan selanjutnya</p>
+                            </div>
+                        @endif
+
+                        @if($isEdit)
+                            <div class="flex items-start space-x-2">
+                                <i class="fa-solid fa-exclamation-triangle text-error mt-0.5"></i>
+                                <p>Perubahan data akan direview ulang oleh pihak terkait</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    @if($isEdit)
+                        <div class="p-4 border-t border-slate-200 dark:border-navy-500">
+                            <div class="space-y-2 text-xs text-slate-500 dark:text-navy-300">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <span>Diajukan: {{ $letter->created_at->format('d M Y, H:i') }}</span>
+                                </div>
+                                @if($letter->updated_at != $letter->created_at)
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fa-solid fa-clock"></i>
+                                        <span>Update: {{ $letter->updated_at->format('d M Y, H:i') }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Status Info (Edit mode only) --}}
+                @if($isEdit)
+                    <div class="card">
+                        <div class="border-b border-slate-200 p-4 dark:border-navy-500">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex size-7 items-center justify-center rounded-lg bg-{{ $letter->status_badge }}/10 p-1 text-{{ $letter->status_badge }}">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </div>
+                                <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                                    Status Surat
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-500 dark:text-navy-300">Status Saat Ini:</span>
+                                <div class="badge rounded-full bg-{{ $letter->status_badge }}/10 text-{{ $letter->status_badge }}">
+                                    {{ $letter->status_label }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Sticky Action Buttons --}}
+        <x-form.sticky-form-actions
+                :cancelUrl="$isEdit ? route('letters.show', $letter) : route('letters.create')"
+                :submitText="$isEdit ? 'Update Pengajuan' : 'Ajukan Surat'"
+                :submitType="$isEdit ? 'warning' : 'primary'"
+        />
+    </form>
+</x-layouts.app>

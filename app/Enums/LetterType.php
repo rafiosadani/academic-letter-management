@@ -127,4 +127,278 @@ enum LetterType: string
             default => '',
         };
     }
+
+    /**
+     * Get required documents for this letter type
+     */
+    public function requiredDocuments(): array
+    {
+        return match($this) {
+            self::PENELITIAN => [
+                'proposal' => [
+                    'label' => 'Proposal Penelitian',
+                    'required' => true,
+                    'max_size' => 5120, // 5MB
+                    'types' => ['pdf'],
+                    'helper' => 'Upload proposal penelitian dalam format PDF (Max 5MB)'
+                ],
+            ],
+            self::DISPENSASI_KULIAH => [
+                'lampiran' => [
+                    'label' => 'Lampiran Pendukung',
+                    'required' => false,
+                    'max_size' => 2048, // 2MB
+                    'types' => ['pdf', 'jpg', 'jpeg', 'png'],
+                    'helper' => 'Upload dokumen pendukung jika ada (Max 2MB)',
+                    'multiple' => true,
+                ],
+            ],
+            default => [], // No documents required
+        };
+    }
+
+    /**
+     * Get form fields for this letter type
+     */
+    public function formFields(): array
+    {
+        return match($this) {
+            self::SKAK => $this->skakFields(),
+            self::SKAK_TUNJANGAN => $this->skakTunjanganFields(),
+            self::PENELITIAN => $this->penelitianFields(),
+            self::DISPENSASI_MAHASISWA => $this->dispensasiMahasiswaFields(),
+            self::DISPENSASI_KULIAH => $this->dispensasiKuliahFields(),
+        };
+    }
+
+    private function skakFields(): array
+    {
+        return [
+            'keperluan' => [
+                'type' => 'select',
+                'label' => 'Keperluan Surat Aktif Kuliah',
+                'required' => true,
+                'options' => [
+                    'bpjs' => 'Pengurusan BPJS Kesehatan',
+                    'ktm_hilang' => 'Pelaporan ke Kepolisian (Kehilangan KTM)',
+                    'beasiswa' => 'Pengurusan Beasiswa',
+                    'visa' => 'Pengurusan VISA',
+                    'paspor' => 'Pengurusan Paspor',
+                    'lainnya' => 'Lainnya',
+                ],
+                'placeholder' => '-- Pilih Keperluan --',
+            ],
+            'keterangan' => [
+                'type' => 'textarea',
+                'label' => 'Keterangan Tambahan',
+                'required' => false,
+                'rows' => 3,
+                'helper' => 'Isi jika ada informasi tambahan yang perlu dicantumkan',
+            ],
+        ];
+    }
+
+    private function skakTunjanganFields(): array
+    {
+        return [
+            'keperluan' => [
+                'type' => 'text',
+                'label' => 'Keperluan',
+                'required' => true,
+                'readonly' => true,
+                'value' => 'Persyaratan Tunjangan Orang Tua',
+            ],
+            'nama_orangtua' => [
+                'type' => 'text',
+                'label' => 'Nama Orang Tua',
+                'required' => true,
+                'placeholder' => 'Nama lengkap orang tua',
+            ],
+            'nip_orangtua' => [
+                'type' => 'text',
+                'label' => 'NIP Orang Tua',
+                'required' => true,
+                'placeholder' => 'Nomor Induk Pegawai',
+            ],
+            'pangkat_golongan_orangtua' => [
+                'type' => 'text',
+                'label' => 'Pangkat/Golongan Orang Tua',
+                'required' => true,
+                'placeholder' => 'Contoh: Pembina Tingkat I / IV b',
+            ],
+            'nama_instansi_orangtua' => [
+                'type' => 'text',
+                'label' => 'Nama Instansi Orang Tua',
+                'required' => true,
+                'placeholder' => 'Nama instansi tempat bekerja',
+            ],
+            'alamat_instansi_orangtua' => [
+                'type' => 'textarea',
+                'label' => 'Alamat Instansi Orang Tua',
+                'required' => true,
+                'rows' => 2,
+                'placeholder' => 'Alamat lengkap instansi',
+            ],
+            'keterangan' => [
+                'type' => 'textarea',
+                'label' => 'Keterangan Tambahan',
+                'required' => false,
+                'rows' => 3,
+                'helper' => 'Isi jika ada informasi tambahan',
+            ],
+        ];
+    }
+
+    private function penelitianFields(): array
+    {
+        return [
+            'judul_penelitian' => [
+                'type' => 'textarea',
+                'label' => 'Judul Penelitian',
+                'required' => true,
+                'rows' => 2,
+                'placeholder' => 'Judul lengkap penelitian',
+            ],
+            'nama_tempat_penelitian' => [
+                'type' => 'text',
+                'label' => 'Nama Tempat Penelitian',
+                'required' => true,
+                'placeholder' => 'Nama instansi/perusahaan',
+            ],
+            'alamat_tempat_penelitian' => [
+                'type' => 'textarea',
+                'label' => 'Alamat Tempat Penelitian',
+                'required' => true,
+                'rows' => 2,
+                'placeholder' => 'Alamat lengkap lokasi penelitian',
+            ],
+            'no_hp' => [
+                'type' => 'text',
+                'label' => 'Nomor HP/WhatsApp',
+                'required' => true,
+                'placeholder' => '08xxxxxxxxxx',
+            ],
+            'dosen_pembimbing' => [
+                'type' => 'text',
+                'label' => 'Dosen Pembimbing',
+                'required' => true,
+                'placeholder' => 'Nama dosen pembimbing',
+            ],
+            'bulan_pelaksanaan' => [
+                'type' => 'text',
+                'label' => 'Bulan Pelaksanaan',
+                'required' => true,
+                'placeholder' => 'Contoh: Juli 2025',
+            ],
+            'keterangan' => [
+                'type' => 'textarea',
+                'label' => 'Keterangan Tambahan',
+                'required' => false,
+                'rows' => 3,
+                'helper' => 'Isi jika ada informasi tambahan',
+            ],
+        ];
+    }
+
+    private function dispensasiMahasiswaFields(): array
+    {
+        return [
+            'nama_instansi_tujuan' => [
+                'type' => 'text',
+                'label' => 'Nama Instansi Tujuan Surat',
+                'required' => true,
+                'placeholder' => 'Contoh: KPPN Kediri',
+            ],
+            'jabatan_penerima' => [
+                'type' => 'text',
+                'label' => 'Jabatan Penerima Surat',
+                'required' => true,
+                'placeholder' => 'Contoh: Kepala Sub Bagian Umum',
+            ],
+            'alamat_instansi' => [
+                'type' => 'textarea',
+                'label' => 'Alamat Instansi',
+                'required' => true,
+                'rows' => 2,
+                'placeholder' => 'Alamat lengkap instansi',
+            ],
+            'alasan_dispensasi' => [
+                'type' => 'textarea',
+                'label' => 'Alasan Dispensasi',
+                'required' => true,
+                'rows' => 2,
+                'placeholder' => 'Contoh: tidak mengikuti kegiatan magang',
+            ],
+            'posisi_magang' => [
+                'type' => 'text',
+                'label' => 'Posisi Magang/Kegiatan',
+                'required' => false,
+                'placeholder' => 'Posisi atau kegiatan yang akan ditinggalkan',
+            ],
+            'keperluan_detail' => [
+                'type' => 'textarea',
+                'label' => 'Keperluan Detail',
+                'required' => true,
+                'rows' => 2,
+                'placeholder' => 'Contoh: menghadiri acara pernikahan saudara',
+            ],
+            'tanggal_mulai' => [
+                'type' => 'date',
+                'label' => 'Tanggal Mulai',
+                'required' => true,
+            ],
+            'tanggal_selesai' => [
+                'type' => 'date',
+                'label' => 'Tanggal Selesai',
+                'required' => true,
+            ],
+            'keterangan' => [
+                'type' => 'textarea',
+                'label' => 'Keterangan Tambahan',
+                'required' => false,
+                'rows' => 3,
+                'helper' => 'Isi jika ada informasi tambahan',
+            ],
+        ];
+    }
+
+    private function dispensasiKuliahFields(): array
+    {
+        return [
+            'nama_kegiatan' => [
+                'type' => 'text',
+                'label' => 'Nama Kegiatan',
+                'required' => true,
+                'placeholder' => 'Nama kegiatan fakultas/universitas',
+            ],
+            'tanggal_kegiatan' => [
+                'type' => 'date',
+                'label' => 'Tanggal Kegiatan',
+                'required' => true,
+            ],
+            'waktu_mulai' => [
+                'type' => 'time',
+                'label' => 'Waktu Mulai',
+                'required' => true,
+            ],
+            'waktu_selesai' => [
+                'type' => 'time',
+                'label' => 'Waktu Selesai',
+                'required' => true,
+            ],
+            'tempat_kegiatan' => [
+                'type' => 'text',
+                'label' => 'Tempat Kegiatan',
+                'required' => true,
+                'placeholder' => 'Lokasi kegiatan',
+            ],
+            'keterangan' => [
+                'type' => 'textarea',
+                'label' => 'Keterangan Tambahan',
+                'required' => false,
+                'rows' => 3,
+                'helper' => 'Isi jika ada informasi tambahan',
+            ],
+        ];
+    }
 }
