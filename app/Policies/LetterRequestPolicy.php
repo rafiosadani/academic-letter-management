@@ -72,7 +72,7 @@ class LetterRequestPolicy
             return in_array($letterRequest->status, ['in_progress', 'rejected']);
         }
 
-        // Staff/Admin can delete
+        // Staff / Admin can delete
         return $user->hasPermissionTo(PermissionName::LETTER_MANAGE_VIEW->value);
     }
 

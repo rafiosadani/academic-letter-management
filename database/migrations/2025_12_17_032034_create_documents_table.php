@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('hash', 64)->nullable();
 
             $table->timestamps();
-            $table->softDeletes();
 
             // Indexes
             $table->index('letter_request_id');

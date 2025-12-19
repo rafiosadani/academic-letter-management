@@ -318,27 +318,47 @@
                         <div class="p-4 sm:p-5 space-y-4">
                             @foreach($requiredDocuments as $docKey => $docConfig)
                                 <div class="rounded-lg border border-slate-200 p-4 dark:border-navy-500">
-                                    <label class="block">
+                                    <div class="mb-3">
                                         <span class="font-medium text-slate-600 dark:text-navy-100">
                                             {{ $docConfig['label'] }}
                                             @if($docConfig['required'])
                                                 <span class="text-error">*</span>
                                             @endif
                                         </span>
-                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 mb-3">
+                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-1">
                                             {{ $docConfig['helper'] }}
                                         </p>
-                                        <input
+                                    </div>
+
+                                    <div x-data="{ fileName: 'Belum ada file dipilih' }"
+                                        class="flex items-stretch min-h-[40px] rounded-lg border border-slate-300 dark:border-navy-450 overflow-hidden hover:border-slate-400 dark:hover:border-navy-400 transition-colors"
+                                    >
+                                        <label class="flex items-center gap-2 px-4 min-w-[100px] cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-navy-600 dark:text-navy-100 dark:hover:bg-navy-500 transition-colors">
+                                            <i class="fa-solid fa-file-arrow-up text-sm"></i>
+                                            <span class="text-xs font-medium">Pilih File</span>
+
+                                            <input
                                                 type="file"
                                                 name="documents[{{ $docKey }}]"
-                                                accept="{{ collect($docConfig['types'])->map(fn($t) => '.' . $t)->join(',') }}"
-                                                class="form-input w-full"
+                                                class="hidden"
+                                                accept="{{ collect($docConfig['types'])->map(fn ($t) => '.' . $t)->join(',') }}"
                                                 {{ $docConfig['required'] && !$isEdit ? 'required' : '' }}
-                                        >
-                                        @error('documents.' . $docKey)
+                                                @change="fileName = $event.target.files[0]?.name ?? 'Belum ada file dipilih'"
+                                            >
+                                        </label>
+
+                                        {{-- Divider --}}
+                                        <div class="w-px bg-slate-300 dark:bg-navy-400"></div>
+
+                                        {{-- File Name Display --}}
+                                        <div x-text="fileName"
+                                             class="flex items-center px-3 py-2 text-xs text-slate-600 dark:text-navy-200 truncate flex-1"
+                                        ></div>
+                                    </div>
+
+                                    @error('documents.' . $docKey)
                                         <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>
-                                        @enderror
-                                    </label>
+                                    @enderror
                                 </div>
                             @endforeach
                         </div>
@@ -363,8 +383,8 @@
                         </div>
                     </div>
 
-                    <div class="p-4 space-y-3 text-xs text-slate-600 dark:text-navy-200">
-                        <p class="text-xs text-slate-500 dark:text-navy-300 mb-3">
+                    <div class="p-4 space-y-3 text-xs text-slate-600 dark:text-navy-200 text-justify">
+                        <p class="text-xs-plus font-medium text-slate-500 dark:text-navy-300 mb-3">
                             {{ $isEdit ? 'Tips mengubah pengajuan surat' : 'Tips mengajukan surat' }}
                         </p>
 
@@ -375,7 +395,7 @@
                             </div>
                             <div class="flex items-start space-x-2">
                                 <i class="fa-solid fa-check text-success mt-0.5"></i>
-                                <p>Data profil (nama, NIM, prodi) akan otomatis terisi dari sistem</p>
+                                <p>Data profil (Nama, NIM, Program Studi) akan otomatis terisi dari sistem</p>
                             </div>
                         @endif
 
@@ -411,12 +431,12 @@
                             <div class="space-y-2 text-xs text-slate-500 dark:text-navy-300">
                                 <div class="flex items-center space-x-2">
                                     <i class="fa-solid fa-calendar-days"></i>
-                                    <span>Diajukan: {{ $letter->created_at->format('d M Y, H:i') }}</span>
+                                    <span>Diajukan: {{ $letter->created_at->format('d F Y, H:i') }}</span>
                                 </div>
                                 @if($letter->updated_at != $letter->created_at)
                                     <div class="flex items-center space-x-2">
                                         <i class="fa-solid fa-clock"></i>
-                                        <span>Update: {{ $letter->updated_at->format('d M Y, H:i') }}</span>
+                                        <span>Update: {{ $letter->updated_at->format('d F Y, H:i') }}</span>
                                     </div>
                                 @endif
                             </div>
@@ -441,9 +461,10 @@
                         <div class="p-4">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs text-slate-500 dark:text-navy-300">Status Saat Ini:</span>
-                                <div class="badge rounded-full bg-{{ $letter->status_badge }}/10 text-{{ $letter->status_badge }}">
-                                    {{ $letter->status_label }}
-                                </div>
+                                <span class="badge bg-{{ $letter->status_badge }}/10 text-{{ $letter->status_badge }} text-tiny border border-{{ $letter->status_badge }} inline-flex items-center space-x-1.5 dark:bg-{{ $letter->status_badge }}/15">
+                                    <i class="{{ $letter->status_icon }} {{ in_array($letter->status, ['in_progress','external_processing']) ? 'animate-spin' : '' }}"></i>
+                                    <span>{{ $letter->status_label }}</span>
+                                </span>
                             </div>
                         </div>
                     </div>

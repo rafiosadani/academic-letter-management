@@ -85,6 +85,14 @@ class UserProfile extends Model
             $missing[] = 'Tanggal Lahir';
         }
 
+        if (empty($this->student_or_employee_id)) {
+            $missing[] = 'NIM';
+        }
+
+        if (empty($this->study_program_id)) {
+            $missing[] = 'Program Studi';
+        }
+
         return $missing;
     }
 

@@ -83,6 +83,10 @@ Route::middleware('auth')->group(function () {
             });
     });
 
+    // ============================================================
+    // SETTINGS ROUTES
+    // ============================================================
+
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         // General Settings
         Route::get('general', [SettingController::class, 'edit'])->name('general.edit');
@@ -105,10 +109,7 @@ Route::middleware('auth')->group(function () {
     // NOTIFICATION ROUTES
     // ============================================================
 
-    // Notification Center
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-
-    // Notification Settings
     Route::get('notifications/settings', [NotificationSettingController::class, 'index'])->name('notifications.settings');
     Route::post('notifications/settings', [NotificationSettingController::class, 'update'])->name('notifications.settings.update');
 
@@ -126,30 +127,28 @@ Route::middleware('auth')->group(function () {
     // DOCUMENT ROUTES
     // ============================================================
 
-    // Upload supporting documents (AJAX)
     Route::post('documents/upload', [DocumentController::class, 'upload'])->name('documents.upload');
-
-    // Upload external document (e.g., SKAK from UB Pusat)
     Route::post('documents/upload-external', [DocumentController::class, 'uploadExternal'])->name('documents.upload-external');
-
-    // Download document
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
-
-    // Stream document for preview
     Route::get('documents/{document}/stream', [DocumentController::class, 'stream'])->name('documents.stream');
-
-    // Delete document
     Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
-    // Letter requests (full resource)
+    // ============================================================
+    // LETTER REQUEST ROUTES
+    // ============================================================
+
     Route::resource('letters', LetterRequestController::class)->except(['destroy']);
-
-    // Cancel letter
     Route::post('letters/{letter}/cancel', [LetterRequestController::class, 'cancel'])->name('letters.cancel');
-
-    // Delete letter
     Route::delete('letters/{letter}', [LetterRequestController::class, 'destroy'])->name('letters.destroy');
 
     // Logout
     Route::post('/logout', LogoutController::class)->name('logout');
 });
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES (No Authentication Required)
+|--------------------------------------------------------------------------
+| Document verification is public so anyone can scan QR code and verify.
+*/
+Route::get('verify/{hash}', [DocumentController::class, 'verify'])->name('documents.verify');

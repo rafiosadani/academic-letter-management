@@ -30,7 +30,7 @@
                 <ul class="space-y-1 text-xs text-slate-600 dark:text-navy-200">
                     <li class="flex items-center space-x-2">
                         <i class="fa-solid fa-check text-success text-tiny"></i>
-                        <span>Pastikan <strong>profil Anda sudah lengkap</strong> (tempat & tanggal lahir)</span>
+                        <span>Pastikan <strong>profil Anda sudah lengkap</strong> (NIM, program studi, tempat & tanggal lahir)</span>
                     </li>
                     <li class="flex items-center space-x-2">
                         <i class="fa-solid fa-check text-success text-tiny"></i>
@@ -76,7 +76,7 @@
                         @if($type === App\Enums\LetterType::SKAK || $type === App\Enums\LetterType::SKAK_TUNJANGAN)
                             <div class="flex items-center space-x-2 text-xs text-slate-500 dark:text-navy-300">
                                 <i class="fa-solid fa-check-circle text-success text-tiny"></i>
-                                <span>Tempat & tanggal lahir diperlukan</span>
+                                <span>NIM, program studi, tempat & tanggal lahir diperlukan</span>
                             </div>
                         @endif
                         @if($type === App\Enums\LetterType::SKAK_TUNJANGAN)
@@ -134,7 +134,7 @@
                 <a href="#"
                    class="btn mt-3 inline-flex items-center space-x-2 text-xs-plus text-white bg-primary hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
                     <i class="fa-solid fa-user-pen"></i>
-                    <span>Update Profile</span>
+                    <span>Ubah Profil</span>
                 </a>
             @endif
         </x-modal.alert>

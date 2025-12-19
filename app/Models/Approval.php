@@ -53,7 +53,7 @@ class Approval extends Model
         return $this->belongsTo(LetterRequest::class);
     }
 
-    public function assigneedApprover(): belongsTo
+    public function assignedApprover(): belongsTo
     {
         return $this->belongsTo(User::class, 'assigned_approver_id');
     }

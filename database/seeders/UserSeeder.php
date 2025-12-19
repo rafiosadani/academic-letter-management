@@ -65,8 +65,8 @@ class UserSeeder extends Seeder
                 'role' => 'Staf Akademik',
             ],
             [
-                'full_name' => 'Mahasiswa',
-                'email' => 'mahasiswa@gmail.com',
+                'full_name' => 'Rafio Sadani',
+                'email' => 'rafioosadani@gmail.com',
                 'role' => 'Mahasiswa',
             ],
         ];

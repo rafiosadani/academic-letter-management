@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Document;
 
+use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Document\UploadDocumentRequest;
 use App\Models\Document;
@@ -44,6 +45,12 @@ class DocumentController extends Controller
             ];
         }
 
+        LogHelper::logSuccess('uploaded', 'document', [
+            'letter_request_id' => $letter->id,
+            'document_count' => count($uploadedDocuments),
+            'files' => array_column($uploadedDocuments, 'name'),
+        ], $request);
+
         return response()->json([
             'success' => true,
             'message' => count($uploadedDocuments) . ' file(s) berhasil diupload',
@@ -65,11 +72,18 @@ class DocumentController extends Controller
 
         $letter = LetterRequest::findOrFail($request->letter_request_id);
 
-        $this->documentService->uploadExternal(
+        $document = $this->documentService->uploadExternal(
             $request->file('file'),
             $letter,
             auth()->user()
         );
+
+        LogHelper::logSuccess('uploaded', 'external document', [
+            'document_id' => $document->id,
+            'letter_request_id' => $letter->id,
+            'file_name' => $document->file_name,
+            'category' => 'external',
+        ], $request);
 
         return redirect()
             ->back()
@@ -107,6 +121,13 @@ class DocumentController extends Controller
     public function destroy(Document $document): RedirectResponse
     {
         $this->authorize('delete', $document);
+
+        LogHelper::logSuccess('deleted', 'document', [
+            'document_id' => $document->id,
+            'file_name' => $document->file_name,
+            'category' => $document->category,
+            'letter_request_id' => $document->letter_request_id,
+        ]);
 
         $this->documentService->delete($document);
 

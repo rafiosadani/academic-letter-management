@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\LetterType;
+use App\Helpers\LogHelper;
 use App\Models\AcademicYear;
 use App\Models\ApprovalFlow;
 use App\Models\LetterRequest;
@@ -17,38 +18,47 @@ class LetterRequestService
      */
     public function create(array $data, User $student): LetterRequest
     {
-        return DB::transaction(function () use ($data, $student) {
-            // Get active semester and academic year
-            $activeSemester = Semester::where('is_active', true)->firstOrFail();
-            $activeAcademicYear = AcademicYear::where('is_active', true)->firstOrFail();
+        try {
+            return DB::transaction(function () use ($data, $student) {
+                // Get active semester and academic year
+                $activeSemester = Semester::where('is_active', true)->firstOrFail();
+                $activeAcademicYear = AcademicYear::where('is_active', true)->firstOrFail();
 
-            // Update user profile if parent info provided (for SKAK Tunjangan)
-            if (isset($data['parent_name'])) {
-                $student->profile->update([
-                    'parent_name' => $data['parent_name'],
-                    'parent_nip' => $data['parent_nip'],
-                    'parent_rank' => $data['parent_rank'],
-                    'parent_institution' => $data['parent_institution'],
-                    'parent_institution_address' => $data['parent_institution_address'],
+                // Update user profile if parent info provided (for SKAK Tunjangan)
+                if (isset($data['parent_name'])) {
+                    $student->profile->update([
+                        'parent_name' => $data['parent_name'],
+                        'parent_nip' => $data['parent_nip'],
+                        'parent_rank' => $data['parent_rank'],
+                        'parent_institution' => $data['parent_institution'],
+                        'parent_institution_address' => $data['parent_institution_address'],
+                    ]);
+                }
+
+                // Create letter request
+                $letterRequest = LetterRequest::create([
+                    'letter_type' => $data['letter_type'],
+                    'student_id' => $student->id,
+                    'semester_id' => $activeSemester->id,
+                    'academic_year_id' => $activeAcademicYear->id,
+                    'data_input' => $data['form_data'],
+                    'status' => 'in_progress',
+                    'is_editable' => false,
                 ]);
-            }
 
-            // Create letter request
-            $letterRequest = LetterRequest::create([
-                'letter_type' => $data['letter_type'],
+                // Create approval steps from approval flow
+                $this->createApprovalSteps($letterRequest);
+
+                return $letterRequest;
+            });
+        } catch (\Exception $e) {
+            LogHelper::logError('create', 'letter request', $e, [
+                'letter_type' => $data['letter_type']->value ?? $data['letter_type'],
                 'student_id' => $student->id,
-                'semester_id' => $activeSemester->id,
-                'academic_year_id' => $activeAcademicYear->id,
-                'data_input' => $data['form_data'],
-                'status' => 'in_progress',
-                'is_editable' => false,
             ]);
 
-            // Create approval steps from approval flow
-            $this->createApprovalSteps($letterRequest);
-
-            return $letterRequest;
-        });
+            throw $e;
+        }
     }
 
     /**
@@ -59,7 +69,15 @@ class LetterRequestService
         $flows = ApprovalFlow::getFlowForLetter($letterRequest->letter_type);
 
         foreach ($flows as $flow) {
-            $assignedApprover = $flow->currentPejabat();
+            // Check if there are multiple positions for this step
+            $hasMultiplePositions = count($flow->required_positions) > 1;
+
+            // If multiple positions: assigned_approver_id = NULL (ANY can approve)
+            // If single position: try to assign specific approver
+            $assignedApprover = null;
+            if (!$hasMultiplePositions) {
+                $assignedApprover = $flow->currentPejabat();
+            }
 
             $letterRequest->approvals()->create([
                 'step' => $flow->step,
@@ -77,37 +95,46 @@ class LetterRequestService
      */
     public function update(LetterRequest $letterRequest, array $data): LetterRequest
     {
-        return DB::transaction(function () use ($letterRequest, $data) {
-            // Update parent profile if provided
-            if (isset($data['parent_name'])) {
-                $letterRequest->student->profile->update([
-                    'parent_name' => $data['parent_name'],
-                    'parent_nip' => $data['parent_nip'],
-                    'parent_rank' => $data['parent_rank'],
-                    'parent_institution' => $data['parent_institution'],
-                    'parent_institution_address' => $data['parent_institution_address'],
+        try {
+            return DB::transaction(function () use ($letterRequest, $data) {
+                // Update parent profile if provided
+                if (isset($data['parent_name'])) {
+                    $letterRequest->student->profile->update([
+                        'parent_name' => $data['parent_name'],
+                        'parent_nip' => $data['parent_nip'],
+                        'parent_rank' => $data['parent_rank'],
+                        'parent_institution' => $data['parent_institution'],
+                        'parent_institution_address' => $data['parent_institution_address'],
+                    ]);
+                }
+
+                // Update letter request data
+                $letterRequest->update([
+                    'data_input' => $data['form_data'],
+                    'status' => 'resubmitted',
+                    'is_editable' => false,
                 ]);
-            }
 
-            // Update letter request data
-            $letterRequest->update([
-                'data_input' => $data['form_data'],
-                'status' => 'resubmitted',
-                'is_editable' => false,
+                // Reset approval steps to first step
+                $letterRequest->approvals()->update([
+                    'status' => 'pending',
+                    'is_active' => false,
+                ]);
+
+                $letterRequest->approvals()->where('step', 1)->update([
+                    'is_active' => true,
+                ]);
+
+                return $letterRequest->fresh();
+            });
+        } catch (\Exception $e) {
+            LogHelper::logError('update', 'letter request', $e, [
+                'letter_request_id' => $letterRequest->id,
+                'letter_type' => $letterRequest->letter_type->value,
             ]);
 
-            // Reset approval steps to first step
-            $letterRequest->approvals()->update([
-                'status' => 'pending',
-                'is_active' => false,
-            ]);
-
-            $letterRequest->approvals()->where('step', 1)->update([
-                'is_active' => true,
-            ]);
-
-            return $letterRequest->fresh();
-        });
+            throw $e;
+        }
     }
 
     /**
@@ -115,18 +142,28 @@ class LetterRequestService
      */
     public function cancel(LetterRequest $letterRequest, User $user, ?string $reason = null): void
     {
-        DB::transaction(function () use ($letterRequest, $user, $reason) {
-            $letterRequest->update([
-                'status' => 'cancelled',
-                'is_editable' => false,
+        try {
+            DB::transaction(function () use ($letterRequest, $user, $reason) {
+                $letterRequest->update([
+                    'status' => 'cancelled',
+                    'is_editable' => false,
+                ]);
+
+                $letterRequest->cancellation()->create([
+                    'cancelled_by' => $user->id,
+                    'reason' => $reason,
+                    'cancelled_at' => now(),
+                ]);
+            });
+        } catch (\Exception $e) {
+            LogHelper::logError('cancel', 'letter request', $e, [
+                'letter_request_id' => $letterRequest->id,
+                'letter_type' => $letterRequest->letter_type->value,
+                'user_id' => $user->id,
             ]);
 
-            $letterRequest->cancellation()->create([
-                'cancelled_by' => $user->id,
-                'reason' => $reason,
-                'cancelled_at' => now(),
-            ]);
-        });
+            throw $e;
+        }
     }
 
     /**
@@ -149,15 +186,12 @@ class LetterRequestService
     /**
      * Get letters for student dashboard.
      */
-    public function getStudentLetters(User $student, ?string $status = null)
+    public function getStudentLetters(User $student, array $filters = [])
     {
         $query = LetterRequest::forStudent($student->id)
             ->with(['semester', 'academicYear', 'currentApproval'])
-            ->latest();
-
-        if ($status) {
-            $query->withStatus($status);
-        }
+            ->latest()
+            ->filter($filters);
 
         return $query->paginate(10);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\LogHelper;
 use App\Models\Document;
 use App\Models\LetterRequest;
 use App\Models\User;
@@ -118,7 +119,22 @@ class DocumentService
      */
     public function delete(Document $document): bool
     {
-        return $document->delete();
+        try {
+            if ($document->file_path && Storage::exists($document->file_path)) {
+                Storage::delete($document->file_path);
+            }
+
+            return $document->forceDelete();
+        } catch (\Exception $e) {
+            LogHelper::logError('delete', 'document', $e, [
+                'document_id' => $document->id,
+                'file_path' => $document->file_path,
+                'error' => $e->getMessage(),
+            ]);
+
+            // Force delete DB record anyway
+            return $document->forceDelete();
+        }
     }
 
     /**

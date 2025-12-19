@@ -4,9 +4,12 @@ namespace App\Models;
 
 use App\Enums\LetterType;
 use App\Traits\RecordSignature;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LetterRequest extends Model
@@ -66,14 +69,24 @@ class LetterRequest extends Model
         return $this->hasMany(Approval::class);
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
     public function rejectionHistories(): HasMany
     {
         return $this->hasMany(RejectionHistory::class);
     }
 
-    public function letterCancellations(): HasMany
+    public function cancellation(): HasMany
     {
         return $this->hasMany(LetterCancellation::class);
+    }
+
+    public function currentApproval(): HasOne
+    {
+        return $this->hasOne(Approval::class)->where('is_active', true);
     }
 
     public function creator(): BelongsTo
@@ -95,12 +108,13 @@ class LetterRequest extends Model
     // SCOPES
     // ============================================
 
-    public function scopeOfType($query, LetterType $type)
+    public function scopeOfType($query, LetterType|string $letterType)
     {
+        $type = $letterType instanceof LetterType ? $letterType->value : $letterType;
         return $query->where('letter_type', $type);
     }
 
-    public function scopeWithStats($query, string $status)
+    public function scopeWithStatus($query, string $status)
     {
         return $query->where('status', $status);
     }
@@ -130,13 +144,72 @@ class LetterRequest extends Model
         return $query->where('status', 'cancelled');
     }
 
+//    public function scopeFilter($query, array $filters)
+//    {
+//
+//        $query->when(!empty($filters['search']), function ($query) use ($filters) {
+//            $search = $filters['search'];
+//            $searchTerm = "%{$search}%";
+//
+//            $query->where(function ($query) use ($searchTerm) {
+//                $query->where('status', 'like', $searchTerm)
+//                    ->orWhere('created_at', 'like', $searchTerm);
+//
+//                $query->orWhereHas('academicYear', fn ($subQuery) =>
+//                    $subQuery->where('year_label', 'like', $searchTerm)
+//                );
+//
+//                $query->orWhereHas('semester', fn ($subQuery) =>
+//                    $subQuery->where('semester_type', 'like', $searchTerm)
+//                );
+//            });
+//        });
+//    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query
+            ->when($filters['status'] ?? null, fn ($query, $status) =>
+                $query->withStatus($status)
+            )
+            ->when($filters['letter_type'] ?? null, fn ($query, $letterType) =>
+                $query->ofType($letterType)
+            )
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $searchTerm = "%{$search}%";
+
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('status', 'like', $searchTerm)
+                        ->orWhereHas('academicYear', fn ($subQuery) =>
+                            $subQuery->where('year_label', 'like', $searchTerm)
+                        )
+                        ->orWhereHas('semester', fn ($subQuery) =>
+                            $subQuery->where('semester_type', 'like', $searchTerm)
+                        );
+                });
+            });
+
+        return $query;
+    }
+
+
     // ============================================
     // BUSINESS METHODS
     // ============================================
 
-    public function currentApproval(): ?Approval
+    public function finalDocument(): ?Document
     {
-        return $this->approvals()->where('is_active', true)->first();
+        return $this->documents()
+            ->where('category', 'generated')
+            ->where('type', 'final')
+            ->whereNotNull('hash')
+            ->latest()
+            ->first();
+    }
+
+    public function supportingDocuments()
+    {
+        return $this->documents()->where('category', 'supporting');
     }
 
     public function requiresExternalSystem(): bool
@@ -185,5 +258,53 @@ class LetterRequest extends Model
             'completed' => 'success',
             default => 'secondary',
         };
+    }
+
+    public function getStatusIconAttribute(): string
+    {
+        return match ($this->status) {
+            'in_progress'          => 'fa-solid fa-spinner',
+            'external_processing'  => 'fa-solid fa-arrows-rotate',
+            'approved'             => 'fa-solid fa-circle-check',
+            'rejected'             => 'fa-solid fa-circle-xmark',
+            'resubmitted'          => 'fa-solid fa-rotate-right',
+            'cancelled'            => 'fa-solid fa-ban',
+            'completed'            => 'fa-solid fa-check-double',
+            default                => 'fa-solid fa-circle-question',
+        };
+    }
+
+    /**
+     * Get formatted data_input with human-readable dates.
+     *
+     * Converts date fields (YYYY-MM-DD) to Indonesian format (DD Month YYYY).
+     */
+    public function getFormattedDataInputAttribute(): array
+    {
+        $rawData = $this->data_input ?? [];
+        $formFields = $this->letter_type->formFields();
+        $formatted = [];
+
+        // Loop through formFields to preserve order
+        foreach ($formFields as $fieldName => $config) {
+            if (isset($rawData[$fieldName])) {
+                $value = $rawData[$fieldName];
+
+                // Format date fields
+                if ($config['type'] === 'date' && $value) {
+                    try {
+                        $value = \Carbon\Carbon::parse($value)
+                            ->locale('id')
+                            ->translatedFormat('d F Y');
+                    } catch (\Exception $e) {
+                        // Keep original value if parse fails
+                    }
+                }
+
+                $formatted[$fieldName] = $value;
+            }
+        }
+
+        return $formatted;
     }
 }

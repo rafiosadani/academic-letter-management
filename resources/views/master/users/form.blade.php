@@ -231,6 +231,7 @@
                             accept="image/*"
                             showPreview
                             centered
+                            preview-variant="square"
                             helper="Max 2MB (JPG, PNG)"
                     />
                 </div>

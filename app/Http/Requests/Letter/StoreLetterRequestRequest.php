@@ -13,7 +13,7 @@ class StoreLetterRequestRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // Authorization handled by policy
+        return true;
     }
 
     /**
@@ -77,6 +77,27 @@ class StoreLetterRequestRequest extends FormRequest
             $rules['parent_institution_address'] = ['required', 'string'];
         }
 
+        // Document validation
+        $requeiredDocuments = $letterType->requiredDocuments();
+        foreach ($requeiredDocuments as $key => $config) {
+            $docRules = [];
+
+            if ($config['required']) {
+                $docRules[] = 'required';
+            } else {
+                $docRules[] = 'nullable';
+            }
+
+            $docRules[] = 'file';
+            $docRules[] = 'max:' . ($config['max_size'] ?? 5120);
+
+            if (!empty($config['types'])) {
+                $docRules[] = 'mimes:' . implode(',', $config['types']);
+            }
+
+            $rules["documents.{$key}"] = $docRules;
+        }
+
         return $rules;
     }
 
@@ -88,13 +109,21 @@ class StoreLetterRequestRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'letter_type.required' => 'Jenis surat harus dipilih',
-            'letter_type.enum' => 'Jenis surat tidak valid',
-            'parent_name.required' => 'Nama orang tua harus diisi',
-            'parent_nip.required' => 'NIP orang tua harus diisi',
-            'parent_rank.required' => 'Pangkat/Golongan orang tua harus diisi',
-            'parent_institution.required' => 'Nama instansi orang tua harus diisi',
-            'parent_institution_address.required' => 'Alamat instansi orang tua harus diisi',
+            'letter_type.required' => ':attribute harus dipilih',
+            'letter_type.enum' => ':attribute tidak valid',
+
+            // Parent info
+            'parent_name.required' => ':attribute harus diisi',
+            'parent_nip.required' => ':attribute harus diisi',
+            'parent_rank.required' => ':attribute harus diisi',
+            'parent_institution.required' => ':attribute harus diisi',
+            'parent_institution_address.required' => ':attribute harus diisi',
+
+            // Documents
+            'documents.*.required' => ':attribute wajib diunggah',
+            'documents.*.file' => ':attribute harus berupa file',
+            'documents.*.mimes' => ':attribute harus berformat :values',
+            'documents.*.max' => ':attribute maksimal berukuran :max KB',
         ];
     }
 
@@ -105,7 +134,16 @@ class StoreLetterRequestRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return [
+        $attributes = [
+            'letter_type' => 'Jenis Surat',
+
+            // Parent info
+            'parent_name' => 'Nama Orang Tua',
+            'parent_nip' => 'NIP Orang Tua',
+            'parent_rank' => 'Pangkat/Golongan Orang Tua',
+            'parent_institution' => 'Instansi Orang Tua',
+            'parent_institution_address' => 'Alamat Instansi Orang Tua',
+
             'keperluan' => 'Keperluan',
             'keterangan' => 'Keterangan',
             'judul_penelitian' => 'Judul Penelitian',
@@ -128,5 +166,15 @@ class StoreLetterRequestRequest extends FormRequest
             'waktu_selesai' => 'Waktu Selesai',
             'tempat_kegiatan' => 'Tempat Kegiatan',
         ];
+
+        $letterType = LetterType::tryFrom($this->input('letter_type'));
+
+        if ($letterType) {
+            foreach ($letterType->requiredDocuments() as $key => $config) {
+                $attributes["documents.$key"] = $config['label'] ?? ucfirst(str_replace('_', ' ', $key));
+            }
+        }
+
+        return $attributes;
     }
 }

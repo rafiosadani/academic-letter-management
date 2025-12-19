@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class Document extends Model
 {
-    use SoftDeletes, RecordSignature;
-
     /**
      * The attributes that are mass assignable.
      *
