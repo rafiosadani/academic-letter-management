@@ -7,16 +7,16 @@
     </button>
 
     <div id="{{ $boxId }}" class="popper-root fixed">
-        <div class="popper-box w-64 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
+        <div class="popper-box w-max min-w-64 max-w-96 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
 
             <!-- Profile Header -->
             <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-2 px-4 dark:bg-navy-800">
-                <div class="avatar size-11">
+                <div class="avatar size-11 shrink-0">
                     <img class="rounded-full"
                          src="{{ auth()->user()->profile?->photo_url ?? asset('assets/images/default.png') }}"
                          alt="avatar">
                 </div>
-                <div>
+                <div class="whitespace-nowrap pr-4">
                     <a href="/"
                        class="font-medium text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light"
                        title="{{ auth()->user()->profile?->full_name ?? 'User' }}"

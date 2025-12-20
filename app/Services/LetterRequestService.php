@@ -83,8 +83,9 @@ class LetterRequestService
                 'step' => $flow->step,
                 'step_label' => $flow->step_label,
                 'required_positions' => $flow->required_positions,
-                'assigned_approver_id' => $assignedApprover?->user_id,
-                'status' => $flow->step === 1 ? 'pending' : 'pending',
+                'assigned_approver_id' => $assignedApprover?->user_id, // NULL if multiple positions
+                'flow_snapshot' => $flow->toArray(),
+                'status' => 'pending',
                 'is_active' => $flow->step === 1,
             ]);
         }
@@ -193,7 +194,7 @@ class LetterRequestService
             ->latest()
             ->filter($filters);
 
-        return $query->paginate(10);
+        return $query->paginate(10)->withQueryString();
     }
 
     /**

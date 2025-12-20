@@ -182,7 +182,7 @@ class LetterRequestController extends Controller
             'semester',
             'academicYear',
             'approvals.assignedApprover.profile',
-            'approvals.actualApprover.profile',
+            'approvals.approvedBy.profile',
             'documents',
             'rejectionHistories.rejectedBy.profile',
         ]);

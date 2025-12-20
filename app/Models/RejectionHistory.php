@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\RecordSignature;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -46,7 +47,7 @@ class RejectionHistory extends Model
         return $this->belongsTo(Approval::class);
     }
 
-    public function rejectionBy(): BelongsTo
+    public function rejectedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rejected_by');
     }
@@ -66,5 +67,35 @@ class RejectionHistory extends Model
             'other' => 'Lainnya',
             default => 'Unknown',
         };
+    }
+
+    protected function rejectedAtFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->rejected_at
+                ? $this->rejected_at->translatedFormat('d F Y')
+                : null
+        );
+    }
+
+    protected function rejectedAtTime(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->rejected_at
+                ? $this->rejected_at->format('H:i') . ' WIB'
+                : null
+        );
+    }
+
+    protected function rejectedAtFull(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->rejectedAtFormatted && $this->rejectedAtTime
+                ? "{$this->rejectedAtFormatted}, {$this->rejectedAtTime}"
+                : null
+        );
     }
 }

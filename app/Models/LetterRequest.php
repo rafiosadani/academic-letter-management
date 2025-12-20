@@ -6,6 +6,7 @@ use App\Enums\LetterType;
 use App\Traits\RecordSignature;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -143,28 +144,6 @@ class LetterRequest extends Model
     {
         return $query->where('status', 'cancelled');
     }
-
-//    public function scopeFilter($query, array $filters)
-//    {
-//
-//        $query->when(!empty($filters['search']), function ($query) use ($filters) {
-//            $search = $filters['search'];
-//            $searchTerm = "%{$search}%";
-//
-//            $query->where(function ($query) use ($searchTerm) {
-//                $query->where('status', 'like', $searchTerm)
-//                    ->orWhere('created_at', 'like', $searchTerm);
-//
-//                $query->orWhereHas('academicYear', fn ($subQuery) =>
-//                    $subQuery->where('year_label', 'like', $searchTerm)
-//                );
-//
-//                $query->orWhereHas('semester', fn ($subQuery) =>
-//                    $subQuery->where('semester_type', 'like', $searchTerm)
-//                );
-//            });
-//        });
-//    }
 
     public function scopeFilter($query, array $filters)
     {
@@ -306,5 +285,38 @@ class LetterRequest extends Model
         }
 
         return $formatted;
+    }
+
+    // ==========================================================
+    // SIGNATURE ACCESSORS
+    // ==========================================================
+    protected function createdAtFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->created_at
+                ? $this->created_at->translatedFormat('d F Y')
+                : null
+        );
+    }
+
+    protected function createdAtTime(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->created_at
+                ? $this->created_at->format('H:i') . ' WIB'
+                : null
+        );
+    }
+
+    protected function createdAtFull(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->createdAtFormatted && $this->createdAtTime
+                ? "{$this->createdAtFormatted}, {$this->createdAtTime}"
+                : null
+        );
     }
 }

@@ -1,5 +1,7 @@
 <div id="{{ $id }}"
-     class="modal {{ $transition }} fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden py-6 px-4 sm:px-5"
+     {{ $attributes->merge([
+        'class' => "modal {$transition} fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden py-6 px-4 sm:px-5"
+     ]) }}
      role="dialog">
 
     <div class="modal-overlay absolute inset-0 bg-slate-900/60"></div>
@@ -32,8 +34,8 @@
             {{-- Tombol Konfirmasi: Menerima atribut 'form' untuk submission HTML5 --}}
             <button
                 type="submit"
-                class="btn min-w-[7rem] rounded-full font-medium text-white {{ $confirmClass }}"
-                {{ $attributes }}>
+                {{ $attributes }}
+                class="btn min-w-[7rem] rounded-full font-medium text-white {{ $confirmClass }}">
                 {{ $confirmText }}
             </button>
         </div>

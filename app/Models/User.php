@@ -237,6 +237,22 @@ class User extends Authenticatable
         return $this->hasMany(NotificationSetting::class);
     }
 
+    public function facultyOfficials(): HasMany
+    {
+        return $this->hasMany(FacultyOfficial::class);
+    }
+
+    public function currentOfficialPosition(): HasOne
+    {
+        return $this->hasOne(FacultyOfficial::class)
+            ->where('start_date', '<=', now())
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', now());
+            })
+            ->latest('start_date');
+    }
+
     // ==========================================================
     // SIGNATURE ACCESSORS
     // ==========================================================

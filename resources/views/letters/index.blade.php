@@ -2,8 +2,9 @@
     <x-ui.breadcrumb
             title="Pengajuan Surat"
             :items="[
-            ['label' => 'Pengajuan Surat Saya']
-        ]"
+                ['label' => 'Surat Saya', 'url' => route('letters.index')],
+                ['label' => 'Pengajuan Surat Saya']
+            ]"
     />
 
     <div class="mt-4 grid grid-cols-12 gap-4 sm:mt-5 sm:gap-5 lg:mt-6 lg:gap-6">
@@ -104,7 +105,7 @@
                                         </div>
                                         <div>
                                             <p class="font-medium text-slate-700 dark:text-navy-100">
-                                                {{ $letter->letter_type->shortLabel() }}
+                                                {{ $letter->letter_type->label() }}
                                             </p>
                                             <p class="text-tiny-plus text-slate-400 dark:text-navy-300">
                                                 {{ $letter?->semester?->semester_type }} - {{ $letter?->academicYear?->year_label }}
@@ -114,8 +115,8 @@
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                     <div class="flex flex-col">
-                                        <span class="text-slate-700 dark:text-navy-100">{{ $letter->created_at->translatedFormat('d F Y') }}</span>
-                                        <span class="text-tiny-plus text-slate-400 dark:text-navy-300">{{ $letter->created_at->format('H:i') }} WIB</span>
+                                        <span class="text-slate-700 dark:text-navy-100">{{ $letter->created_at_formatted }}</span>
+                                        <span class="text-tiny-plus text-slate-400 dark:text-navy-300">{{ $letter->created_at_time }}</span>
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">

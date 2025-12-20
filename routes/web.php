@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Approval\ApprovalController;
 use App\Http\Controllers\Document\DocumentController;
 use App\Http\Controllers\Letter\LetterRequestController;
 use App\Http\Controllers\Master\AcademicYearController;
@@ -141,7 +142,22 @@ Route::middleware('auth')->group(function () {
     Route::post('letters/{letter}/cancel', [LetterRequestController::class, 'cancel'])->name('letters.cancel');
     Route::delete('letters/{letter}', [LetterRequestController::class, 'destroy'])->name('letters.destroy');
 
-    // Logout
+    // ============================================================
+    // APPROVAL ROUTES
+    // ============================================================
+
+    // Approval dashboard and detail
+    Route::get('approvals', [ApprovalController::class, 'index'])->name('approvals.index');
+    Route::get('approvals/{approval}', [ApprovalController::class, 'show'])->name('approvals.show');
+
+    // Approval actions
+    Route::post('approvals/{approval}/approve', [ApprovalController::class, 'approve'])->name('approvals.approve');
+    Route::post('approvals/{approval}/reject', [ApprovalController::class, 'reject'])->name('approvals.reject');
+    Route::post('approvals/{approval}/edit-content', [ApprovalController::class, 'editContent'])->name('approvals.edit-content');
+
+    // ============================================================
+    // LOGOUT
+    // ============================================================
     Route::post('/logout', LogoutController::class)->name('logout');
 });
 

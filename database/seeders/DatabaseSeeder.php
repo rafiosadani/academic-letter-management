@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ApprovalFlowSeeder::class,
             LetterNumberConfigSeeder::class,
             SettingSeeder::class,
+            LetterRequestSeeder::class
         ]);
 
         $this->command->info('  🎉 All seeders completed successfully!');

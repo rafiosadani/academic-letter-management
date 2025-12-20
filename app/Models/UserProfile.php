@@ -150,39 +150,87 @@ class UserProfile extends Model
         return $this->place_of_birth . ', ' . $this->formatted_date_of_birth;
     }
 
+//    protected function shortName(): Attribute
+//    {
+//        return Attribute::make(
+//            get: function () {
+//                $fullName = $this->full_name;
+//                if (!$fullName) {
+//                    return 'User';
+//                }
+//
+//                $parts = explode(' ', $fullName);
+//                $numParts = count($parts);
+//
+//                if ($numParts <= 2) {
+//                    return $fullName;
+//                }
+//
+//                $firstName = array_shift($parts);
+//                $secondName = array_shift($parts);
+//
+//                $initialsArray = collect($parts)
+//                    ->map(fn($part) => strtoupper(substr($part, 0, 1) . '.'))
+//                    ->all(); // Contoh: ['C.', 'F.']
+//
+//                $initialsString = implode(' ', $initialsArray);
+//
+//                $initialsString = rtrim($initialsString, '. ');
+//
+//                $displayName = $firstName . ' ' . $secondName;
+//                if ($initialsString) {
+//                    $displayName .= ' ' . $initialsString;
+//                }
+//
+//                return trim($displayName);
+//            }
+//        );
+//    }
+
     protected function shortName(): Attribute
     {
         return Attribute::make(
             get: function () {
                 $fullName = $this->full_name;
-                if (!$fullName) {
-                    return 'User';
+                if (!$fullName) return 'User';
+
+                // 1. Identifikasi Gelar Depan (Dr., Prof., Ir., dsb)
+                // Mencari kata yang diakhiri titik di awal kalimat
+                $prefixPattern = '/^(Dr\.|Prof\.|Ir\.|Drs\.|H\.|Hj\.)\s+/i';
+                $prefixes = [];
+                while (preg_match($prefixPattern, $fullName, $matches)) {
+                    $prefixes[] = $matches[1];
+                    $fullName = preg_replace($prefixPattern, '', $fullName);
                 }
 
-                $parts = explode(' ', $fullName);
-                $numParts = count($parts);
+                // 2. Identifikasi Gelar Belakang (setelah koma, misal: , S.T., M.Sc.)
+                $parts = explode(',', $fullName);
+                $nameWithInitials = array_shift($parts); // Ambil bagian sebelum koma pertama (Nama Inti)
+                $suffixes = $parts; // Sisanya adalah gelar belakang
 
-                if ($numParts <= 2) {
-                    return $fullName;
+                // 3. Olah Nama Inti (Singkat nama ke-3 dst menjadi inisial)
+                $nameParts = explode(' ', trim($nameWithInitials));
+                $numParts = count($nameParts);
+
+                if ($numParts > 2) {
+                    $firstName = array_shift($nameParts); // Nama 1
+                    $secondName = array_shift($nameParts); // Nama 2
+
+                    // Singkat sisanya menjadi inisial (A. B. C.)
+                    $initials = collect($nameParts)
+                        ->map(fn($part) => strtoupper(substr($part, 0, 1)) . '.')
+                        ->implode(' ');
+
+                    $finalName = "{$firstName} {$secondName} {$initials}";
+                } else {
+                    $finalName = $nameWithInitials;
                 }
 
-                $firstName = array_shift($parts);
-                $secondName = array_shift($parts);
+                // 4. Gabungkan Kembali: Prefix + Nama Hasil Olah + Suffix
+                $prefixString = count($prefixes) > 0 ? implode(' ', $prefixes) . ' ' : '';
+                $suffixString = count($suffixes) > 0 ? ', ' . implode(',', $suffixes) : '';
 
-                $initialsArray = collect($parts)
-                    ->map(fn($part) => strtoupper(substr($part, 0, 1) . '.'))
-                    ->all(); // Contoh: ['C.', 'F.']
-
-                $initialsString = implode(' ', $initialsArray);
-
-                $initialsString = rtrim($initialsString, '. ');
-
-                $displayName = $firstName . ' ' . $secondName;
-                if ($initialsString) {
-                    $displayName .= ' ' . $initialsString;
-                }
-
-                return trim($displayName);
+                return trim($prefixString . $finalName . $suffixString);
             }
         );
     }

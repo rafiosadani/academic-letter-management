@@ -50,7 +50,7 @@
                                 @if($setting->type === 'image')
                                     <div>
                                         <label class="block">
-                                            <span class="text-xs+ font-medium text-slate-600 dark:text-navy-100">
+                                            <span class="text-xs-plus font-medium text-slate-600 dark:text-navy-100">
                                                 {{ $setting->label }}
                                             </span>
                                             @if($setting->description)
@@ -79,7 +79,7 @@
                                             preview-variant="square"
                                             buttonText="Pilih Gambar"
                                             changeText="Ganti Gambar"
-                                            class="text-xs"
+                                            class="text-tiny-plus"
                                         />
                                     </div>
                                 @else
@@ -159,7 +159,7 @@
                                                 preview-variant="square"
                                                 buttonText="Pilih Gambar"
                                                 changeText="Ganti Gambar"
-                                                class="text-xs"
+                                                class="text-tiny-plus"
                                             />
                                         </div>
                                     @elseif($setting->type === 'text')
@@ -229,7 +229,7 @@
                                     {{-- Image Upload --}}
                                     <div>
                                         <label class="block">
-                                            <span class="text-xs+ font-medium text-slate-600 dark:text-navy-100">
+                                            <span class="text-xs-plus font-medium text-slate-600 dark:text-navy-100">
                                                 {{ $setting->label }}
                                             </span>
                                             @if($setting->description)
@@ -258,14 +258,14 @@
                                             preview-variant="fit"
                                             buttonText="Pilih Gambar"
                                             changeText="Ganti Gambar"
-                                            class="text-xs"
+                                            class="text-tiny-plus"
                                         />
                                     </div>
                                 @else
                                     {{-- Textarea --}}
                                     <div>
                                         <label class="block">
-                                            <span class="text-xs+ font-medium text-slate-600 dark:text-navy-100">
+                                            <span class="text-xs-plus font-medium text-slate-600 dark:text-navy-100">
                                                 {{ $setting->label }}
                                             </span>
                                             @if($setting->description)

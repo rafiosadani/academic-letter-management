@@ -5,7 +5,7 @@ import '../lineone/js/app.js';
 import '../lineone/js/libs/components.js';
 
 import '../lineone/js/libs/forms.js';
-import '../lineone/js/pages/forms-upload.js'
+import '../lineone/js/pages/forms-upload.js';
 
 import './notifications/notification-polling.js';
 

@@ -12,7 +12,7 @@ class LetterNumberService
     /**
      * Generate letter number for a given letter type
      */
-    public function generate(LetterType $letterType): string
+    public function generateNumber(LetterType $letterType): string
     {
         // Only generate for PDF types (internal system)
         if (!$letterType->needsAutoNumbering()) {

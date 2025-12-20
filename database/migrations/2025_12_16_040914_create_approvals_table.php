@@ -24,8 +24,10 @@ return new class extends Migration
             // Approver assignment (snapshot at letter request creation)
             $table->foreignId('assigned_approver_id')->nullable()->constrained('users')->nullOnDelete()->comment('Pejabat yang ditugaskan saat surat dibuat (snapshot)');
 
+            $table->json('flow_snapshot')->nullable()->comment('Snapshot lengkap dari approval_flows (including can_edit_content, on_reject, is_final, etc)');
+
             // Actual approver (who clicked approve/reject button)
-            $table->foreignId('actual_approver_id')->nullable()->constrained('users')->nullOnDelete()->comment('User yang actually melakukan approve/reject (could be different if delegated)');
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete()->comment('User yang actually melakukan approve/reject');
 
             // Status approval
             $table->enum('status', [
@@ -38,10 +40,6 @@ return new class extends Migration
 
             // Notes dari approver
             $table->text('note')->nullable()->comment('Catatan dari approver (visible ke mahasiswa)');
-
-            // Content editing tracking
-            $table->boolean('content_edited')->default(false)->comment('Flag apakah approver edit data');
-            $table->json('edited_fields')->nullable()->comment('Detail field yang diedit');
 
             // Timestamps
             $table->timestamp('approved_at')->nullable()->comment('Waktu approve/reject');
@@ -61,12 +59,12 @@ return new class extends Migration
             $table->index('letter_request_id');
             $table->index('step');
             $table->index('assigned_approver_id');
-            $table->index('actual_approver_id');
+            $table->index('approved_by');
             $table->index('status');
             $table->index('is_active');
             $table->index(['letter_request_id', 'is_active']);
             $table->index(['assigned_approver_id', 'status']);
-            $table->index(['actual_approver_id', 'status']);
+            $table->index(['approved_by', 'status']);
         });
     }
 

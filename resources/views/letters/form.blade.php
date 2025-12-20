@@ -191,6 +191,63 @@
                                         :required="$config['required']"
                                         :helper="$config['helper'] ?? ''"
                                 />
+                            @elseif($config['type'] === 'select_or_other')
+                                <div x-data="{
+                                    selectedValue: '{{ old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '') }}',
+                                    isOther: {{ (old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '') && !in_array(old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ''), array_keys($config['options']))) ? 'true' : 'false' }}
+                                }">
+                                    <label class="block">
+                                        <span class="text-xs+ font-medium text-slate-600 dark:text-navy-100">
+                                            {{ $config['label'] }}
+                                            @if($config['required'])
+                                                <span class="text-error">*</span>
+                                            @endif
+                                        </span>
+                                        <select
+                                                @change="if (selectedValue === 'Lainnya') { isOther = true; selectedValue = ''; } else { isOther = false; }"
+                                                x-model="selectedValue"
+                                                name="{{ $fieldName }}"
+                                                class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+                                                {{ $config['required'] ? 'required' : '' }}
+                                                x-show="!isOther"
+                                        >
+                                            <option value="">{{ $config['placeholder'] ?? '-- Pilih --' }}</option>
+                                            @foreach($config['options'] as $optValue => $optLabel)
+                                                <option value="{{ $optValue }}">{{ $optLabel }}</option>
+                                            @endforeach
+                                        </select>
+
+                                        {{-- Other Input --}}
+                                        <div x-show="isOther" x-cloak>
+                                            <div class="flex gap-2 mt-1.5">
+                                                <input
+                                                        type="text"
+                                                        name="{{ $fieldName }}"
+                                                        x-model="selectedValue"
+                                                        class="form-input flex-1 rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                                                        placeholder="{{ $config['other_placeholder'] ?? 'Masukkan nilai lainnya' }}"
+                                                        {{ $config['required'] ? 'required' : '' }}
+                                                >
+                                                <button
+                                                        type="button"
+                                                        @click="isOther = false; selectedValue = ''"
+                                                        class="btn size-10 rounded-lg p-0 hover:bg-slate-300/20"
+                                                        title="Kembali ke pilihan">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        @if(isset($config['helper']))
+                                            <span class="text-tiny text-slate-400 dark:text-navy-300 mt-1 block">
+                                                {{ $config['helper'] }}
+                                            </span>
+                                        @endif
+                                    </label>
+                                    @error($fieldName)
+                                    <span class="text-tiny text-error mt-1 block">{{ $message }}</span>
+                                    @enderror
+                                </div>
 
                             @elseif($config['type'] === 'textarea')
                                 <x-form.textarea

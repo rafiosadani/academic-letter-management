@@ -184,9 +184,9 @@ class Menu
 
         return [
             'text' => 'Transaksi Surat',
-            'route' => '#',
+            'route' => route('approvals.index'),
             'icon' => self::iconTransaksiSurat(),
-            'active' => ['letter.incoming.*', 'letter.manage.*'],
+            'active' => ['approvals.*'],
             'hasPanel' => true,
             'panelTitle' => 'Transaksi Surat',
             'submenu' => $authorizedSubmenus,
