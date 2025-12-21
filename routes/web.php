@@ -139,6 +139,7 @@ Route::middleware('auth')->group(function () {
     // ============================================================
 
     Route::resource('letters', LetterRequestController::class)->except(['destroy']);
+    Route::get('letters/docx/{document}', [LetterRequestController::class, 'downloadDocx'])->name('letters.download-docx');
     Route::post('letters/{letter}/cancel', [LetterRequestController::class, 'cancel'])->name('letters.cancel');
     Route::delete('letters/{letter}', [LetterRequestController::class, 'destroy'])->name('letters.destroy');
 

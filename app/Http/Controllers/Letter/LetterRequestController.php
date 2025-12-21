@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Letter\StoreLetterRequestRequest;
 use App\Http\Requests\Letter\UpdateLetterRequestRequest;
 use App\Models\AcademicYear;
+use App\Models\Approval;
+use App\Models\Document;
 use App\Models\LetterRequest;
 use App\Models\Semester;
 use App\Services\DocumentService;
@@ -331,5 +333,35 @@ class LetterRequestController extends Controller
                 'position' => 'center-top',
                 'duration' => 3000,
             ]);
+    }
+
+    /**
+     * Download generated DOCX file.
+     */
+    public function downloadDocx(Document $document)
+    {
+        $letter = $document->letterRequest;
+
+        if ($document->category !== 'generated') {
+            abort(400, 'This endpoint is only for generated DOCX files');
+        }
+
+        // Only staff can download DOCX drafts
+        if (!auth()->user()->can('viewAny', Approval::class)) {
+            abort(403, 'Only staff can download draft DOCX documents');
+        }
+
+        $filePath = storage_path("app/{$document->file_path}");
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found');
+        }
+
+        LogHelper::logSuccess('downloaded', $document->category, [
+            'document_id' => $document->id,
+            'letter_request_id' => $letter->id,
+        ], request());
+
+        return response()->download($filePath, $document->file_name);
     }
 }

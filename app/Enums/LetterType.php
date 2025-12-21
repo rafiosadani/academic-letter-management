@@ -422,4 +422,13 @@ enum LetterType: string
             ],
         ];
     }
+
+    public function templateFile(): string
+    {
+        return match($this) {
+            self::SKAK => 'skak_general.docx',
+            self::SKAK_TUNJANGAN => 'skak_tunjangan.docx',
+            default => throw new \Exception("No template defined for this letter type"),
+        };
+    }
 }

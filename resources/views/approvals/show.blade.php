@@ -10,8 +10,8 @@
 
     <x-ui.page-header
             title="Detail Pengajuan - {{ $letter->letter_type->label() }}"
-            :description="'Diajukan pada ' . $letter->created_at->format('d F Y, H:i') . ' WIB'"
-            :backUrl="route('letters.index')"
+            :description="'Diajukan pada ' . $letter->created_at_full"
+            :backUrl="route('approvals.index')"
     >
         <x-slot:icon>
             <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -210,18 +210,28 @@
                         </div>
                     </div>
 
+                    @php
+                        $supportingDocs = $letter->documents()->supporting()->get();
+                    @endphp
+
                     {{-- Documents --}}
-                    @if($letter->documents->count() > 0)
-                        <div class="mb-5">
-                            <h5 class="font-medium text-slate-700 dark:text-navy-100 mb-3">
-                                <i class="fa-solid fa-paperclip mr-2"></i>
-                                Dokumen Pendukung
-                            </h5>
-                            <x-document.list
-                                    :documents="$letter->documents"
+                    @if($supportingDocs->count() > 0)
+                        <div class="mb-5 rounded-lg border border-slate-200 p-4 dark:border-navy-500">
+                            <div class="mb-4 flex items-center gap-2">
+                                <div class="flex size-6 items-center justify-center rounded-lg bg-warning/10 p-1 text-warning">
+                                    <i class="fa-solid fa-paperclip text-xs"></i>
+                                </div>
+                                <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100">
+                                    Dokumen Pendukung ({{ $letter->documents->count() }})
+                                </h5>
+                            </div>
+                            <div class="space-y-3">
+                                <x-document.list
+                                    :documents="$supportingDocs"
                                     :can-delete="false"
                                     :title="null"
-                            />
+                                />
+                            </div>
                         </div>
                     @endif
 
@@ -340,6 +350,21 @@
                         <i class="fa-solid fa-arrow-left text-xs"></i>
                         Kembali
                     </a>
+
+                    @php
+                        $generatedDocx = $letter->documents()->where('category', 'generated')->latest()->first();
+//                        $finalPdf = $letter->documents()->final()->first();
+                        $finalPdf = $letter->documents()->where('category', 'final')->latest()->first();
+                    @endphp
+
+                    {{-- Download Generated DOCX (for external letters) --}}
+                    @if($generatedDocx && $letter->letter_type->isExternal())
+                        <a href="{{ route('letters.download-docx', $generatedDocx) }}"
+                           class="btn w-full bg-info font-medium text-white hover:bg-info-focus focus:bg-info-focus active:bg-info-focus/90">
+                            <i class="fa-solid fa-file-word mr-2"></i>
+                            Download DOCX
+                        </a>
+                    @endif
 
                     @if($canApprove)
                         {{-- Approve Button --}}

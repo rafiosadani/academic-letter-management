@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_path', 500);
             $table->unsignedInteger('file_size');
-            $table->string('mime_type', 50);
+            $table->string('mime_type', 100);
 
             $table->string('hash', 64)->nullable();
 

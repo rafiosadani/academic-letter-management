@@ -10,11 +10,13 @@ use App\Models\RejectionHistory;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ApprovalService
 {
     public function __construct(
-        protected LetterNumberService $letterNumberService
+        protected LetterNumberService $letterNumberService,
+        protected LetterDocxService $docxService
     ) {}
 
     /**
@@ -35,6 +37,12 @@ class ApprovalService
                     'note' => $note,
                     'is_active' => false,
                 ]);
+
+                // Generate DOCX if this is the right step (before Upload & Publish)
+                if ($this->shouldGenerateDocx($approval, $letter)) {
+                    LetterDocxService::validateWDData();
+                    $this->generateDocx($letter);
+                }
 
                 // Check if this is final approval
                 if ($approval->is_final) {
@@ -221,13 +229,62 @@ class ApprovalService
                 'status' => 'external_processing',
             ]);
         } else {
-            // Generate letter number
-            $letterNumber = $this->letterNumberService->generateNumber($letter->letter_type);
+            // Generate PDF
+        }
+    }
 
-            $letter->update([
-                'status' => 'approved',
-                'letter_number' => $letterNumber,
+    /**
+     * Check if should generate DOCX at this approval step.
+     * DOCX ONLY for external letters (SKAK) at step before Upload & Publish.
+     * Internal letters will generate PDF directly (Phase 5B-2).
+     */
+    private function shouldGenerateDocx(Approval $approval, LetterRequest $letter): bool
+    {
+        // Only external letters need DOCX
+        if (!$letter->letter_type->isExternal()) {
+            return false;
+        }
+
+        // For external letters (SKAK), generate DOCX at step before Upload & Publish
+        // Get total steps
+        $totalSteps = $letter->approvals()->count();
+        $currentStep = $approval->step;
+
+        // Generate if this is second-to-last step
+        // (Next step will be Upload & Publish PDF Final)
+        return $currentStep === ($totalSteps - 1);
+    }
+
+    /**
+     * Generate DOCX document for approved letter.
+     */
+    private function generateDocx(LetterRequest $letter): void
+    {
+        try {
+            $filePath = $this->docxService->generate($letter);
+
+            // Save to documents table
+            $letter->documents()->create([
+                'category' => 'generated',
+                'file_name' => basename($filePath),
+                'file_path' => $filePath,
+                'file_size' => filesize(storage_path("app/{$filePath}")),
+                'mime_type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'uploaded_by' => null, // System generated
             ]);
+
+            LogHelper::logSuccess('generated', 'docx', [
+                'letter_request_id' => $letter->id,
+                'file_path' => $filePath,
+            ]);
+        } catch (\Exception $e) {
+            LogHelper::logError('generate', 'docx', $e, [
+                'letter_request_id' => $letter->id,
+            ]);
+
+            Log::error("❌ DOCX Generation Failed for Letter #{$letter->id}");
+            Log::error("Error: " . $e->getMessage());
+            Log::error("Trace: " . $e->getTraceAsString());
         }
     }
 
@@ -295,7 +352,7 @@ class ApprovalService
         $userPosition = $user->currentOfficialPosition?->position;
 
         if (!$userPosition) {
-            return new \Illuminate\Pagination\LengthAwarePaginator(
+            return new LengthAwarePaginator(
                 [],
                 0,
                 15,

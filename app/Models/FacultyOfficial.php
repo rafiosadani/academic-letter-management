@@ -17,6 +17,7 @@ class FacultyOfficial extends Model
     protected $fillable = [
         'user_id',
         'position',
+        'rank',
         'study_program_id',
         'start_date',
         'end_date',
@@ -30,6 +31,82 @@ class FacultyOfficial extends Model
     ];
 
     protected $appends = ['is_active'];
+
+    // ============================================
+    // RELATIONSHIPS
+    // ============================================
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function studyProgram(): BelongsTo
+    {
+        return $this->belongsTo(StudyProgram::class);
+    }
+
+    public function createdByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function deletedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    // ============================================
+    // ACCESSORS (MUTATORS)
+    // ============================================
+
+    /**
+     * Check if assignment is currently active
+     */
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->end_date === null || $this->end_date->isFuture() || $this->end_date->isToday();
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        return match($this->is_active) {
+            true => '<span class="badge bg-success/10 text-success"><i class="fa-solid fa-circle-check mr-1"></i>Aktif</span>',
+            false => '<span class="badge bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100 text-tinybadge"><i class="fa-solid fa-circle-xmark mr-1"></i>Berakhir</span>',
+        };
+    }
+
+    /**
+     * Get formatted period
+     */
+    public function getPeriodAttribute(): string
+    {
+        $start = $this->start_date->translatedFormat('d F Y');
+        $end = $this->end_date ? $this->end_date->translatedFormat('d F Y') : 'Sekarang';
+
+        return "{$start} - {$end}";
+    }
+
+    /**
+     * Get position label
+     */
+    public function getPositionLabelAttribute(): string
+    {
+        return $this->position->label();
+    }
+
+    /**
+     * Get short position label
+     */
+    public function getPositionShortLabelAttribute(): string
+    {
+        return $this->position->shortLabel();
+    }
 
     // ============================================
     // SCOPES
@@ -100,146 +177,6 @@ class FacultyOfficial extends Model
                 );
             });
         });
-    }
-
-    // ============================================
-    // ACCESSORS (MUTATORS)
-    // ============================================
-
-    /**
-     * Check if assignment is currently active
-     */
-    public function getIsActiveAttribute(): bool
-    {
-        return $this->end_date === null || $this->end_date->isFuture() || $this->end_date->isToday();
-    }
-
-    public function getStatusBadgeAttribute()
-    {
-        return match($this->is_active) {
-            true => '<span class="badge bg-success/10 text-success"><i class="fa-solid fa-circle-check mr-1"></i>Aktif</span>',
-            false => '<span class="badge bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100 text-tinybadge"><i class="fa-solid fa-circle-xmark mr-1"></i>Berakhir</span>',
-        };
-    }
-
-    /**
-     * Get formatted period
-     */
-    public function getPeriodAttribute(): string
-    {
-        $start = $this->start_date->translatedFormat('d F Y');
-        $end = $this->end_date ? $this->end_date->translatedFormat('d F Y') : 'Sekarang';
-
-        return "{$start} - {$end}";
-    }
-
-    /**
-     * Get position label
-     */
-    public function getPositionLabelAttribute(): string
-    {
-        return $this->position->label();
-    }
-
-    /**
-     * Get short position label
-     */
-    public function getPositionShortLabelAttribute(): string
-    {
-        return $this->position->shortLabel();
-    }
-
-    // ============================================
-    // RELATIONSHIPS
-    // ============================================
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function studyProgram(): BelongsTo
-    {
-        return $this->belongsTo(StudyProgram::class);
-    }
-
-    public function createdByUser(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updatedByUser(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    public function deletedByUser(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'deleted_by');
-    }
-
-    // ==========================================================
-    // SIGNATURE ACCESSORS
-    // ==========================================================
-
-    protected function createdByName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () =>
-            $this->created_by
-                ? ($this->createdByUser?->profile?->full_name ?? "Administrator")
-                : "Administrator"
-        );
-    }
-
-    protected function updatedByName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () =>
-            $this->updated_by
-                ? ($this->updatedByUser?->profile?->full_name ?? "Administrator")
-                : "Administrator"
-        );
-    }
-
-    protected function deletedByName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () =>
-            $this->deleted_by
-                ? ($this->deletedByUser?->profile?->full_name ?? "Administrator")
-                : "Administrator"
-        );
-    }
-
-    protected function createdAtFormatted(): Attribute
-    {
-        return Attribute::make(
-            get: fn () =>
-            $this->created_at
-                ? Carbon::parse($this->created_at)->translatedFormat('d F Y H:i:s')
-                : null
-        );
-    }
-
-    protected function updatedAtFormatted(): Attribute
-    {
-        return Attribute::make(
-            get: fn () =>
-            $this->updated_at
-                ? Carbon::parse($this->updated_at)->translatedFormat('d F Y H:i:s')
-                : null
-        );
-    }
-
-    protected function deletedAtFormatted(): Attribute
-    {
-        return Attribute::make(
-            get: fn () =>
-            $this->deleted_at
-                ? Carbon::parse($this->deleted_at)->translatedFormat('d F Y H:i:s')
-                : null
-        );
     }
 
     // ============================================
@@ -396,5 +333,69 @@ class FacultyOfficial extends Model
         }
 
         return "{$userName} - {$positionLabel}";
+    }
+
+    // ==========================================================
+    // SIGNATURE ACCESSORS
+    // ==========================================================
+
+    protected function createdByName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->created_by
+                ? ($this->createdByUser?->profile?->full_name ?? "Administrator")
+                : "Administrator"
+        );
+    }
+
+    protected function updatedByName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->updated_by
+                ? ($this->updatedByUser?->profile?->full_name ?? "Administrator")
+                : "Administrator"
+        );
+    }
+
+    protected function deletedByName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->deleted_by
+                ? ($this->deletedByUser?->profile?->full_name ?? "Administrator")
+                : "Administrator"
+        );
+    }
+
+    protected function createdAtFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->created_at
+                ? Carbon::parse($this->created_at)->translatedFormat('d F Y H:i:s')
+                : null
+        );
+    }
+
+    protected function updatedAtFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->updated_at
+                ? Carbon::parse($this->updated_at)->translatedFormat('d F Y H:i:s')
+                : null
+        );
+    }
+
+    protected function deletedAtFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            $this->deleted_at
+                ? Carbon::parse($this->deleted_at)->translatedFormat('d F Y H:i:s')
+                : null
+        );
     }
 }

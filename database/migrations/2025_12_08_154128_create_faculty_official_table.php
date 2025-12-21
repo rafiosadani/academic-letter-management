@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('position', 50)
                 ->comment('Jabatan: Dekan, Wakil Dekan Bidang Akademik, etc');
 
+            $table->string('rank')->nullable()->after('position')->comment('Pangkat/Golongan pejabat (contoh: Pembina Tingkat I / IV b)');
+
             $table->foreignId('study_program_id')
                 ->nullable()
                 ->constrained('study_programs')

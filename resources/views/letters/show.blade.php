@@ -10,7 +10,7 @@
 
     <x-ui.page-header
             title="Detail Pengajuan - {{ $letter->letter_type->label() }}"
-            :description="'Diajukan pada ' . $letter->created_at->format('d F Y, H:i') . ' WIB'"
+            :description="'Diajukan pada ' . $letter->created_at_full"
             :backUrl="route('letters.index')"
     >
         <x-slot:icon>
@@ -203,32 +203,8 @@
                     </a>
 
                     @php
-                        $generatedDocx = $letter->documents()->where('category', 'generated')->latest()->first();
                         $finalPdf = $letter->documents()->where('category', 'final')->latest()->first();
                     @endphp
-
-                    {{-- Download Generated DOCX --}}
-                    @if($generatedDocx)
-                        <a href="{{ route('letters.download-docx', $generatedDocx) }}"
-                           class="btn w-full bg-info font-medium text-white hover:bg-info-focus focus:bg-info-focus active:bg-info-focus/90">
-                            <i class="fa-solid fa-file-word mr-2"></i>
-                            Download DOCX
-                        </a>
-                    @endif
-
-                    {{-- Upload Final PDF (for staff) --}}
-                    @can('viewAny', App\Models\Approval::class)
-                        @if($generatedDocx && !$finalPdf && in_array($letter->status, ['external_processing', 'approved']))
-                            <button
-                                    type="button"
-                                    data-toggle="modal"
-                                    data-target="#upload-pdf-modal"
-                                    class="btn w-full bg-success font-medium text-white hover:bg-success-focus focus:bg-success-focus active:bg-success-focus/90">
-                                <i class="fa-solid fa-upload mr-2"></i>
-                                Upload PDF Final
-                            </button>
-                        @endif
-                    @endcan
 
                     {{-- Download Final PDF --}}
                     @if($finalPdf)
@@ -338,10 +314,5 @@
     {{-- Cancel Modal --}}
     @can('cancel', $letter)
         @include('letters.modals._cancel', ['letter' => $letter])
-    @endcan
-
-    {{-- Upload Final PDF Modal (for staff) --}}
-    @can('viewAny', App\Models\Approval::class)
-        @include('letters.modals._upload-pdf', ['letter' => $letter])
     @endcan
 </x-layouts.app>

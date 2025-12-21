@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Approval;
 
 use App\Enums\LetterType;
+use App\Enums\OfficialPosition;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Approval\ApproveRequest;
 use App\Http\Requests\Approval\EditContentRequest;
 use App\Http\Requests\Approval\RejectRequest;
 use App\Models\Approval;
+use App\Models\FacultyOfficial;
 use App\Services\ApprovalService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
