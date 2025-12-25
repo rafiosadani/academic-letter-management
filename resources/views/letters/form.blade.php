@@ -408,9 +408,12 @@
                                         <div class="w-px bg-slate-300 dark:bg-navy-400"></div>
 
                                         {{-- File Name Display --}}
-                                        <div x-text="fileName"
-                                             class="flex items-center px-3 py-2 text-xs text-slate-600 dark:text-navy-200 truncate flex-1"
-                                        ></div>
+                                        <div class="flex flex-1 items-center min-w-0 px-3 py-2">
+                                            <span x-text="fileName"
+                                                :title="fileName"
+                                                class="block w-full truncate text-tiny-plus text-slate-600 dark:text-navy-200 font-mono">
+                                            </span>
+                                        </div>
                                     </div>
 
                                     @error('documents.' . $docKey)

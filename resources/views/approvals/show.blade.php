@@ -14,8 +14,10 @@
             :backUrl="route('approvals.index')"
     >
         <x-slot:icon>
-            <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
         </x-slot:icon>
     </x-ui.page-header>
@@ -47,6 +49,7 @@
                     </div>
                 </div>
 
+                {{-- Student Info --}}
                 <div class="p-4 sm:p-5">
                     <div class="mb-5 rounded-xl border border-slate-200 p-4 dark:border-navy-500">
                         <div class="mb-4 flex items-center gap-2">
@@ -62,7 +65,7 @@
                         <div class="flex items-start gap-4">
                             <div class="avatar size-16 shrink-0">
                                 <img
-                                    src="{{ $letter->student->profile->photo_url ?? asset('images/default-avatar.png') }}"
+                                    src="{{ $letter->student->profile->photo_url ?? asset('assets/default.png') }}"
                                     alt="{{ $letter->student->profile->full_name }}"
                                     class="rounded-full object-cover"
                                 >
@@ -148,7 +151,9 @@
                                 <div class="flex size-6 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
                                     <i class="fa-solid fa-user-tie text-xs"></i>
                                 </div>
-                                <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100">Informasi Orang Tua</h5>
+                                <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100">
+                                    Informasi Orang Tua
+                                </h5>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2 text-xs pl-2">
@@ -210,8 +215,12 @@
                         </div>
                     </div>
 
+                    {{-- Documents --}}
                     @php
-                        $supportingDocs = $letter->documents()->supporting()->get();
+                        $supportingDocs = $letter->documents()->where('category', 'supporting')->get();
+//                        $supportingDocs = $letter->documents()->supporting()->get();
+                        $generatedDocx = $letter->documents()->where('category', 'generated')->where('type', 'draft')->latest()->first();
+                        $finalPdf = $letter->documents()->where('type', 'final')->latest()->first();
                     @endphp
 
                     {{-- Documents --}}
@@ -303,8 +312,8 @@
                                                 @endif
                                             </p>
                                             @if($timelineApproval->approved_at)
-                                                <p class="text-tiny text-slate-400 dark:text-navy-300 mt-1">
-                                                    {{ $timelineApproval->approved_at_formatted }}, {{ $timelineApproval->approved_at_time }}
+                                                <p class="text-xs text-slate-400 dark:text-navy-300 mt-1">
+                                                    {{ $timelineApproval->approved_at_full }}
                                                 </p>
                                             @endif
                                         </div>
@@ -314,11 +323,18 @@
                                         </span>
                                     </div>
                                     @if($timelineApproval->note)
-                                        <div class="mt-2 rounded-lg bg-slate-100 dark:bg-navy-600 p-2">
-                                            <p class="text-xs text-slate-600 dark:text-navy-200">
-                                                <i class="fa-solid fa-comment-dots mr-1"></i>
-                                                {{ $timelineApproval->note }}
-                                            </p>
+                                        <div class="mt-2 rounded-md bg-slate-100 dark:bg-navy-600 px-2.5 py-2 border-l-2 border-slate-300 dark:border-navy-400">
+                                            <div class="flex items-start gap-2">
+                                                <i class="fa-solid fa-comment-dots text-[10px] text-slate-400 mt-0.5"></i>
+                                                <div class="flex-1 min-w-0 space-y-0.5">
+                                                    <p class="text-tiny font-semibold text-slate-500 dark:text-navy-300 uppercase tracking-tight">
+                                                        Catatan:
+                                                    </p>
+                                                    <p class="text-tiny text-slate-600 dark:text-navy-200 leading-normal italic">
+                                                        {{ $timelineApproval->note }}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -350,79 +366,230 @@
                         <i class="fa-solid fa-arrow-left text-xs"></i>
                         Kembali
                     </a>
+                    @if($approval->status === 'pending' && $approval->is_active)
+                        {{-- STEP 1: Normal Approval (Show Approve/Reject buttons) --}}
+                        @if($approval->canManuallyApprove())
+                            @if($canApprove)
+                                {{-- Approve Button --}}
+                                <button
+                                        type="button"
+                                        data-toggle="modal"
+                                        data-target="#approve-modal-{{ $approval->id }}"
+                                        class="btn w-full bg-success font-medium text-white hover:bg-success-focus">
+                                    <i class="fa-solid fa-check mr-2"></i>
+                                    Setujui
+                                </button>
 
-                    @php
-                        $generatedDocx = $letter->documents()->where('category', 'generated')->latest()->first();
-//                        $finalPdf = $letter->documents()->final()->first();
-                        $finalPdf = $letter->documents()->where('category', 'final')->latest()->first();
-                    @endphp
+                                {{-- Reject Button --}}
+                                <button
+                                        type="button"
+                                        data-toggle="modal"
+                                        data-target="#reject-modal-{{ $approval->id }}"
+                                        class="btn w-full inline-flex items-center justify-center gap-2 bg-error text-white font-semibold shadow-sm hover:shadow-md hover:bg-error-focus active:bg-error-focus/90">
+                                    <i class="fa-solid fa-times mr-2"></i>
+                                    Tolak
+                                </button>
 
-                    {{-- Download Generated DOCX (for external letters) --}}
-                    @if($generatedDocx && $letter->letter_type->isExternal())
-                        <a href="{{ route('letters.download-docx', $generatedDocx) }}"
-                           class="btn w-full bg-info font-medium text-white hover:bg-info-focus focus:bg-info-focus active:bg-info-focus/90">
-                            <i class="fa-solid fa-file-word mr-2"></i>
-                            Download DOCX
-                        </a>
+                                @can('editContent', $approval)
+                                    <button
+                                            type="button"
+                                            data-toggle="modal"
+                                            data-target="#edit-content-modal-{{ $approval->id }}"
+                                            class="btn w-full inline-flex items-center justify-center gap-2 bg-warning text-white font-semibold shadow-sm hover:shadow-md hover:bg-warning-focus active:bg-warning-focus/90">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Edit Konten
+                                    </button>
+                                @endcan
+
+                                {{-- Info untuk Step 2: DOCX will be generated --}}
+                                @if($approval->step === 2 && $letter->letter_type->isExternal())
+                                    <div class="rounded-lg border border-info/20 bg-info/10 p-3">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                                                <i class="fa-solid fa-circle-info text-info text-lg"></i>
+                                            </div>
+                                            <div class="flex flex-col min-w-0 text-left">
+                                                <span class="text-tiny font-bold uppercase tracking-wider text-info">
+                                                    Sistem Otomatis
+                                                </span>
+                                                <p class="mt-1 text-xs text-slate-600 dark:text-navy-200">
+                                                    DOCX akan otomatis di-generate setelah Anda menyetujui tahap ini.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                @endif
+                            @else
+                                {{-- Cannot approve - no permission --}}
+                                <div class="rounded-lg bg-slate-100 dark:bg-navy-600 p-3 text-center">
+                                    <i class="fa-solid fa-info-circle text-slate-400 dark:text-navy-300"></i>
+                                    <p class="text-xs text-slate-600 dark:text-navy-200 mt-2">
+                                        Anda tidak memiliki akses untuk menyetujui step ini
+                                    </p>
+                                </div>
+                            @endif
+                        @endif
+
+                        {{-- STEP 3: Upload Step (Show Upload button) --}}
+                        {{-- UPLOAD STEP (Step 3 for external) --}}
+                        @if($approval->isUploadStep())
+                            <button
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#upload-pdf-modal-{{ $approval->letter_request_id }}"
+                                class="btn w-full bg-success font-medium text-white hover:bg-success-focus"
+                            >
+                                <i class="fa-solid fa-upload mr-2"></i>
+                                Upload PDF Final
+                            </button>
+
+                            <div class="rounded-lg border border-warning/20 bg-warning/10 p-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                                        <i class="fa-solid fa-file-arrow-up text-lg text-warning"></i>
+                                    </div>
+                                    <div class="flex flex-col min-w-0 text-left">
+                                        <span class="text-tiny font-bold uppercase tracking-wider text-warning">
+                                            Perlu Upload PDF
+                                        </span>
+                                        <p class="mt-1 text-xs text-slate-600 dark:text-navy-200 leading-relaxed">
+                                            Silakan upload file PDF yang sudah ditandatangani dari UB Pusat untuk menyelesaikan seluruh proses pengajuan ini.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                    {{-- APPROVED: Show approved status --}}
+                    @elseif($approval->status === 'approved')
+                        <div class="rounded-lg border border-success/20 bg-success/10 p-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                                    <i class="fa-solid fa-check-circle text-lg text-success"></i>
+                                </div>
+                                <div class="flex flex-col min-w-0 text-left">
+                                    <span class="text-tiny font-bold uppercase tracking-wider text-success">
+                                        Sudah Disetujui
+                                    </span>
+                                    <p class="mt-1 text-xs font-semibold text-slate-700 dark:text-navy-100 truncate">
+                                        {{ $approval->approver?->profile->full_name ?? 'System' }}
+                                    </p>
+                                    <div class="mt-0.5 flex items-center text-tiny-plus text-slate-600 dark:text-navy-200">
+                                        <i class="fa-regular fa-clock mr-1 text-[10px]"></i>
+                                        {{ $approval->approved_at_full }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Download DOCX (for step 2 external letters) --}}
+                        @if($generatedDocx && $approval->step === 2 && $letter->letter_type->isExternal())
+                            <a href="{{ route('letters.download-docx', $letter) }}"
+                               class="btn w-full bg-info font-medium text-white hover:bg-info-focus">
+                                <i class="fa-solid fa-file-word mr-2"></i>
+                                Download DOCX
+                            </a>
+
+                            {{-- Info: Instruksi setelah download --}}
+                            <div class="rounded-lg border border-info/20 bg-info/10 p-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                                        <i class="fa-solid fa-circle-info text-lg text-info"></i>
+                                    </div>
+
+                                    {{-- Konten Teks --}}
+                                    <div class="flex flex-col min-w-0 text-left">
+                                        <span class="text-tiny font-bold uppercase tracking-wider text-info">
+                                            Langkah Selanjutnya
+                                        </span>
+                                        <div class="mt-2 space-y-1 text-xs text-slate-600 dark:text-navy-200">
+                                            <div class="flex space-x-1">
+                                                <span class="font-semibold text-info">1.</span>
+                                                <p>Download file DOCX di atas.</p>
+                                            </div>
+                                            <div class="flex space-x-1">
+                                                <span class="font-semibold text-info">2.</span>
+                                                <p>Kirim ke Sistem UB Pusat untuk ditandatangani.</p>
+                                            </div>
+                                            <div class="flex space-x-1">
+                                                <span class="font-semibold text-info">3.</span>
+                                                <p>Setelah ditandatangani, upload PDF final di Step 3.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Next Step Button (if same approver) --}}
+                        @php
+                            $nextApproval = $letter->approvals()
+                                ->where('step', '>', $approval->step)
+                                ->where('status', 'pending')
+                                ->where('is_active', true)
+                                ->first();
+
+                            $canApproveNext = $nextApproval ? app(\App\Services\ApprovalService::class)->canUserViewApproval(auth()->user(), $nextApproval) : false;
+                        @endphp
+
+                        @if($nextApproval && $canApproveNext)
+                            <a href="{{ route('approvals.show', $nextApproval) }}"
+                               class="btn w-full bg-primary text-xs-plus font-medium text-white hover:bg-primary-focus">
+                                <i class="fa-solid fa-arrow-right mr-2"></i>
+                                Lanjut ke Step Berikutnya
+                            </a>
+                        @endif
+
+                    {{-- REJECTED: Show rejected status --}}
+                    @elseif($approval->status === 'rejected')
+                        <div class="rounded-lg border border-error/20 bg-error/10 p-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                                    <i class="fa-solid fa-times-circle text-lg text-error"></i>
+                                </div>
+                                <div class="flex flex-col min-w-0 text-left">
+                                    <span class="text-tiny font-bold uppercase tracking-wider text-error">
+                                        Ditolak
+                                    </span>
+                                    <p class="mt-1 text-xs font-semibold text-slate-700 dark:text-navy-100 truncate">
+                                        {{ $approval->approver?->profile->full_name ?? 'System' }}
+                                    </p>
+                                    <div class="mt-0.5 flex items-center text-tiny text-slate-600 dark:text-navy-200">
+                                        <i class="fa-regular fa-clock mr-1 text-[10px]"></i>
+                                        {{ $approval->approved_at_full }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endif
 
-                    @if($canApprove)
-                        {{-- Approve Button --}}
-                        <button
-                                type="button"
-                                data-toggle="modal"
-                                data-target="#approve-modal-{{ $approval->id }}"
-                                class="btn w-full inline-flex items-center justify-center gap-2 bg-success text-white font-semibold shadow-sm hover:shadow-md hover:bg-success-focus active:bg-success-focus/90">
-                            <i class="fa-solid fa-check-circle"></i>
-                            Setujui
-                        </button>
-
-                        {{-- Reject Button --}}
-                        <button
-                                type="button"
-                                data-toggle="modal"
-                                data-target="#reject-modal-{{ $approval->id }}"
-                                class="btn w-full inline-flex items-center justify-center gap-2 bg-error text-white font-semibold shadow-sm hover:shadow-md hover:bg-error-focus active:bg-error-focus/90">
-                            <i class="fa-solid fa-circle-xmark"></i>
-                            Tolak
-                        </button>
-
-                        {{-- Edit Content Button (if allowed) --}}
-                        @can('editContent', $approval)
-                            <button
-                                    type="button"
-                                    data-toggle="modal"
-                                    data-target="#edit-content-modal-{{ $approval->id }}"
-                                    class="btn w-full inline-flex items-center justify-center gap-2 bg-warning text-white font-semibold shadow-sm hover:shadow-md hover:bg-warning-focus active:bg-warning-focus/90">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                                Edit Konten
-                            </button>
-                        @endcan
-                    @else
-                        <div class="rounded-lg bg-slate-100 dark:bg-navy-600 p-3 text-center">
-                            <i class="fa-solid fa-info-circle text-slate-400 dark:text-navy-300"></i>
-                            <p class="text-xs text-slate-600 dark:text-navy-200 mt-2">
-                                @if($approval->status !== 'pending')
-                                    Step ini sudah {{ $approval->status === 'approved' ? 'disetujui' : 'ditolak' }}
-                                @else
-                                    Anda tidak memiliki akses untuk menyetujui step ini
-                                @endif
-                            </p>
-                        </div>
+                    {{-- Download Final PDF (if completed) --}}
+                    @if($finalPdf)
+                        <a href="{{ route('letters.download-pdf', $letter) }}"
+                           class="btn w-full bg-error font-medium text-white hover:bg-error-focus active:bg-error-focus/90">
+                            <i class="fa-solid fa-file-pdf mr-2"></i>
+                            Download PDF Final
+                        </a>
                     @endif
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Modals --}}
-    @if($canApprove)
+    {{-- Modals (only include if needed) --}}
+    @if($approval->status === 'pending' && $approval->is_active && $canApprove && $approval->canManuallyApprove())
         @include('approvals.modals._approve', ['approval' => $approval, 'letter' => $letter])
         @include('approvals.modals._reject', ['approval' => $approval, 'letter' => $letter])
 
         @can('editContent', $approval)
             @include('approvals.modals._edit', ['approval' => $approval, 'letter' => $letter])
         @endcan
+    @endif
+
+    {{-- Upload PDF Modal (for upload step) --}}
+    @if($approval->isUploadStep() && $approval->status === 'pending' && $approval->is_active)
+        @include('approvals.modals._upload-pdf', ['letter' => $letter])
     @endif
 
     @if(session('open_reject_modal'))
@@ -433,6 +600,10 @@
         <div data-open-modal="edit-content-modal-{{ session('open_edit_modal_id') }}" class="hidden"></div>
     @endif
 
+    @if(session('open_upload_final_pdf_modal_id'))
+        <div data-open-modal="upload-pdf-modal-{{ session('open_upload_final_pdf_modal_id') }}" class="hidden"></div>
+    @endif
+
     <x-slot:scripts>
         <script>
             document.addEventListener('click', function (event) {
@@ -441,8 +612,9 @@
                 if (closeButton) {
                     const isRejectModal = closeButton.closest('#reject-modal-{{ $approval->id }}');
                     const isEditModal = closeButton.closest('#edit-content-modal-{{ $approval->id }}');
+                    const isUploadModal = closeButton.closest('#upload-pdf-modal-{{ $letter->id }}');
 
-                    if (isRejectModal || isEditModal) {
+                    if (isRejectModal || isEditModal || isUploadModal) {
                         window.location.href = window.location.pathname;
                     }
                 }

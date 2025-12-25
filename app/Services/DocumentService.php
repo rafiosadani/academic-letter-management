@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helpers\LogHelper;
 use App\Models\Document;
+use App\Models\LetterNumberConfig;
 use App\Models\LetterRequest;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -18,7 +19,7 @@ class DocumentService
         LetterRequest $letter,
         User $user
     ): Document {
-        $fileData = $this->storeFile($file, $letter);
+        $fileData = $this->storeFile($file, $letter, 'supporting');
 
         return Document::create([
             'letter_request_id' => $letter->id,
@@ -39,51 +40,51 @@ class DocumentService
     public function uploadExternal(
         UploadedFile $file,
         LetterRequest $letter,
+        string $letterNumber,
         User $user
     ): Document {
-        $fileData = $this->storeFile($file, $letter);
-        $hash = $this->generateHash($letter, $fileData['path']);
+        $filename = $this->generatePdfFilename($letter, $letterNumber);
+        $fileData = $this->storeFile($file, $letter, 'external', $filename);
 
         return Document::create([
             'letter_request_id' => $letter->id,
             'uploaded_by' => $user->id,
             'category' => 'external',
             'type' => 'final',
-            'file_name' => $file->getClientOriginalName(),
+            'file_name' => $filename,
             'file_path' => $fileData['path'],
             'file_size' => $file->getSize(),
             'mime_type' => $file->getMimeType(),
-            'hash' => $hash,
+            'hash' => null,
         ]);
     }
 
-    /**
-     * Store generated PDF (system-generated).
-     */
-    public function storeGenerated(
-        string $pdfContent,
+    public function storeGeneratedDocx(
+        string $filePath,
         LetterRequest $letter,
-        string $type = 'final'
     ): Document {
-        $fileName = $this->generateFileName($letter, $type);
-        $filePath = $this->generateStoragePath($letter) . '/' . $fileName;
+        if (!file_exists($filePath)) {
+            throw new \Exception("File DOCX tidak ditemukan di lokasi penyimpanan: {$filePath}");
+        }
 
-        // Store file
-        Storage::put($filePath, $pdfContent);
+        $fileSize = filesize($filePath);
 
-        // Generate hash for final documents
-        $hash = $type === 'final' ? $this->generateHash($letter, $filePath) : null;
+        // Extract relative path from physical path
+        // Example: /var/www/storage/app/documents/... -> documents/...
+        $storagePath = str_replace(storage_path('app/private'), '', $filePath);
+
+        $filename = basename($filePath);
 
         return Document::create([
             'letter_request_id' => $letter->id,
-            'uploaded_by' => null, // System generated
+            'uploaded_by' => null,
             'category' => 'generated',
-            'type' => $type,
-            'file_name' => $fileName,
-            'file_path' => $filePath,
-            'file_size' => strlen($pdfContent),
-            'mime_type' => 'application/pdf',
-            'hash' => $hash,
+            'type' => 'draft',
+            'file_name' => $filename,
+            'file_path' => $storagePath,
+            'file_size' => $fileSize,
+            'mime_type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'hash' => null,
         ]);
     }
 
@@ -96,10 +97,7 @@ class DocumentService
             abort(404, 'File not found in storage');
         }
 
-        return Storage::download(
-            $document->file_path,
-            $document->download_name
-        );
+        return Storage::download($document->file_path, $document->file_name);
     }
 
     /**
@@ -152,11 +150,15 @@ class DocumentService
      *
      * @return array ['path' => string, 'filename' => string]
      */
-    private function storeFile(UploadedFile $file, LetterRequest $letter): array
-    {
+    private function storeFile(
+        UploadedFile $file,
+        LetterRequest $letter,
+        ?string $category = null,
+        ?string $customFileName = null
+    ): array {
         $extension = $file->getClientOriginalExtension();
-        $filename = Str::uuid() . '.' . $extension;
-        $directory = $this->generateStoragePath($letter);
+        $filename = $customFileName ?? Str::uuid() . '.' . $extension;
+        $directory = $this->generateStoragePath($letter, $category);
 
         $path = $file->storeAs($directory, $filename);
 
@@ -170,24 +172,52 @@ class DocumentService
      * Generate storage path based on letter and date.
      * Format: documents/letters/{year}/{month}
      */
-    private function generateStoragePath(LetterRequest $letter): string
+    private function generateStoragePath(LetterRequest $letter, ?string $category = null): string
     {
         $date = $letter->created_at ?? now();
-        return sprintf(
+        $basePath = sprintf(
             'documents/letters/%s/%s',
             $date->format('Y'),
             $date->format('m')
         );
+
+        // Add subfolder based on category
+        if ($category === 'supporting') {
+            return $basePath . '/supporting';
+        } elseif ($category === 'generated') {
+            return $basePath . '/generated';
+        } elseif ($category === 'external') {
+            return $basePath . '/final';
+        }
+
+        return $basePath;
     }
 
     /**
-     * Generate filename for system-generated documents.
+     * Generate PDF filename with letter number prefix.
      */
-    private function generateFileName(LetterRequest $letter, string $type): string
+    private function generatePdfFilename(LetterRequest $letter, string $letterNumber): string
     {
-        $prefix = $type === 'draft' ? 'draft' : 'final';
-        $uuid = Str::uuid();
-        return sprintf('%s_%s.pdf', $prefix, $uuid);
+        // Get padding from config
+        $letterNumberConfig = LetterNumberConfig::where('letter_type', $letter->letter_type->value)->first();
+        $padding = $letterNumberConfig?->padding ?? 5;
+        $counter = substr($letterNumber, 0, $padding);
+
+        // Get components
+        $typeLabel = $letter->letter_type ? $letter->letter_type->labelFileName() : 'Surat';
+        $studentName = $letter->student->profile->full_name;
+        $purpose = $this->cleanFilename($letter->data_input['keperluan'] ?? 'Umum');
+
+        return "{$counter} {$typeLabel} {$studentName} ({$purpose}).pdf";
+    }
+
+    private function cleanFilename(string $text): string
+    {
+        // Remove special chars except spaces, parentheses, hyphen
+        $text = preg_replace('/[^\p{L}\p{N}\s\(\)\-]/u', '', $text);
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        return trim($text);
     }
 
     /**

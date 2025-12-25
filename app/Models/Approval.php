@@ -57,7 +57,7 @@ class Approval extends Model
         return $this->belongsTo(User::class, 'assigned_approver_id');
     }
 
-    public function approvedBy(): BelongsTo
+    public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
@@ -80,6 +80,12 @@ class Approval extends Model
     {
         return $query->where('assigned_approver_id', $approverId)
             ->orWhere('approved_by', $approverId);
+    }
+
+    public function scopeFinal($query)
+    {
+        return $query->whereRaw("JSON_EXTRACT(flow_snapshot, '$.is_final') = true");
+        // return $query->where('flow_snapshot->is_final', true);
     }
 
     public function scopeFilter($query, array $filters)
@@ -114,24 +120,30 @@ class Approval extends Model
         return $query;
     }
 
-    public function getCanEditContentAttribute(): bool
+    // ============================================
+    // BUSINESS LOGIC
+    // ============================================
+
+    /**
+     * Check if this approval step is upload step (final step for external letters).
+     */
+    public function isUploadStep(): bool
     {
-        return $this->flow_snapshot['can_edit_content'] ?? false;
+        // Final step for external letters = Upload PDF
+        return $this->is_final && $this->letterRequest->letter_type->isExternal();
     }
 
-    public function getIsFinalAttribute(): bool
+    /**
+     * Check if user can manually approve this step.
+     * Upload steps don't show approve button (only upload button).
+     */
+    public function canManuallyApprove(): bool
     {
-        return $this->flow_snapshot['is_final'] ?? false;
-    }
-
-    public function getOnRejectAttribute(): ?\App\Enums\ApprovalAction
-    {
-        $value = $this->flow_snapshot['on_reject'] ?? null;
-        return $value ? \App\Enums\ApprovalAction::from($value) : null;
+        return !$this->isUploadStep();
     }
 
     // ============================================
-    // HELPER
+    // STATE CHECKER
     // ============================================
 
     public function isPending(): bool
@@ -147,6 +159,50 @@ class Approval extends Model
     public function isRejected(): bool
     {
         return $this->status === 'rejected';
+    }
+
+    // ============================================
+    // FLOW SNAPSHOT ACCESSORS
+    // ============================================
+
+//    protected function canEditContent(): Attribute
+//    {
+//        return Attribute::make(
+//            get: fn () => $this->flow_snapshot['can_edit_content'] ?? false
+//        );
+//    }
+//
+//    protected function isFinal(): Attribute
+//    {
+//        return Attribute::make(
+//            get: fn () => $this->flow_snapshot['is_final'] ?? false
+//        );
+//    }
+//
+//    protected function onReject(): Attribute
+//    {
+//        return Attribute::make(
+//            get: fn () =>
+//            isset($this->flow_snapshot['on_reject'])
+//                ? ApprovalAction::from($this->flow_snapshot['on_reject'])
+//                : null
+//        );
+//    }
+
+    public function getCanEditContentAttribute(): bool
+    {
+        return $this->flow_snapshot['can_edit_content'] ?? false;
+    }
+
+    public function getIsFinalAttribute(): bool
+    {
+        return $this->flow_snapshot['is_final'] ?? false;
+    }
+
+    public function getOnRejectAttribute(): ?\App\Enums\ApprovalAction
+    {
+        $value = $this->flow_snapshot['on_reject'] ?? null;
+        return $value ? \App\Enums\ApprovalAction::from($value) : null;
     }
 
     // ============================================

@@ -24,6 +24,16 @@ enum LetterType: string
         };
     }
 
+    public function labelFileName(): string
+    {
+        return match($this) {
+            self::SKAK, self::SKAK_TUNJANGAN => 'Surat Keterangan Aktif Kuliah',
+            self::PENELITIAN => 'Surat Permohonan Penelitian',
+            self::DISPENSASI_KULIAH => 'Surat Dispensasi Perkuliahan',
+            self::DISPENSASI_MAHASISWA => 'Surat Dispensasi Mahasiswa',
+        };
+    }
+
     /**
      * Get short label
      */

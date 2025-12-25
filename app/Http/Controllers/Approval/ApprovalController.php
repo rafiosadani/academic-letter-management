@@ -76,19 +76,28 @@ class ApprovalController extends Controller
         $this->authorize('approve', $approval);
 
         try {
+            $approval->load('letterRequest.student.profile', 'letterRequest.approvals');
+            $letter = $approval->letterRequest;
+
             $this->approvalService->approve(
                 $approval,
                 auth()->user(),
                 $request->note
             );
 
+            $studentName = $letter->student->profile->full_name;
+            $nim = $letter->student->profile->student_or_employee_id;
+            $letterTypeLabel = $letter->letter_type->label();
+
+            $successMessage = "Step {$approval->step} ({$approval->step_label}) berhasil disetujui! Pengajuan {$letterTypeLabel} dari {$studentName} (NIM: {$nim}).";
+
             return redirect()
-                ->route('approvals.index')
+                ->route('approvals.show', $approval)
                 ->with('notification_data', [
                     'type' => 'success',
-                    'text' => 'Pengajuan berhasil disetujui!',
+                    'text' => $successMessage,
                     'position' => 'center-top',
-                    'duration' => 3000,
+                    'duration' => 5000,
                 ]);
         } catch (\Exception $e) {
             return redirect()
@@ -110,19 +119,27 @@ class ApprovalController extends Controller
         $this->authorize('reject', $approval);
 
         try {
+            $approval->load('letterRequest.student.profile');
+            $letter = $approval->letterRequest;
+
             $this->approvalService->reject(
                 $approval,
                 auth()->user(),
                 $request->reason
             );
 
+            $studentName = $letter->student->profile->full_name;
+            $nim = $letter->student->profile->student_or_employee_id;
+            $letterTypeLabel = $letter->letter_type->label();
+            $rejectMessage = "Step {$approval->step} ({$approval->step_label}) ditolak! Pengajuan {$letterTypeLabel} dari {$studentName} (NIM: {$nim}) telah dikembalikan.";
+
             return redirect()
                 ->route('approvals.index')
                 ->with('notification_data', [
                     'type' => 'success',
-                    'text' => 'Pengajuan telah ditolak.',
+                    'text' => $rejectMessage,
                     'position' => 'center-top',
-                    'duration' => 3000,
+                    'duration' => 5000,
                 ]);
         } catch (\Exception $e) {
             return redirect()
@@ -144,10 +161,12 @@ class ApprovalController extends Controller
         $this->authorize('editContent', $approval);
 
         try {
-            $letterType = $approval->letterRequest->letter_type;
+            $approval->load('letterRequest.student.profile');
+            $letter = $approval->letterRequest;
+
+            $letterType = $letter->letter_type;
             $formData = [];
 
-            // Extract form data based on letter type
             foreach ($letterType->formFields() as $fieldName => $config) {
                 $formData[$fieldName] = $request->input($fieldName);
             }
@@ -158,13 +177,18 @@ class ApprovalController extends Controller
                 auth()->user()
             );
 
+            $studentName = $letter->student->profile->full_name;
+            $nim = $letter->student->profile->student_or_employee_id;
+            $letterTypeLabel = $letterType->label();
+            $editMessage = "Konten {$letterTypeLabel} Pengajuan dari {$studentName} (NIM: {$nim}) berhasil diperbarui!";
+
             return redirect()
                 ->back()
                 ->with('notification_data', [
                     'type' => 'success',
-                    'text' => 'Konten surat berhasil diperbarui!',
+                    'text' => $editMessage,
                     'position' => 'center-top',
-                    'duration' => 3000,
+                    'duration' => 5000,
                 ]);
         } catch (\Exception $e) {
             return redirect()

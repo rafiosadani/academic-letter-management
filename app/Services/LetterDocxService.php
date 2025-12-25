@@ -42,39 +42,52 @@ class LetterDocxService
      */
     public function generate(LetterRequest $letter): string
     {
+        self::validateWDData();
+
+        $letterType = $letter->letter_type;
+
+        if (!$letterType->isExternal()) {
+            throw new \Exception('Pembuatan dokumen DOCX hanya diperuntukkan bagi surat eksternal.');
+        }
+
         $templatePath = $this->getTemplatePath($letter->letter_type);
 
         if (!file_exists($templatePath)) {
-            throw new \Exception("Template not found: {$templatePath}");
+            throw new \Exception("Template tidak ditemukan: {$templatePath}");
         }
 
         // Load template
         $templateProcessor = new TemplateProcessor($templatePath);
 
         // Get placeholder values
-        $values = $this->getPlaceholderValues($letter);
+        $placeholders = $this->getPlaceholderValues($letter);
 
         // Replace placeholders (except ${nomor} and ${tte})
-        foreach ($values as $placeholder => $value) {
+        foreach ($placeholders as $placeholder => $value) {
             $templateProcessor->setValue($placeholder, $value);
         }
 
         // Generate filename
         $filename = $this->generateFilename($letter);
 
-        // Save to storage
-        $outputPath = storage_path("app/letters/docx/{$letter->id}/{$filename}");
+        $date = $letter->created_at ?? now();
+        $directory = storage_path(sprintf(
+            'app/private/documents/letters/%s/%s/generated',
+            $date->format('Y'),
+            $date->format('m')
+        ));
 
         // Create directory if not exists
-        $directory = dirname($outputPath);
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
 
-        // Save file
+        $outputPath = "{$directory}/{$filename}";
+
+        // Save DOCX
         $templateProcessor->saveAs($outputPath);
 
-        return "letters/docx/{$letter->id}/{$filename}";
+        return $outputPath;
     }
 
     /**
@@ -211,16 +224,15 @@ class LetterDocxService
      */
     private function generateFilename(LetterRequest $letter): string
     {
-        $typeSlug = match($letter->letter_type) {
-            LetterType::SKAK => 'SKAK',
-            LetterType::SKAK_TUNJANGAN => 'SKAK_Tunjangan',
-            default => 'Surat',
-        };
+        $typeLabel = $letter->letter_type->labelFileName();
+        $studentName = $letter->student->profile->full_name;
+        $purpose = $letter->data_input['keperluan'] ?? 'Umum';
 
-        // Ambil nama depan saja dan hilangkan karakter aneh
-        $studentName = Str::slug(explode(' ', $letter->student->profile->full_name)[0]);
+        // Clean keperluan
+        $purpose = preg_replace('/[^\p{L}\p{N}\s\(\)\-]/u', '', $purpose);
+        $purpose = trim(preg_replace('/\s+/', ' ', $purpose));
 
-        return "{$typeSlug}_{$studentName}_{$letter->id}_" . now()->format('Ymd_His') . ".docx";
+        return "{$typeLabel} {$studentName} ({$purpose}).docx";
     }
 
     /**

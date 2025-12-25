@@ -16,7 +16,8 @@ class ApprovalService
 {
     public function __construct(
         protected LetterNumberService $letterNumberService,
-        protected LetterDocxService $docxService
+        protected LetterDocxService $docxService,
+        protected DocumentService $documentService
     ) {}
 
     /**
@@ -38,10 +39,15 @@ class ApprovalService
                     'is_active' => false,
                 ]);
 
-                // Generate DOCX if this is the right step (before Upload & Publish)
+                // Generate DOCX if this is the right step (before Upload & Publish) - this is step 2 for external letters
                 if ($this->shouldGenerateDocx($approval, $letter)) {
                     LetterDocxService::validateWDData();
                     $this->generateDocx($letter);
+
+                    // Set status to external_processing after DOCX generated
+                    $letter->update([
+                        'status' => 'external_processing',
+                    ]);
                 }
 
                 // Check if this is final approval
@@ -69,6 +75,49 @@ class ApprovalService
             ]);
 
             throw $e;
+        }
+    }
+
+    /**
+     * Check if should generate DOCX at this approval step.
+     */
+    private function shouldGenerateDocx(Approval $approval, LetterRequest $letter): bool
+    {
+        if (!$letter->letter_type->isExternal()) {
+            return false;
+        }
+
+        // Get total steps
+        $totalSteps = $letter->approvals()->count();
+        $currentStep = $approval->step;
+
+        // Generate at second-to-last step (step 2, before upload step 3)
+        return $currentStep === ($totalSteps - 1);
+    }
+
+    /**
+     * Generate DOCX document for external letters.
+     */
+    private function generateDocx(LetterRequest $letter): void
+    {
+        try {
+            $physicalPath = $this->docxService->generate($letter);
+
+            $document = $this->documentService->storeGeneratedDocx($physicalPath, $letter);
+
+            LogHelper::logSuccess('generated', 'docx', [
+                'letter_request_id' => $letter->id,
+                'document_id' => $document->id,
+                'file_name' => $document->file_name,
+            ]);
+        } catch (\Exception $e) {
+            LogHelper::logError('generate', 'docx', $e, [
+                'letter_request_id' => $letter->id,
+            ]);
+
+            Log::error("❌ DOCX Generation Failed for Letter #{$letter->id}");
+            Log::error("Error: " . $e->getMessage());
+            Log::error("Trace: " . $e->getTraceAsString());
         }
     }
 
@@ -103,13 +152,11 @@ class ApprovalService
 
                 // Handle based on on_reject action
                 if ($onReject === ApprovalAction::TO_STUDENT) {
-                    // Return to student for revision
                     $letter->update([
                         'status' => 'rejected',
                         'is_editable' => true,
                     ]);
 
-                    // Reset all approvals to pending
                     $letter->approvals()->update([
                         'status' => 'pending',
                         'is_active' => false,
@@ -118,19 +165,16 @@ class ApprovalService
                         'note' => null,
                     ]);
 
-                    // Activate first step
                     $letter->approvals()->where('step', 1)->update([
                         'is_active' => true,
                     ]);
                 } elseif ($onReject === ApprovalAction::TO_PREVIOUS_STEP) {
-                    // Return to previous step
                     $previousApproval = $letter->approvals()
                         ->where('step', '<', $approval->step)
                         ->orderBy('step', 'desc')
                         ->first();
 
                     if ($previousApproval) {
-                        // Reset previous step to pending
                         $previousApproval->update([
                             'status' => 'pending',
                             'is_active' => true,
@@ -160,7 +204,6 @@ class ApprovalService
                         'is_editable' => false,
                     ]);
 
-                    // Deactivate all remaining approvals
                     $letter->approvals()->where('status', 'pending')->update([
                         'is_active' => false,
                     ]);
@@ -223,68 +266,26 @@ class ApprovalService
      */
     private function handleFinalApproval(LetterRequest $letter): void
     {
-        // Check if letter type is external (SKAK)
         if ($letter->letter_type->isExternal()) {
-            $letter->update([
-                'status' => 'external_processing',
-            ]);
+            // External letters: Status already 'external_processing' from step 2
+            // Final step (upload) will be handled by uploadFinalPdf()
+            return;
         } else {
-            // Generate PDF
-        }
-    }
+            // Internal letters: Generate letter number & PDF
+            $letterNumber = $this->letterNumberService->generateNumber($letter->letter_type);
 
-    /**
-     * Check if should generate DOCX at this approval step.
-     * DOCX ONLY for external letters (SKAK) at step before Upload & Publish.
-     * Internal letters will generate PDF directly (Phase 5B-2).
-     */
-    private function shouldGenerateDocx(Approval $approval, LetterRequest $letter): bool
-    {
-        // Only external letters need DOCX
-        if (!$letter->letter_type->isExternal()) {
-            return false;
-        }
-
-        // For external letters (SKAK), generate DOCX at step before Upload & Publish
-        // Get total steps
-        $totalSteps = $letter->approvals()->count();
-        $currentStep = $approval->step;
-
-        // Generate if this is second-to-last step
-        // (Next step will be Upload & Publish PDF Final)
-        return $currentStep === ($totalSteps - 1);
-    }
-
-    /**
-     * Generate DOCX document for approved letter.
-     */
-    private function generateDocx(LetterRequest $letter): void
-    {
-        try {
-            $filePath = $this->docxService->generate($letter);
-
-            // Save to documents table
-            $letter->documents()->create([
-                'category' => 'generated',
-                'file_name' => basename($filePath),
-                'file_path' => $filePath,
-                'file_size' => filesize(storage_path("app/{$filePath}")),
-                'mime_type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'uploaded_by' => null, // System generated
+            $letter->update([
+                'status' => 'approved',
+                'letter_number' => $letterNumber,
             ]);
 
-            LogHelper::logSuccess('generated', 'docx', [
-                'letter_request_id' => $letter->id,
-                'file_path' => $filePath,
-            ]);
-        } catch (\Exception $e) {
-            LogHelper::logError('generate', 'docx', $e, [
-                'letter_request_id' => $letter->id,
-            ]);
+            // TODO: Generate PDF for internal letters (Phase 5B-2)
+            // $this->generatePdf($letter);
 
-            Log::error("❌ DOCX Generation Failed for Letter #{$letter->id}");
-            Log::error("Error: " . $e->getMessage());
-            Log::error("Trace: " . $e->getTraceAsString());
+            // Set status to completed after PDF generation
+            $letter->update([
+                'status' => 'completed',
+            ]);
         }
     }
 
@@ -312,9 +313,12 @@ class ApprovalService
                 'is_active' => true,
             ]);
 
-            $letter->update([
-                'status' => 'in_progress',
-            ]);
+            // Don't override status if already external_processing
+            if ($letter->status !== 'external_processing') {
+                $letter->update([
+                    'status' => 'in_progress',
+                ]);
+            }
         }
     }
 
@@ -360,10 +364,6 @@ class ApprovalService
             );
         }
 
-        // Get approvals where:
-        // 1. Status = pending
-        // 2. is_active = true
-        // 3. User position matches required_positions
         return Approval::where('status', 'pending')
             ->where('is_active', true)
             ->whereJsonContains('required_positions', $userPosition->value)
@@ -403,7 +403,6 @@ class ApprovalService
      */
     public function canUserApprove(User $user, Approval $approval): bool
     {
-        // Must be active and pending
         if (!$approval->is_active || $approval->status !== 'pending') {
             return false;
         }
@@ -419,4 +418,18 @@ class ApprovalService
         return in_array($userPosition->value, $approval->required_positions ?? []);
     }
 
+    /**
+     * Check if user has permission to view/approve this step
+     * (without checking is_active or status)
+     */
+    public function canUserViewApproval(User $user, Approval $approval): bool
+    {
+        $userPosition = $user->currentOfficialPosition?->position;
+
+        if (!$userPosition) {
+            return false;
+        }
+
+        return in_array($userPosition->value, $approval->required_positions ?? []);
+    }
 }

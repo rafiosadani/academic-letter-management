@@ -35,7 +35,6 @@ return new class extends Migration
                 'approved',    // Disetujui
                 'rejected',    // Ditolak
                 'skipped',     // Dilewati (rare case)
-                'published'    // Khusus step publish - surat diterbitkan
             ])->default('pending');
 
             // Notes dari approver

@@ -7,9 +7,11 @@ use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Letter\StoreLetterRequestRequest;
 use App\Http\Requests\Letter\UpdateLetterRequestRequest;
+use App\Http\Requests\UploadFinalPdfRequest;
 use App\Models\AcademicYear;
 use App\Models\Approval;
 use App\Models\Document;
+use App\Models\LetterNumberConfig;
 use App\Models\LetterRequest;
 use App\Models\Semester;
 use App\Services\DocumentService;
@@ -18,6 +20,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LetterRequestController extends Controller
@@ -184,7 +187,7 @@ class LetterRequestController extends Controller
             'semester',
             'academicYear',
             'approvals.assignedApprover.profile',
-            'approvals.approvedBy.profile',
+            'approvals.approver.profile',
             'documents',
             'rejectionHistories.rejectedBy.profile',
         ]);
@@ -335,33 +338,149 @@ class LetterRequestController extends Controller
             ]);
     }
 
-    /**
-     * Download generated DOCX file.
-     */
-    public function downloadDocx(Document $document)
+    public function downloadDocx(LetterRequest $letter)
     {
-        $letter = $document->letterRequest;
-
-        if ($document->category !== 'generated') {
-            abort(400, 'This endpoint is only for generated DOCX files');
-        }
-
-        // Only staff can download DOCX drafts
         if (!auth()->user()->can('viewAny', Approval::class)) {
-            abort(403, 'Only staff can download draft DOCX documents');
+            abort(403, 'Hanya staff yang dapat mengunduh DOCX draft');
         }
 
-        $filePath = storage_path("app/{$document->file_path}");
-
-        if (!file_exists($filePath)) {
-            abort(404, 'File not found');
+        // Must be external letter
+        if (!$letter->letter_type->isExternal()) {
+            abort(400, 'Download DOCX hanya untuk surat eksternal');
         }
 
-        LogHelper::logSuccess('downloaded', $document->category, [
+        // Get generated DOCX document
+        $document = $letter->documents()
+            ->where('category', 'generated')
+            ->where('type', 'draft')
+            ->latest()
+            ->first();
+
+        if (!$document) {
+            abort(404, 'File DOCX tidak ditemukan');
+        }
+
+        // LOG SUCCESS
+        LogHelper::logSuccess('downloaded', 'docx', [
             'document_id' => $document->id,
             'letter_request_id' => $letter->id,
         ], request());
 
-        return response()->download($filePath, $document->file_name);
+        return $this->documentService->download($document);
+    }
+
+    public function uploadFinalPdf(UploadFinalPdfRequest $request, LetterRequest $letter)
+    {
+        $this->authorize('viewAny', Approval::class); // Staff only
+
+        // Validation: must be external letter
+        if (!$letter->letter_type->isExternal()) {
+            return redirect()->back()->with('notification_data', [
+                'type' => 'error',
+                'text' => 'Upload PDF hanya untuk surat eksternal (SKAK).',
+                'position' => 'center-top',
+                'duration' => 3000,
+            ]);
+        }
+
+        // Validation: must be in external_processing status
+        if ($letter->status !== 'external_processing') {
+            return redirect()->back()->with('notification_data', [
+                'type' => 'error',
+                'text' => 'Surat tidak dalam status external processing.',
+                'position' => 'center-top',
+                'duration' => 4000,
+            ]);
+        }
+
+        try {
+            DB::transaction(function () use ($request, $letter) {
+                // Get file
+                $file = $request->file('final_pdf');
+
+                $document = $this->documentService->uploadExternal(
+                    $file,
+                    $letter,
+                    $request->letter_number,
+                    auth()->user()
+                );
+
+                $finalApproval = $letter->approvals()->final()->first();
+
+                if ($finalApproval) {
+                    $finalApproval->update([
+                        'status' => 'approved',
+                        'approved_by' => auth()->id(),
+                        'approved_at' => now(),
+                        'note' => $request->note ?? 'File PDF final telah diupload',
+                        'is_active' => false,
+                    ]);
+                }
+
+                $letter->update([
+                    'status' => 'completed',
+                    'letter_number' => $request->letter_number,
+                ]);
+
+                // LOG SUCCESS
+                LogHelper::logSuccess('uploaded', 'final_pdf', [
+                    'letter_request_id' => $letter->id,
+                    'document_id' => $document->id,
+                    'letter_number' => $request->letter_number,
+                ], request());
+            });
+
+            $letter->load('student.profile');
+            $studentName = $letter->student->profile->full_name;
+            $letterTypeLabel = $letter->letter_type->label();
+
+            return redirect()
+                ->route('approvals.show', $letter->approvals()->latest()->first())
+                ->with('notification_data', [
+                    'type' => 'success',
+                    'text' => "PDF final berhasil diupload! Surat {$letterTypeLabel} untuk {$studentName} telah selesai diproses.",
+                    'position' => 'center-top',
+                    'duration' => 4000,
+                ]);
+
+        } catch (\Exception $e) {
+            LogHelper::logError('upload', 'final_pdf', $e, [
+                'letter_request_id' => $letter->id,
+            ], request());
+
+            return redirect()->back()->with('notification_data', [
+                'type' => 'error',
+                'text' => 'Gagal upload PDF: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function downloadPdf(LetterRequest $letter)
+    {
+        // Authorization: owner or staff
+        if ($letter->student_id !== auth()->id() && !auth()->user()->can('viewAny', Approval::class)) {
+            abort(403, 'Unauthorized!');
+        }
+
+        if ($letter->status !== 'completed') {
+            abort(400, 'Surat belum selesai diproses');
+        }
+
+        // Get final PDF document
+        $document = $letter->documents()
+            ->where('type', 'final')
+            ->latest()
+            ->first();
+
+        if (!$document) {
+            abort(404, 'File PDF tidak ditemukan');
+        }
+
+        LogHelper::logSuccess('downloaded', 'final_pdf', [
+            'document_id' => $document->id,
+            'letter_request_id' => $letter->id,
+        ], request());
+
+        return $this->documentService->download($document);
     }
 }

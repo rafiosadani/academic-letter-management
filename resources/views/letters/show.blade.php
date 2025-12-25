@@ -55,7 +55,7 @@
                         <div class="flex size-7 items-center justify-center rounded-lg bg-primary/10 p-1 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                             <i class="fa-solid fa-user"></i>
                         </div>
-                        <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                        <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
                             Informasi Pemohon
                         </h4>
                     </div>
@@ -94,7 +94,7 @@
                         <div class="flex size-7 items-center justify-center rounded-lg bg-success/10 p-1 text-success">
                             <i class="fa-solid fa-file-lines"></i>
                         </div>
-                        <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                        <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
                             Data Surat
                         </h4>
                     </div>
@@ -114,8 +114,12 @@
                 </div>
             </div>
 
-            {{-- Documents --}}
-            @if($letter->documents->count() > 0)
+            {{-- Dokumen Pendukung --}}
+            @php
+                $supportingDocs = $letter->documents()->where('category', 'supporting')->get();
+            @endphp
+
+            @if($supportingDocs->count() > 0)
                 <div class="card">
                     <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
                         <div class="flex items-center space-x-2">
@@ -123,14 +127,14 @@
                                 <i class="fa-solid fa-paperclip"></i>
                             </div>
                             <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
-                                Dokumen ({{ $letter->documents->count() }})
+                                Dokumen Pendukung ({{ $supportingDocs->count() }})
                             </h4>
                         </div>
                     </div>
 
                     <div class="p-4 sm:p-5">
                         <x-document.list
-                                :documents="$letter->documents"
+                                :documents="$supportingDocs"
                                 :can-delete="false"
                                 :title="null"
                         />
@@ -154,19 +158,32 @@
 
                     <div class="p-4 sm:p-5 space-y-4">
                         @foreach($letter->rejectionHistories as $history)
-                            <div class="rounded-lg bg-error/10 border border-error/20 p-4">
+                            <div class="rounded-lg border border-error/30 bg-slate-50/50 p-3 shadow-sm dark:border-error/30 dark:bg-navy-700">
                                 <div class="flex items-start space-x-3">
-                                    <i class="fa-solid fa-circle-xmark text-error text-lg mt-0.5"></i>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-slate-700 dark:text-navy-100">
-                                            Ditolak pada Step {{ $history->step }}
+                                    {{-- Ikon Box Putih/Sleek --}}
+                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-error/10 dark:bg-error/20">
+                                        <i class="fa-solid fa-ban text-sm text-error"></i>
+                                    </div>
+
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-xs font-bold text-slate-700 dark:text-navy-100">
+                                                Penolakan Step {{ $history->step }}
+                                            </p>
+                                            <span class="text-tiny-plus font-medium text-slate-400 dark:text-navy-300">
+                                                {{ $history->rejected_at_full }}
+                                            </span>
+                                        </div>
+
+                                        {{-- Info Penolak --}}
+                                        <p class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1">
+                                            Oleh: <span class="font-medium text-slate-600 dark:text-navy-200">{{ $history->rejectedBy->profile->full_name }}</span>
                                         </p>
-                                        <p class="text-xs text-slate-500 dark:text-navy-300 mt-1">
-                                            Oleh: {{ $history->rejectedBy->profile->full_name }} • {{ $history->rejected_at_full }}
-                                        </p>
-                                        <div class="mt-3 rounded-lg bg-white/60 dark:bg-navy-700/50 p-3 border border-dashed border-error/30">
-                                            <p class="text-[11px] uppercase tracking-wider font-bold text-error/80 mb-1">Alasan Penolakan:</p>
-                                            <p class="text-xs leading-relaxed text-slate-700 dark:text-navy-100 italic">
+
+                                        {{-- Alasan Penolakan: Lebih Minimalis --}}
+                                        <div class="mt-2.5 rounded-md border-l-2 border-error/30 bg-error/5 px-2.5 py-2 dark:bg-error/10">
+                                            <p class="text-[10px] font-bold uppercase tracking-tight text-error/80">Alasan:</p>
+                                            <p class="mt-0.5 text-tiny-plus italic leading-relaxed text-slate-600 dark:text-navy-200">
                                                 "{{ $history->reason }}"
                                             </p>
                                         </div>
@@ -195,25 +212,12 @@
                     </div>
                 </div>
 
-                <div class="p-4 space-y-2">
+                <div class="p-4 sm:p-5 space-y-2">
                     <a href="{{ route('letters.index') }}"
-                       class="btn w-full border border-slate-300 font-medium text-slate-800 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-50 dark:hover:bg-navy-500">
-                        <i class="fa-solid fa-arrow-left mr-2"></i>
+                       class="btn w-full inline-flex items-center justify-center gap-2 border border-slate-300 font-medium text-slate-700 hover:bg-slate-100 active:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
                         Kembali ke Daftar
                     </a>
-
-                    @php
-                        $finalPdf = $letter->documents()->where('category', 'final')->latest()->first();
-                    @endphp
-
-                    {{-- Download Final PDF --}}
-                    @if($finalPdf)
-                        <a href="{{ route('letters.download-docx', $finalPdf) }}"
-                           class="btn w-full bg-success font-medium text-white hover:bg-success-focus focus:bg-success-focus active:bg-success-focus/90">
-                            <i class="fa-solid fa-file-pdf mr-2"></i>
-                            Download Surat Final
-                        </a>
-                    @endif
 
                     @if($letter->canBeEditedByStudent())
                         <a href="{{ route('letters.edit', $letter) }}"
@@ -236,6 +240,60 @@
                 </div>
             </div>
 
+            {{-- Download Surat (ONLY for letters completed status!) --}}
+            @if($letter->status === 'completed')
+                @php
+                    $finalPdf = $letter->documents()->where('type', 'final')->latest()->first();
+                @endphp
+
+                @if($finalPdf)
+                    <div class="card">
+                        <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex size-7 items-center justify-center rounded-lg bg-success/10 p-1 text-success">
+                                    <i class="fa-solid fa-download"></i>
+                                </div>
+                                <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                                    Download Surat
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="p-4 sm:p-5">
+                            <div class="rounded-lg border border-success/20 bg-success/10 p-3 mb-2">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                                        <i class="fa-solid fa-check-double text-lg text-success"></i>
+                                    </div>
+                                    <div class="flex flex-col min-w-0 text-left">
+                                        <span class="text-tiny font-bold uppercase tracking-wider text-success">
+                                            Proses Selesai
+                                        </span>
+                                        <p class="mt-1 text-xs font-semibold text-slate-700 dark:text-navy-100 leading-normal">
+                                            Surat Anda telah selesai diproses dan siap diunduh!
+                                        </p>
+                                        <div class="mt-1 flex items-center text-[11px] text-slate-500 dark:text-navy-300">
+                                            <i class="fa-solid fa-circle-info mr-1 text-[10px]"></i>
+                                            Silakan cek bagian dokumen di bawah.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('letters.download-pdf', $letter) }}"
+                               class="btn w-full bg-error text-xs-plus font-medium text-white hover:bg-error-focus active:bg-error-focus/90">
+                                <i class="fa-solid fa-file-pdf mr-2"></i>
+                                Download PDF
+                            </a>
+
+                            <p class="text-tiny text-slate-400 dark:text-navy-300 mt-2 text-center">
+                                File: {{ $finalPdf->file_name }}
+                            </p>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
             {{-- Timeline Card --}}
             <div class="card">
                 <div class="border-b border-slate-200 p-4 dark:border-navy-500">
@@ -249,7 +307,7 @@
                     </div>
                 </div>
 
-                <div class="p-4">
+                <div class="p-4 sm:p-5">
                     <ol class="timeline line-space [--size:1.5rem] [--line-color:var(--tw-colors-slate-200)] dark:[--line-color:var(--tw-colors-navy-500)]">
                         @foreach($letter->approvals as $approval)
                             <li class="timeline-item">
@@ -284,7 +342,7 @@
                                                 @endif
                                             </p>
                                             @if($approval->approved_at)
-                                                <p class="text-tiny text-slate-400 dark:text-navy-300 mt-1">
+                                                <p class="text-xs text-slate-400 dark:text-navy-300 mt-1">
                                                     {{ $approval->approved_at_full }}
                                                 </p>
                                             @endif
@@ -295,11 +353,18 @@
                                         </span>
                                     </div>
                                     @if($approval->note)
-                                        <div class="mt-2 rounded-lg bg-slate-100 dark:bg-navy-600 p-2">
-                                            <p class="text-xs text-slate-600 dark:text-navy-200">
-                                                <i class="fa-solid fa-comment-dots mr-1"></i>
-                                                {{ $approval->note }}
-                                            </p>
+                                        <div class="mt-2 rounded-md bg-slate-100 dark:bg-navy-600 px-2.5 py-2 border-l-2 border-slate-300 dark:border-navy-400">
+                                            <div class="flex items-start gap-2">
+                                                <i class="fa-solid fa-comment-dots text-[10px] text-slate-400 mt-0.5"></i>
+                                                <div class="flex-1 min-w-0 space-y-0.5">
+                                                    <p class="text-tiny font-semibold text-slate-500 dark:text-navy-300 uppercase tracking-tight">
+                                                        Catatan:
+                                                    </p>
+                                                    <p class="text-tiny text-slate-600 dark:text-navy-200 leading-normal italic">
+                                                        {{ $approval->note }}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
