@@ -85,7 +85,11 @@ class Approval extends Model
     public function scopeFinal($query)
     {
         return $query->whereRaw("JSON_EXTRACT(flow_snapshot, '$.is_final') = true");
-        // return $query->where('flow_snapshot->is_final', true);
+    }
+
+    public function scopeCanEditContent($query)
+    {
+        return $query->whereRaw("JSON_EXTRACT(flow_snapshot, '$.can_edit_content') = true");
     }
 
     public function scopeFilter($query, array $filters)

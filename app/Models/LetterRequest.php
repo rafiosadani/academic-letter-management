@@ -207,6 +207,13 @@ class LetterRequest extends Model
         return in_array($this->status, ['completed', 'cancelled']);
     }
 
+    public function hasStudentList(): bool
+    {
+        return isset($this->data_input['student_list']) &&
+            is_array($this->data_input['student_list']) &&
+            count($this->data_input['student_list']) > 0;
+    }
+
     // ============================================
     // ACCESSORS
     // ============================================
@@ -269,6 +276,14 @@ class LetterRequest extends Model
             if (isset($rawData[$fieldName])) {
                 $value = $rawData[$fieldName];
 
+                if ($config['type'] === 'student_list') {
+                    continue;
+                }
+
+                if (is_array($value)) {
+                    continue;
+                }
+
                 // Format date fields
                 if ($config['type'] === 'date' && $value) {
                     try {
@@ -285,6 +300,13 @@ class LetterRequest extends Model
         }
 
         return $formatted;
+    }
+
+    public function getStudentListAttribute(): array
+    {
+        $studentList = $this->data_input['student_list'] ?? [];
+
+        return is_string($studentList) ? json_decode($studentList, true) : $studentList;
     }
 
     // ==========================================================

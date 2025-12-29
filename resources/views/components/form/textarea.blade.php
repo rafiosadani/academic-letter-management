@@ -31,6 +31,6 @@
     @enderror
 
     @if($helper)
-        <span class="text-xs text-slate-400 dark:text-navy-300 mt-1 block">{{ $helper }}</span>
+        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 ms-1 mt-1 block">{{ $helper }}</span>
     @endif
 </label>

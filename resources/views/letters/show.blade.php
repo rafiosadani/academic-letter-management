@@ -114,6 +114,66 @@
                 </div>
             </div>
 
+            @if($letter->hasStudentList())
+                <div class="card mt-5">
+                    <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex size-7 items-center justify-center rounded-lg bg-info/10 p-1 text-info">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                                    Daftar Mahasiswa
+                                </h4>
+                            </div>
+                            <span class="text-xs font-medium text-slate-700 dark:text-navy-100 dark:border-navy-500">
+                                Total: {{ count($letter->student_list) }} Orang
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <div class="is-scrollbar-hidden min-w-full overflow-x-auto rounded-lg border border-slate-300 dark:border-navy-500">
+                            <table class="w-full text-left">
+                                <thead>
+                                <tr class="bg-slate-200 dark:bg-navy-800">
+                                    <th class="w-12 border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100 text-center">
+                                        No
+                                    </th>
+                                    <th class="border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                        Nama Mahasiswa
+                                    </th>
+                                    <th class="border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                        NIM
+                                    </th>
+                                    <th class="px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                        Program Studi
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-navy-500">
+                                @foreach($letter->student_list as $index => $student)
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-navy-800/50">
+                                        <td class="border-r border-slate-200 px-4 py-3 text-center text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                            {{ $index + 1 }}
+                                        </td>
+                                        <td class="border-r border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                            {{ $student['name'] ?? '-' }}
+                                        </td>
+                                        <td class="border-r border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                            {{ $student['nim'] ?? '-' }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-slate-700 dark:text-navy-100">
+                                            {{ $student['program'] ?? '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Dokumen Pendukung --}}
             @php
                 $supportingDocs = $letter->documents()->where('category', 'supporting')->get();

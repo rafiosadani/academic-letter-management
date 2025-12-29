@@ -10,6 +10,7 @@ use App\Http\Requests\Approval\EditContentRequest;
 use App\Http\Requests\Approval\RejectRequest;
 use App\Models\Approval;
 use App\Models\FacultyOfficial;
+use App\Models\StudyProgram;
 use App\Services\ApprovalService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
@@ -64,8 +65,9 @@ class ApprovalController extends Controller
 
         $letter = $approval->letterRequest;
         $canApprove = $this->approvalService->canUserApprove(auth()->user(), $approval);
+        $studyPrograms = StudyProgram::getFormattedNames();
 
-        return view('approvals.show', compact('approval', 'letter', 'canApprove'));
+        return view('approvals.show', compact('approval', 'letter', 'canApprove', 'studyPrograms'));
     }
 
     /**
@@ -168,7 +170,12 @@ class ApprovalController extends Controller
             $formData = [];
 
             foreach ($letterType->formFields() as $fieldName => $config) {
-                $formData[$fieldName] = $request->input($fieldName);
+                if ($config['type'] === 'student_list') {
+                    $jsonString = $request->input($fieldName);
+                    $formData[$fieldName] = json_decode($jsonString, true);
+                } else {
+                    $formData[$fieldName] = $request->input($fieldName);
+                }
             }
 
             $this->approvalService->editContent(

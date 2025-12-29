@@ -16,6 +16,7 @@ use App\Http\Controllers\Notification\NotificationSettingController;
 use App\Http\Controllers\Setting\ApprovalFlowController;
 use App\Http\Controllers\Setting\LetterNumberConfigController;
 use App\Http\Controllers\Setting\SettingController;
+use App\Http\Controllers\PDF\PDFController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -158,6 +159,9 @@ Route::middleware('auth')->group(function () {
     Route::post('approvals/{approval}/reject', [ApprovalController::class, 'reject'])->name('approvals.reject');
     Route::post('approvals/{approval}/edit-content', [ApprovalController::class, 'editContent'])->name('approvals.edit-content');
 
+    // Preview PDF Before Approval Final
+    Route::get('approvals/preview-pdf/{letter}', [PDFController::class, 'preview'])->name('approvals.preview-pdf');
+
     // ============================================================
     // LOGOUT
     // ============================================================
@@ -170,4 +174,5 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 | Document verification is public so anyone can scan QR code and verify.
 */
-Route::get('verify/{hash}', [DocumentController::class, 'verify'])->name('documents.verify');
+//Route::get('verify/{hash}', [DocumentController::class, 'verify'])->name('documents.verify');
+Route::get('/documents/verify/{hash}', [DocumentController::class, 'verify'])->name('documents.verify');

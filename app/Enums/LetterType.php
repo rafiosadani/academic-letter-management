@@ -423,6 +423,14 @@ enum LetterType: string
                 'required' => true,
                 'placeholder' => 'Lokasi kegiatan',
             ],
+            'student_list' => [
+                'type' => 'student_list',
+                'label' => 'Daftar Mahasiswa',
+                'required' => true,
+                'helper' => 'Tambahkan mahasiswa yang akan mengikuti kegiatan',
+                'min_students' => 1,
+                'max_students' => 50,
+            ],
             'keterangan' => [
                 'type' => 'textarea',
                 'label' => 'Keterangan Tambahan',
@@ -439,6 +447,15 @@ enum LetterType: string
             self::SKAK => 'skak_general.docx',
             self::SKAK_TUNJANGAN => 'skak_tunjangan.docx',
             default => throw new \Exception("No template defined for this letter type"),
+        };
+    }
+
+    public function templateView(): string
+    {
+        return match($this) {
+            self::PENELITIAN => 'pdf.penelitian',
+            self::DISPENSASI_KULIAH => 'pdf.dispensasi_kuliah',
+            self::DISPENSASI_MAHASISWA => 'pdf.dispensasi_mahasiswa',
         };
     }
 }

@@ -63,6 +63,9 @@ class StoreLetterRequestRequest extends FormRequest
                 case 'time':
                     $fieldRules[] = 'date_format:H:i';
                     break;
+                case 'student_list':
+                    $fieldRules[] = 'json';
+                    break;
             }
 
             $rules[$fieldName] = $fieldRules;
@@ -101,6 +104,75 @@ class StoreLetterRequestRequest extends FormRequest
         return $rules;
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $letterType = LetterType::tryFrom($this->input('letter_type'));
+
+            if ($letterType) {
+                $formFields = $letterType->formFields();
+                foreach ($formFields as $fieldName => $config) {
+                    if ($config['type'] === 'student_list' && $this->has($fieldName)) {
+                        $this->validateStudentList($validator, $fieldName);
+                    }
+                }
+            }
+        });
+    }
+
+    private function validateStudentList($validator, $fieldName)
+    {
+        $studentListJson = $this->input($fieldName);
+        $studentList = json_decode($studentListJson, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $validator->errors()->add($fieldName, 'Format daftar mahasiswa tidak valid.');
+            return;
+        }
+
+        if (!is_array($studentList)) {
+            $validator->errors()->add($fieldName, 'Daftar mahasiswa harus berupa array.');
+            return;
+        }
+
+        if (count($studentList) < 1) {
+            $validator->errors()->add($fieldName, 'Minimal 1 mahasiswa harus ditambahkan.');
+            return;
+        }
+
+        if (count($studentList) > 50) {
+            $validator->errors()->add($fieldName, 'Maksimal 50 mahasiswa dapat ditambahkan.');
+            return;
+        }
+
+        foreach ($studentList as $index => $student) {
+            $studentNumber = $index + 1;
+
+            if (!isset($student['name']) || empty(trim($student['name']))) {
+                $validator->errors()->add($fieldName, "Nama mahasiswa ke-{$studentNumber} harus diisi.");
+            }
+
+            if (!isset($student['nim']) || empty(trim($student['nim']))) {
+                $validator->errors()->add($fieldName, "NIM mahasiswa ke-{$studentNumber} harus diisi.");
+            }
+
+            if (!isset($student['program']) || empty(trim($student['program']))) {
+                $validator->errors()->add($fieldName, "Program Studi mahasiswa ke-{$studentNumber} harus diisi.");
+            }
+
+            if (isset($student['nim']) && !empty($student['nim'])) {
+                if (!preg_match('/^\d{15}$/', $student['nim'])) {
+                    $validator->errors()->add($fieldName, "NIM mahasiswa ke-{$studentNumber} harus berupa 15 digit angka.");
+                }
+            }
+
+            $nims = array_column($studentList, 'nim');
+            if (count($nims) !== count(array_unique($nims))) {
+                $validator->errors()->add($fieldName, "Terdapat NIM yang sama dalam daftar mahasiswa.");
+            }
+        }
+    }
+
     /**
      * Get custom messages for validator errors.
      *
@@ -118,6 +190,17 @@ class StoreLetterRequestRequest extends FormRequest
             'parent_rank.required' => ':attribute harus diisi',
             'parent_institution.required' => ':attribute harus diisi',
             'parent_institution_address.required' => ':attribute harus diisi',
+
+            'required' => ':attribute wajib diisi',
+            'string' => ':attribute harus berupa teks',
+            'max' => ':attribute maksimal :max karakter',
+            'date' => ':attribute harus berupa tanggal yang valid',
+            'date_format' => ':attribute harus berupa waktu yang valid (HH:MM)',
+            'json' => ':attribute harus berformat JSON yang valid',
+
+            // Student List
+            'student_list.required' => ':attribute harus diisi',
+            'student_list.json' => ':attribute harus berformat JSON yang valid',
 
             // Documents
             'documents.*.required' => ':attribute wajib diunggah',
@@ -144,32 +227,16 @@ class StoreLetterRequestRequest extends FormRequest
             'parent_institution' => 'Instansi Orang Tua',
             'parent_institution_address' => 'Alamat Instansi Orang Tua',
 
-            'keperluan' => 'Keperluan',
-            'keterangan' => 'Keterangan',
-            'judul_penelitian' => 'Judul Penelitian',
-            'nama_tempat_penelitian' => 'Nama Tempat Penelitian',
-            'alamat_tempat_penelitian' => 'Alamat Tempat Penelitian',
-            'no_hp' => 'Nomor HP',
-            'dosen_pembimbing' => 'Dosen Pembimbing',
-            'bulan_pelaksanaan' => 'Bulan Pelaksanaan',
-            'nama_instansi_tujuan' => 'Nama Instansi Tujuan',
-            'jabatan_penerima' => 'Jabatan Penerima',
-            'alamat_instansi' => 'Alamat Instansi',
-            'alasan_dispensasi' => 'Alasan Dispensasi',
-            'posisi_magang' => 'Posisi Magang',
-            'keperluan_detail' => 'Keperluan Detail',
-            'tanggal_mulai' => 'Tanggal Mulai',
-            'tanggal_selesai' => 'Tanggal Selesai',
-            'nama_kegiatan' => 'Nama Kegiatan',
-            'tanggal_kegiatan' => 'Tanggal Kegiatan',
-            'waktu_mulai' => 'Waktu Mulai',
-            'waktu_selesai' => 'Waktu Selesai',
-            'tempat_kegiatan' => 'Tempat Kegiatan',
+            'student_list' => 'Daftar Mahasiswa',
         ];
 
         $letterType = LetterType::tryFrom($this->input('letter_type'));
 
         if ($letterType) {
+            foreach ($letterType->formFields() as $fieldName => $config) {
+                $attributes[$fieldName] = $config['label'] ?? ucwords(str_replace('_', ' ', $fieldName));
+            }
+
             foreach ($letterType->requiredDocuments() as $key => $config) {
                 $attributes["documents.$key"] = $config['label'] ?? ucfirst(str_replace('_', ' ', $key));
             }

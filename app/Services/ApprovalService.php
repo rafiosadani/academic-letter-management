@@ -15,8 +15,9 @@ use Illuminate\Support\Facades\Log;
 class ApprovalService
 {
     public function __construct(
-        protected LetterNumberService $letterNumberService,
         protected LetterDocxService $docxService,
+        protected LetterNumberService $letterNumberService,
+        protected LetterPdfService $pdfService,
         protected DocumentService $documentService
     ) {}
 
@@ -105,12 +106,14 @@ class ApprovalService
 
             $document = $this->documentService->storeGeneratedDocx($physicalPath, $letter);
 
+            // LOG SUCCESS
             LogHelper::logSuccess('generated', 'docx', [
                 'letter_request_id' => $letter->id,
                 'document_id' => $document->id,
                 'file_name' => $document->file_name,
             ]);
         } catch (\Exception $e) {
+            // LOG ERROR
             LogHelper::logError('generate', 'docx', $e, [
                 'letter_request_id' => $letter->id,
             ]);
@@ -279,13 +282,44 @@ class ApprovalService
                 'letter_number' => $letterNumber,
             ]);
 
-            // TODO: Generate PDF for internal letters (Phase 5B-2)
-            // $this->generatePdf($letter);
+            LetterPdfService::validateRequiredData();
+            $this->generatePdf($letter);
 
             // Set status to completed after PDF generation
             $letter->update([
                 'status' => 'completed',
             ]);
+        }
+    }
+
+    /**
+     * Generate PDF document for internal letters.
+     */
+    private function generatePdf(LetterRequest $letter): void
+    {
+        try {
+            $result = $this->pdfService->generate($letter, $letter->letter_number);
+
+            $physicalPath = $result['path'];
+            $documentHash = $result['hash'];
+
+            $document = $this->documentService->storeGeneratedPdf($physicalPath, $letter, $documentHash);
+
+            // LOG SUCCESS
+            LogHelper::logSuccess('generated', 'pdf', [
+                'letter_request_id' => $letter->id,
+                'document_id' => $document->id,
+                'file_name' => $document->file_name,
+                'hash' => $documentHash,
+            ]);
+        } catch (\Exception $e) {
+            LogHelper::logError('generate', 'pdf', $e, [
+                'letter_request_id' => $letter->id,
+            ]);
+
+            Log::error("❌ PDF Generation Failed for Letter #{$letter->id}");
+            Log::error("Error: " . $e->getMessage());
+            Log::error("Trace: " . $e->getTraceAsString());
         }
     }
 

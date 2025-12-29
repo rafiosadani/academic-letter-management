@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Approval;
 
+use App\Enums\LetterType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
@@ -53,12 +54,80 @@ class EditContentRequest extends FormRequest
                 case 'time':
                     $fieldRules[] = 'date_format:H:i';
                     break;
+                case 'student_list':
+                    $fieldRules[] = 'json';
+                    break;
             }
 
             $rules[$fieldName] = $fieldRules;
         }
 
         return $rules;
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $approval = $this->route('approval');
+            $letterType = $approval->letterRequest->letter_type;
+
+            foreach ($letterType->formFields() as $fieldName => $config) {
+                if ($config['type'] === 'student_list' && $this->has($fieldName)) {
+                    $this->validateStudentList($validator, $fieldName);
+                }
+            }
+        });
+    }
+
+    private function validateStudentList($validator, $fieldName)
+    {
+        $jsonString = $this->input($fieldName);
+        $studentList = json_decode($jsonString, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $validator->errors()->add($fieldName, 'Format daftar mahasiswa tidak valid.');
+            return;
+        }
+
+        if (!is_array($studentList)) {
+            $validator->errors()->add($fieldName, 'Daftar mahasiswa harus berupa array.');
+            return;
+        }
+
+        if (count($studentList) < 1) {
+            $validator->errors()->add($fieldName, 'Minimal 1 mahasiswa harus ditambahkan.');
+            return;
+        }
+
+        if (count($studentList) > 50) {
+            $validator->errors()->add($fieldName, 'Maksimal 50 mahasiswa.');
+            return;
+        }
+
+        foreach ($studentList as $index => $student) {
+            $no = $index + 1;
+
+            if (empty($student['name'])) {
+                $validator->errors()->add($fieldName, "Nama mahasiswa ke-{$no} harus diisi.");
+            }
+
+            if (empty($student['nim'])) {
+                $validator->errors()->add($fieldName, "NIM mahasiswa ke-{$no} harus diisi.");
+            }
+
+            if (empty($student['program'])) {
+                $validator->errors()->add($fieldName, "Program Studi mahasiswa ke-{$no} harus dipilih.");
+            }
+
+            if (!empty($student['nim']) && !preg_match('/^\d{15}$/', $student['nim'])) {
+                $validator->errors()->add($fieldName, "NIM mahasiswa ke-{$no} harus 15 digit angka.");
+            }
+        }
+
+        $nims = array_column($studentList, 'nim');
+        if (count($nims) !== count(array_unique($nims))) {
+            $validator->errors()->add($fieldName, 'Terdapat NIM yang sama dalam daftar.');
+        }
     }
 
     /**
@@ -72,6 +141,7 @@ class EditContentRequest extends FormRequest
             '*.max' => ':attribute maksimal :max karakter',
             '*.date' => ':attribute harus berupa tanggal yang valid',
             '*.date_format' => ':attribute harus berupa waktu yang valid (HH:MM)',
+            '*.json' => ':attribute harus berformat JSON yang valid',
         ];
     }
 
@@ -93,6 +163,8 @@ class EditContentRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
+        $this->flash();
+
         $notifications = collect($validator->errors()->all())->map(fn ($error) => [
             'type' => 'error',
             'text' => $error,

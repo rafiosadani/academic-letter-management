@@ -93,6 +93,19 @@ class StudyProgram extends Model
         return $this->degree?->getBadgeColor();
     }
 
+    public static function getFormattedNames(): array
+    {
+        return self::query()
+        ->withoutTrashed()
+            ->select('id', 'degree', 'name')
+            ->get()
+            ->pluck('degree_name')
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+    }
+
     // ==========================================================
     // RELATIONSHIPS
     // ==========================================================

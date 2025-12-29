@@ -88,4 +88,32 @@ class LetterRequestPolicy
 
         return false;
     }
+
+    /**
+     * Determine if user can preview PDF.
+     */
+    public function previewPdf(User $user, LetterRequest $letter): bool
+    {
+        // Staff / Admin
+        if ($user->hasPermissionTo(PermissionName::LETTER_MY_VIEW->value)) {
+            return true;
+        }
+
+        // Approver can view if assigned to approval step
+        if ($letter->approvals()->where('assigned_approver_id', $user->id)->exists()) {
+            return true;
+        }
+
+        // Administrator can view all
+        if ($user->hasRole('Administrator')) {
+            return true;
+        }
+
+        // Staf Akademik can view all
+        if ($user->hasRole('Staf Akademik')) {
+            return true;
+        }
+
+        return false;
+    }
 }

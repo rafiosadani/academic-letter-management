@@ -181,7 +181,14 @@
                     <div class="p-4 sm:p-5 space-y-4">
                         {{-- Dynamic Form Fields --}}
                         @foreach($formFields as $fieldName => $config)
-                            @if($config['type'] === 'select')
+                            @if($config['type'] === 'student_list')
+                                <x-form.student-list-input
+                                        :name="$fieldName"
+                                        :required="$config['required']"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? []) : [])"
+                                        :studyPrograms="$studyPrograms ?? []"
+                                />
+                            @elseif($config['type'] === 'select')
                                 <x-form.select
                                         :label="$config['label']"
                                         :name="$fieldName"

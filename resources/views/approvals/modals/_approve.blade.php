@@ -59,27 +59,55 @@
             @endphp
 
             <div class="rounded-lg bg-info/10 border border-info/20 p-3">
-                <p class="font-medium text-info text-sm mb-2">
-                    <i class="fa-solid fa-arrow-right mr-1"></i>
-                    Setelah Disetujui:
+                <p class="font-bold text-info text-sm mb-2 flex items-center justify-center text-center">
+                    <i class="fa-solid fa-circle-nodes mr-2 text-xs"></i>
+                    ALUR SELANJUTNYA
                 </p>
-                @if($approval->is_final)
-                    <p class="text-xs text-slate-600 dark:text-navy-200">
+
+                <div class="flex flex-col items-center space-y-1">
+                    @if($approval->is_final)
                         @if($letter->letter_type->isExternal())
-                            • Surat akan menunggu proses eksternal (SKAK dari UB Pusat)
+                            <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                                <i class="fa-solid fa-building-columns text-info mr-2 text-xs shrink-0"></i>
+                                <p class="text-xs text-slate-600 dark:text-navy-200">
+                                    Menunggu proses eksternal (SKAK dari UB Pusat)
+                                </p>
+                            </div>
+                            <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                                <i class="fa-solid fa-clock-rotate-left text-info mr-2 text-xs shrink-0"></i>
+                                <p class="text-xs text-slate-600 dark:text-navy-200">
+                                    Mahasiswa menunggu unggahan dokumen final
+                                </p>
+                            </div>
                         @else
-                            • Surat akan disetujui dan mendapatkan nomor surat
-                            • Mahasiswa dapat mengunduh surat
+                            <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                                <i class="fa-solid fa-check-circle text-success mr-2 text-xs shrink-0"></i>
+                                <p class="text-xs text-slate-600 dark:text-navy-200">
+                                    Nomor surat dibuat secara otomatis & status <span class="font-bold text-success">Selesai</span>
+                                </p>
+                            </div>
+
+                            <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                                <i class="fa-solid fa-file-pdf text-info mr-2 text-xs shrink-0"></i>
+                                <p class="text-xs text-slate-600 dark:text-navy-200">
+                                    Mahasiswa dapat langsung mengunduh surat PDF
+                                </p>
+                            </div>
                         @endif
-                    </p>
-                @elseif($nextApproval)
-                    <p class="text-xs text-slate-600 dark:text-navy-200">
-                        • Surat akan dilanjutkan ke step berikutnya
-                    </p>
-                    <p class="text-xs text-slate-600 dark:text-navy-200">
-                        • <strong>{{ $nextApproval->step_label }}</strong>
-                    </p>
-                @endif
+                    @elseif($nextApproval)
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center text-left mb-1 max-w-xs w-full sm:w-auto">
+                                <i class="fa-solid fa-share text-warning mr-2 text-xs shrink-0"></i>
+                                <p class="text-xs text-slate-600 dark:text-navy-200">
+                                    Surat akan dilanjutkan ke tahap:
+                                </p>
+                            </div>
+                            <span class="badge bg-warning/10 text-warning border border-warning/20 text-tiny font-bold px-2 py-0.5 rounded">
+                                {{ $nextApproval->step_label }}
+                            </span>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <div>

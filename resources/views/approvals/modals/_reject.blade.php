@@ -61,29 +61,73 @@
             @endphp
 
             <div class="rounded-lg bg-warning/10 border border-warning/20 p-3">
-                <p class="font-medium text-warning text-sm mb-2">
-                    <i class="fa-solid fa-exclamation-triangle mr-1"></i>
-                    Yang Akan Terjadi:
+                <p class="font-bold text-warning text-sm mb-2 flex items-center justify-center text-center">
+                    <i class="fa-solid fa-circle-exclamation mr-2 text-xs"></i>
+                    YANG AKAN TERJADI
                 </p>
-                @if($onReject === \App\Enums\ApprovalAction::TO_STUDENT)
-                    <ul class="text-xs text-slate-600 dark:text-navy-200 space-y-1">
-                        <li>• Surat dikembalikan ke mahasiswa untuk perbaikan</li>
-                        <li>• Mahasiswa dapat mengedit dan mengajukan ulang</li>
-                        <li>• Proses approval akan dimulai dari awal</li>
-                    </ul>
-                @elseif($onReject === \App\Enums\ApprovalAction::TO_PREVIOUS_STEP)
-                    <ul class="text-xs text-slate-600 dark:text-navy-200 space-y-1">
-                        <li>• Surat kembali ke step approval sebelumnya</li>
-                        <li>• Approver sebelumnya dapat mereview ulang</li>
-                        <li>• Proses dilanjutkan dari step sebelumnya</li>
-                    </ul>
-                @else
-                    <ul class="text-xs text-slate-600 dark:text-navy-200 space-y-1">
-                        <li>• Surat ditolak secara permanen</li>
-                        <li>• Mahasiswa harus membuat pengajuan baru</li>
-                        <li>• Proses approval dihentikan total</li>
-                    </ul>
-                @endif
+
+                <div class="flex flex-col items-center space-y-1">
+                    @if($onReject === \App\Enums\ApprovalAction::TO_STUDENT)
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-user-pen text-warning mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Surat dikembalikan ke mahasiswa untuk perbaikan
+                            </p>
+                        </div>
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-rotate-left text-warning mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Mahasiswa dapat mengedit dan mengajukan ulang
+                            </p>
+                        </div>
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-forward-step text-warning mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Proses approval akan dimulai dari awal
+                            </p>
+                        </div>
+
+                    @elseif($onReject === \App\Enums\ApprovalAction::TO_PREVIOUS_STEP)
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-backward text-warning mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Surat kembali ke tahap approval sebelumnya
+                            </p>
+                        </div>
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-magnifying-glass text-warning mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Approver sebelumnya dapat mereview ulang
+                            </p>
+                        </div>
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-play text-warning mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Proses dilanjutkan dari tahap tersebut
+                            </p>
+                        </div>
+
+                    @else
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-ban text-error mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200 font-bold">
+                                Surat ditolak secara permanen
+                            </p>
+                        </div>
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-file-circle-plus text-slate-500 mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Mahasiswa harus membuat pengajuan baru
+                            </p>
+                        </div>
+                        <div class="flex items-center text-left max-w-xs w-full sm:w-auto">
+                            <i class="fa-solid fa-stop text-error mr-2 text-xs shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-navy-200">
+                                Proses approval dihentikan total
+                            </p>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             {{-- Required Reason--}}

@@ -88,6 +88,35 @@ class DocumentService
         ]);
     }
 
+    public function storeGeneratedPdf(
+        string $filePath,
+        LetterRequest $letter,
+        string $hash
+    ): Document {
+        if (!file_exists($filePath)) {
+            throw new \Exception("File PDF tidak ditemukan di lokasi penyimpanan: {$filePath}");
+        }
+
+        $fileSize = filesize($filePath);
+
+        // Extract relative path (remove storage/app/private/ prefix)
+        $storagePath = str_replace(storage_path('app/private') . '/', '', $filePath);
+
+        $filename = basename($filePath);
+
+        return Document::create([
+            'letter_request_id' => $letter->id,
+            'uploaded_by' => null,
+            'category' => 'generated',
+            'type' => 'final',
+            'file_name' => $filename,
+            'file_path' => $storagePath,
+            'file_size' => $fileSize,
+            'mime_type' => 'application/pdf',
+            'hash' => $hash,
+        ]);
+    }
+
     /**
      * Download document.
      */
@@ -218,22 +247,5 @@ class DocumentService
         $text = preg_replace('/\s+/', ' ', $text);
 
         return trim($text);
-    }
-
-    /**
-     * Generate hash for document verification.
-     */
-    private function generateHash(LetterRequest $letter, string $filePath): string
-    {
-        $data = implode('|', [
-            $letter->id,
-            $letter->letter_number ?? 'pending',
-            $letter->student_id,
-            now()->timestamp,
-            $filePath,
-            config('app.key'),
-        ]);
-
-        return hash('sha256', $data);
     }
 }

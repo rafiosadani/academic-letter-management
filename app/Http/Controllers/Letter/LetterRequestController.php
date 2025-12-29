@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Letter;
 
 use App\Enums\LetterType;
+use App\Enums\OfficialPosition;
 use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Letter\StoreLetterRequestRequest;
@@ -11,15 +12,22 @@ use App\Http\Requests\UploadFinalPdfRequest;
 use App\Models\AcademicYear;
 use App\Models\Approval;
 use App\Models\Document;
+use App\Models\FacultyOfficial;
 use App\Models\LetterNumberConfig;
 use App\Models\LetterRequest;
 use App\Models\Semester;
+use App\Models\StudyProgram;
 use App\Services\DocumentService;
+use App\Services\LetterPdfService;
 use App\Services\LetterRequestService;
+use App\Services\QRCodeService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -114,8 +122,9 @@ class LetterRequestController extends Controller
 
         $formFields = $letterType->formFields();
         $requiredDocuments = $letterType->requiredDocuments();
+        $studyPrograms = StudyProgram::getFormattedNames();
 
-        return view('letters.form', compact('letterType', 'formFields', 'requiredDocuments'));
+        return view('letters.form', compact('letterType', 'formFields', 'requiredDocuments', 'studyPrograms'));
     }
 
     /**
@@ -129,7 +138,11 @@ class LetterRequestController extends Controller
 
         $formData = [];
         foreach ($letterType->formFields() as $fieldName => $config) {
-            $formData[$fieldName] = $request->input($fieldName);
+            if ($config['type'] === 'student_list') {
+                $formData[$fieldName] = json_decode($request->input($fieldName), true);
+            } else {
+                $formData[$fieldName] = $request->input($fieldName);
+            }
         }
 
         $data = [

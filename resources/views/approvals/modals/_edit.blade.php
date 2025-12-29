@@ -26,11 +26,20 @@
         <div class="scrollbar-sm overflow-y-auto px-4 py-4 sm:px-5">
 
             {{-- Info --}}
-            <div class="rounded-lg bg-info/10 border border-info/20 p-3 mb-4 text-left">
-                <p class="text-xs text-slate-600 dark:text-navy-200">
-                    <i class="fa-solid fa-info-circle text-info mr-1"></i>
-                    Anda dapat mengedit konten surat sebelum menyetujui. Perubahan akan tersimpan dan mahasiswa akan melihat data yang telah diedit.
-                </p>
+            <div class="rounded-lg border border-info/20 bg-info/10 p-3 mb-4">
+                <div class="flex items-start space-x-3">
+                    <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-navy-700">
+                        <i class="fa-solid fa-info-circle text-lg text-info"></i>
+                    </div>
+                    <div class="flex flex-col min-w-0 text-left">
+                        <span class="text-tiny font-bold uppercase tracking-wider text-info">
+                            Informasi Editor
+                        </span>
+                        <p class="mt-1 text-xs text-justify text-slate-600 dark:text-navy-200">
+                            Anda dapat mengedit konten surat sebelum menyetujui. Perubahan akan tersimpan dan mahasiswa akan melihat data yang telah diedit.
+                        </p>
+                    </div>
+                </div>
             </div>
 
             {{-- Form --}}
@@ -53,8 +62,159 @@
                                         <span class="text-error">*</span>
                                     @endif
                                 </span>
+                                @if($config['type'] === 'student_list')
+                                    <div x-data="studentListEditor{{ $approval->id }}()"
+                                         x-init="init()"
+                                         @click.stop.prevent
+                                         @mousedown.stop
+                                         @touchstart.stop
+                                         class="mt-1.5">
 
-                                @if($config['type'] === 'select')
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">
+                                                Data Kolektif Mahasiswa (<span x-text="students.length"></span>)
+                                            </span>
+                                            <button type="button"
+                                                    @click.stop.prevent="addStudent()"
+                                                    class="btn h-6 rounded bg-primary px-2 text-tiny font-medium text-white hover:bg-primary-focus">
+                                                <i class="fa-solid fa-plus mr-1"></i> Tambah Data
+                                            </button>
+                                        </div>
+
+                                        <div class="is-scrollbar-hidden min-w-full overflow-x-auto rounded border border-slate-200 dark:border-navy-500">
+                                            <table class="w-full text-left">
+                                                <thead>
+                                                <tr class="bg-slate-50 dark:bg-navy-800">
+                                                    <th class="w-8 border-r border-slate-200 px-2 py-2 text-tiny font-medium uppercase text-slate-600 dark:border-navy-500 dark:text-navy-100 text-center">#</th>
+                                                    <th class="border-r border-slate-200 px-3 py-2 text-tiny font-medium uppercase text-slate-600 dark:border-navy-500 dark:text-navy-100">Nama</th>
+                                                    <th class="w-40 border-r border-slate-200 px-3 py-2 text-tiny font-medium uppercase text-slate-600 dark:border-navy-500 dark:text-navy-100">NIM</th>
+                                                    <th class="w-60 border-r border-slate-200 px-3 py-2 text-tiny font-medium uppercase text-slate-600 dark:border-navy-500 dark:text-navy-100">Prodi</th>
+                                                    <th class="w-10 px-2 py-2 text-center text-[10px] font-medium uppercase text-slate-600 dark:text-navy-100">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="bg-white dark:bg-navy-900">
+                                                <template x-for="student in students" :key="student._id">
+                                                    <tr class="border-t border-slate-200 dark:border-navy-500 hover:bg-slate-50/50" x-show="student && student._id">
+                                                        <td class="border-r border-slate-200 px-2 py-2 text-center text-xs text-slate-500 dark:border-navy-500"
+                                                            x-text="students.indexOf(student) + 1"></td>
+
+                                                        <td class="border-r border-slate-200 px-2 py-2 dark:border-navy-500">
+                                                            <input x-model="student.name"
+                                                                   @click.stop
+                                                                   class="form-input w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs focus:border-primary dark:border-navy-450 dark:bg-navy-900"
+                                                                   placeholder="Nama..."
+                                                                   type="text" />
+                                                        </td>
+
+                                                        <td class="border-r border-slate-200 px-2 py-2 dark:border-navy-500">
+                                                            <input x-model="student.nim"
+                                                                   @click.stop
+                                                                   class="form-input w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs focus:border-primary dark:border-navy-450 dark:bg-navy-900 font-mono"
+                                                                   placeholder="NIM..."
+                                                                   type="text"
+                                                                   maxlength="15" />
+                                                        </td>
+
+                                                        <td class="border-r border-slate-200 px-2 py-2 dark:border-navy-500">
+                                                            <select x-model="student.program"
+                                                                    @click.stop
+                                                                    class="form-select w-full rounded border border-slate-200 bg-white px-2 py-1 text-xs focus:border-primary dark:border-navy-450 dark:bg-navy-900"
+                                                                    style="background-position: right 0.4rem center; padding-right: 1.5rem;">
+                                                                <option value="">Pilih Prodi</option>
+                                                                <template x-for="prodi in studyPrograms" :key="prodi">
+                                                                    <option :value="prodi" x-text="prodi" :selected="prodi === student.program"></option>
+                                                                </template>
+                                                            </select>
+                                                        </td>
+
+                                                        <td class="px-2 py-2 text-center">
+                                                            <button type="button"
+                                                                    @click.stop.prevent="removeStudent(student._id)"
+                                                                    class="h-6 w-6 text-error hover:bg-error/10 rounded transition-colors">
+                                                                <i class="fa-solid fa-xmark text-[10px]"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                                <tr x-show="students.length === 0">
+                                                    <td colspan="5" class="px-3 py-2 text-center text-tiny-plus italic text-slate-400">
+                                                        Belum ada data mahasiswa. Klik tombol "Tambah Data" untuk menambahkan.
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <input type="hidden"
+                                               :name="'{{ $fieldName }}'"
+                                               :value="JSON.stringify(students.map(s => ({name: s.name, nim: s.nim, program: s.program})))">
+                                    </div>
+
+                                    <script>
+                                        (function() {
+                                            const editorId = 'studentListEditor{{ $approval->id }}';
+
+                                            if (typeof window[editorId] === 'function') {
+                                                return;
+                                            }
+
+                                            window[editorId] = function() {
+                                                return {
+                                                    students: [],
+                                                    studyPrograms: @json($studyPrograms ?? []),
+                                                    nextId: Date.now(),
+
+                                                    init() {
+                                                        let initialValue = null;
+
+                                                        const oldInput = @json(old($fieldName));
+                                                        if (oldInput) {
+                                                            if (typeof oldInput === 'string') {
+                                                                try {
+                                                                    initialValue = JSON.parse(oldInput);
+                                                                } catch (e) {
+                                                                    initialValue = null;
+                                                                }
+                                                            } else {
+                                                                initialValue = oldInput;
+                                                            }
+                                                        }
+
+                                                        if (!initialValue) {
+                                                            initialValue = @json($currentData[$fieldName] ?? []);
+                                                        }
+
+                                                        if (Array.isArray(initialValue) && initialValue.length > 0) {
+                                                            this.students = initialValue.map(student => ({
+                                                                _id: this.nextId++,
+                                                                name: student.name || '',
+                                                                nim: student.nim || '',
+                                                                program: student.program || ''
+                                                            }));
+                                                        }
+                                                    },
+
+                                                    addStudent() {
+                                                        this.students.push({
+                                                            _id: this.nextId++,
+                                                            name: '',
+                                                            nim: '',
+                                                            program: ''
+                                                        });
+                                                    },
+
+                                                    removeStudent(studentId) {
+                                                        const filtered = this.students.filter(s => s._id !== studentId);
+                                                        this.students = [...filtered];
+                                                    }
+                                                }
+                                            };
+                                        })();
+                                    </script>
+
+                                @elseif($config['type'] === 'select')
                                     <select
                                             name="{{ $fieldName }}"
                                             class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
@@ -148,14 +308,14 @@
                                     >
                                 @endif
 
-                                @if(isset($config['helper']))
+                                @if(isset($config['helper']) && !$errors->has('student_list'))
                                     <span class="text-tiny-plus text-slate-400 dark:text-navy-300 ms-1 mt-1 block">
                                         {{ $config['helper'] }}
                                     </span>
                                 @endif
 
                                 @error($fieldName)
-                                <span class="text-tiny-plus text-error ms-1 mt-1 block">{{ $message }}</span>
+                                    <span class="text-tiny-plus text-error ms-1 mt-1 block">{{ $message }}</span>
                                 @enderror
                             </label>
                         </div>

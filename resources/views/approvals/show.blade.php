@@ -215,6 +215,119 @@
                         </div>
                     </div>
 
+{{--                    @if($letter->hasStudentList())--}}
+{{--                        <div class="mb-5 rounded-lg border border-slate-200 p-4 dark:border-navy-500">--}}
+{{--                            --}}{{-- Header --}}
+{{--                            <div class="mb-4 flex items-center justify-between">--}}
+{{--                                <div class="flex items-center gap-2">--}}
+{{--                                    <div class="flex size-6 items-center justify-center rounded-lg bg-info/10 text-info">--}}
+{{--                                        <i class="fa-solid fa-users text-xs"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100">--}}
+{{--                                        Daftar Mahasiswa Kolektif--}}
+{{--                                    </h5>--}}
+{{--                                </div>--}}
+{{--                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">--}}
+{{--                                    Total: {{ count($letter->student_list) }} Orang--}}
+{{--                                </span>--}}
+{{--                            </div>--}}
+
+{{--                            --}}{{-- List Mahasiswa --}}
+{{--                            <div class="space-y-4">--}}
+{{--                                @foreach($letter->student_list as $index => $student)--}}
+{{--                                    <div class="flex flex-col space-y-2 border-b border-slate-200 pb-4 last:border-0 last:pb-0 dark:border-navy-500">--}}
+{{--                                        --}}{{-- Baris Atas: No & Nama --}}
+{{--                                        <div class="flex items-center gap-3">--}}
+{{--                                            <span class="flex size-5 shrink-0 items-center justify-center rounded bg-slate-100 text-[10px] font-bold text-slate-500 dark:bg-navy-600 dark:text-navy-200">--}}
+{{--                                                {{ $index + 1 }}--}}
+{{--                                            </span>--}}
+{{--                                            <div class="flex flex-col">--}}
+{{--                                                <span class="text-xs font-semibold text-slate-700 dark:text-navy-100">--}}
+{{--                                                    {{ $student['name'] ?? '-' }}--}}
+{{--                                                </span>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+
+{{--                                        --}}{{-- Baris Bawah: Detail NIM & Prodi --}}
+{{--                                        <div class="grid grid-cols-2 gap-4 pl-8">--}}
+{{--                                            <div class="flex flex-col">--}}
+{{--                                                <span class="text-tiny uppercase tracking-tight text-slate-400 dark:text-navy-300">NIM</span>--}}
+{{--                                                <span class="text-xs font-medium text-slate-600 dark:text-navy-100 font-mono italic">--}}
+{{--                                                    {{ $student['nim'] ?? '-' }}--}}
+{{--                                                </span>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="flex flex-col">--}}
+{{--                                                <span class="text-tiny uppercase tracking-tight text-slate-400 dark:text-navy-300">Program Studi</span>--}}
+{{--                                                <span class="text-xs font-medium text-slate-600 dark:text-navy-100">--}}
+{{--                                                    {{ $student['program'] ?? '-' }}--}}
+{{--                                            </span>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                @endforeach--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
+
+                    @if($letter->hasStudentList())
+                        <div class="mb-5 rounded-lg border border-slate-200 p-4 dark:border-navy-500">
+                            {{-- Header Card --}}
+                            <div class="mb-4 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex size-6 items-center justify-center rounded-lg bg-info/10 text-info">
+                                        <i class="fa-solid fa-users text-xs"></i>
+                                    </div>
+                                    <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100">
+                                        Daftar Mahasiswa
+                                    </h5>
+                                </div>
+                                <span class="text-xs font-medium text-slate-700 dark:text-navy-100 dark:border-navy-500">
+                                    Total: {{ count($letter->student_list) }} Orang
+                                </span>
+                            </div>
+
+                            {{-- Tabel dengan Style Data Surat --}}
+                            <div class="is-scrollbar-hidden min-w-full overflow-x-auto rounded-lg border border-slate-300 dark:border-navy-500">
+                                <table class="w-full text-left">
+                                    <thead>
+                                    <tr class="bg-slate-200 dark:bg-navy-800">
+                                        <th class="w-12 border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100 text-center">
+                                            No
+                                        </th>
+                                        <th class="border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                            Nama Mahasiswa
+                                        </th>
+                                        <th class="border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                            NIM
+                                        </th>
+                                        <th class="px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                            Program Studi
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-200 dark:divide-navy-500">
+                                    @foreach($letter->student_list as $index => $student)
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-navy-800/50">
+                                            <td class="border-r border-slate-200 px-4 py-3 text-center text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                                {{ $index + 1 }}
+                                            </td>
+                                            <td class="border-r border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                                {{ $student['name'] ?? '-' }}
+                                            </td>
+                                            <td class="border-r border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                                {{ $student['nim'] ?? '-' }}
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-slate-700 dark:text-navy-100">
+                                                {{ $student['program'] ?? '-' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- Documents --}}
                     @php
                         $supportingDocs = $letter->documents()->where('category', 'supporting')->get();
@@ -572,6 +685,27 @@
                             Download PDF Final
                         </a>
                     @endif
+
+                    {{-- Preview PDF Button (for internal letters) --}}
+                    @php
+                        $finalApproval = $letter->approvals()
+                            ->final()
+                            ->where('status', 'pending')
+                            ->where('is_active', true)
+                            ->exists();
+
+                        $canEdit = auth()->user()->can('editContent', $approval);
+                    @endphp
+                    @can('approve', $approval)
+                        @if(!$letter->letter_type->isExternal() && ($finalApproval || $canEdit))
+                            <a href="{{ route('approvals.preview-pdf', $letter) }}"
+                               target="_blank"
+                               class="btn w-full bg-info font-medium text-white hover:bg-info-focus active:bg-info-focus/90">
+                                <i class="fas fa-eye mr-2"></i>
+                                Preview PDF
+                            </a>
+                        @endif
+                    @endcan
                 </div>
             </div>
         </div>
