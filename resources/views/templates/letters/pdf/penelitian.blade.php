@@ -1,4 +1,4 @@
-@extends('pdf.layouts.official-letter', ['title' => 'Surat Permohonan Penelitian'])
+@extends('templates.letters.pdf.layouts.official-letter', ['title' => 'Surat Permohonan Penelitian'])
 
 @section('extra-style')
     <style>

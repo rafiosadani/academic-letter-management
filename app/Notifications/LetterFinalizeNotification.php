@@ -84,11 +84,11 @@ class LetterFinalizeNotification extends Notification implements ShouldQueue
             'title' => 'Surat Selesai Diproses',
             'message' => $this->getMessage(),
             'action' => [
-                'text' => 'Lihat Detail',
+                'text' => 'Lihat & Donwload',
                 'url' => route('letters.show', $this->letterRequest),
                 'method' => 'GET',
             ],
-            'icon' => 'fa-file-circle-check',
+            'icon' => 'fa-circle-check',
             'color' => 'success',
             'category' => NotificationCategory::LETTER_STATUS->value,
             'priority' => NotificationPriority::HIGH->value,

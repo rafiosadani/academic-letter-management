@@ -1,4 +1,4 @@
-@extends('pdf.layouts.official-letter', ['title' => 'Surat Dispensasi Mahasiswa'])
+@extends('templates.letters.pdf.layouts.official-letter', ['title' => 'Surat Dispensasi Mahasiswa'])
 
 @section('extra-style')
     <style>

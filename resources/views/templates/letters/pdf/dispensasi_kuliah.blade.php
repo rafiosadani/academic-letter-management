@@ -1,4 +1,4 @@
-@extends('pdf.layouts.official-letter', ['title' => 'Surat Dispensasi Perkuliahan'])
+@extends('templates.letters.pdf.layouts.official-letter', ['title' => 'Surat Dispensasi Perkuliahan'])
 
 @section('extra-style')
     <style>
