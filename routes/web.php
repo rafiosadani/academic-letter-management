@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Approval\ApprovalController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Approval\ApprovalController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Document\DocumentController;
 use App\Http\Controllers\Letter\LetterRequestController;
 use App\Http\Controllers\Master\AcademicYearController;
@@ -13,10 +14,10 @@ use App\Http\Controllers\Master\StudyProgramController;
 use App\Http\Controllers\Master\UserController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Notification\NotificationSettingController;
+use App\Http\Controllers\PDF\PDFController;
 use App\Http\Controllers\Setting\ApprovalFlowController;
 use App\Http\Controllers\Setting\LetterNumberConfigController;
 use App\Http\Controllers\Setting\SettingController;
-use App\Http\Controllers\PDF\PDFController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,7 +36,9 @@ Route::middleware('guest')->prefix('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () { return view('dashboard.index'); })->name('dashboard');
+//    Route::get('/dashboard', function () { return view('dashboard.index'); })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
 
     // ============================================================
     // MASTER DATA ROUTES
