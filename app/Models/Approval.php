@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OfficialPosition;
 use App\Traits\RecordSignature;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -207,6 +208,30 @@ class Approval extends Model
     {
         $value = $this->flow_snapshot['on_reject'] ?? null;
         return $value ? \App\Enums\ApprovalAction::from($value) : null;
+    }
+
+    public function getAssignedAuthorityAttribute(): string
+    {
+        if ($this->assigned_approver_id && $this->assignedApprover) {
+            return $this->assignedApprover->profile->full_name;
+        }
+
+        if ($this->approved_by && $this->approver) {
+            return $this->approver->profile->full_name;
+        }
+
+        $flow = new ApprovalFlow($this->flow_snapshot);
+        $pejabat = $flow->currentPejabat();
+
+        if ($pejabat?->user?->profile) {
+            return $pejabat->user->profile->full_name;
+        }
+
+        $labels = array_map(function($slug) {
+            return OfficialPosition::from($slug)->label();
+        }, $this->required_positions);
+
+        return implode(' atau ', $labels);
     }
 
     // ============================================

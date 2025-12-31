@@ -149,7 +149,7 @@
                         <p class="font-medium text-slate-700 dark:text-navy-100 group-hover:text-primary dark:group-hover:text-accent-light transition-colors">
                             ${title}
                         </p>
-                        <p class="mt-1 text-xs text-slate-500 dark:text-navy-300">
+                        <p class="mt-1 text-xs text-justify text-slate-500 dark:text-navy-300">
                             ${message}
                         </p>
                         <p class="mt-1 text-xs text-slate-400 dark:text-navy-400">

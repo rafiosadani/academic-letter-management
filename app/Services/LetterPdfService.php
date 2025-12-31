@@ -242,7 +242,7 @@ class LetterPdfService
                 ],
             ],
             LetterType::DISPENSASI_KULIAH => [
-                'nama_kegiatan' => $this->formatForDocument($letter->data_input['nama_kegiatan'] ?? '-'),
+                'nama_kegiatan' => $letter->data_input['nama_kegiatan'] ?? '-',
                 'tanggal_kegiatan' => $letter->data_input['tanggal_kegiatan']
                     ? Carbon::parse($letter->data_input['tanggal_kegiatan'])->translatedFormat('l, d F Y')
                     : '-',
@@ -273,23 +273,15 @@ class LetterPdfService
      * Parse student list for Dispensasi Kuliah.
      * Format: Name | NIM | Program (each line)
      */
-    private function parseStudentList(string $input): array
+    private function parseStudentList(array $students): array
     {
-        if (empty($input)) return [];
-
-        $students = [];
-        foreach (explode("\n", $input) as $line) {
-            $line = trim($line);
-            if (empty($line)) continue;
-
-            $parts = array_map('trim', explode('|', $line));
-            $students[] = [
-                'name' => $this->formatForDocument($parts[0] ?? '-'),
-                'nim' => $parts[1] ?? '-',
-                'program' => $this->formatForDocument($parts[2] ?? '-'),
+        return collect($students)->map(function ($student) {
+            return [
+                'name' => $this->formatForDocument($student['name'] ?? '-'),
+                'nim' => $student['nim'] ?? '-',
+                'program' => $this->formatForDocument($student['program'] ?? '-'),
             ];
-        }
-        return $students;
+        })->toArray();
     }
 
     /**

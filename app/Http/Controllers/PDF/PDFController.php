@@ -149,7 +149,7 @@ class PDFController extends Controller
                 ],
             ],
             LetterType::DISPENSASI_KULIAH => [
-                'nama_kegiatan' => $this->formatForDocument($letter->data_input['nama_kegiatan'] ?? '-'),
+                'nama_kegiatan' => $letter->data_input['nama_kegiatan'] ?? '-',
                 'tanggal_kegiatan' => $letter->data_input['tanggal_kegiatan']
                     ? Carbon::parse($letter->data_input['tanggal_kegiatan'])->translatedFormat('l, d F Y')
                     : '-',

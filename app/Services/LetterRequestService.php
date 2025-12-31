@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Enums\LetterType;
+use App\Events\LetterRequestSubmitted;
+use App\Events\LetterResubmitted;
 use App\Helpers\LogHelper;
 use App\Models\AcademicYear;
 use App\Models\ApprovalFlow;
@@ -19,7 +21,7 @@ class LetterRequestService
     public function create(array $data, User $student): LetterRequest
     {
         try {
-            return DB::transaction(function () use ($data, $student) {
+            $letterRequest = DB::transaction(function () use ($data, $student) {
                 // Get active semester and academic year
                 $activeSemester = Semester::where('is_active', true)->firstOrFail();
                 $activeAcademicYear = AcademicYear::where('is_active', true)->firstOrFail();
@@ -51,6 +53,12 @@ class LetterRequestService
 
                 return $letterRequest;
             });
+
+            // Dispatch event - Notify student + first approver
+            event(new LetterRequestSubmitted($letterRequest));
+
+            return $letterRequest;
+
         } catch (\Exception $e) {
             LogHelper::logError('create', 'letter request', $e, [
                 'letter_type' => $data['letter_type']->value ?? $data['letter_type'],
@@ -98,6 +106,15 @@ class LetterRequestService
     {
         try {
             return DB::transaction(function () use ($letterRequest, $data) {
+                $previousRejectionReason = null;
+                if ($letterRequest->status === 'rejected') {
+                    $lastRejection = $letterRequest->rejectionHistories()
+                        ->latest('rejected_at')
+                        ->first();
+
+                    $previousRejectionReason = $lastRejection?->reason;
+                }
+
                 // Update parent profile if provided
                 if (isset($data['parent_name'])) {
                     $letterRequest->student->profile->update([
@@ -125,6 +142,9 @@ class LetterRequestService
                 $letterRequest->approvals()->where('step', 1)->update([
                     'is_active' => true,
                 ]);
+
+                // Dispatch event - Notify first approver about resubmission
+                event(new LetterResubmitted($letterRequest, $previousRejectionReason));
 
                 return $letterRequest->fresh();
             });

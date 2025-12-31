@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Enums\ApprovalAction;
+use App\Events\ApprovalContentEdited;
+use App\Events\ApprovalProcessed;
+use App\Events\LetterFinalized;
 use App\Helpers\LogHelper;
 use App\Models\Approval;
 use App\Models\LetterRequest;
@@ -58,8 +61,8 @@ class ApprovalService
                     $this->moveToNextStep($letter);
                 }
 
-                // Send notifications
-                $this->notifyStakeholders($letter, $approval, 'approved', $approver);
+                // Dispatch event - Notify student + next approver
+                event(new ApprovalProcessed($approval, 'approved', $note));
             });
 
             LogHelper::logSuccess('approved', 'approval', [
@@ -212,8 +215,8 @@ class ApprovalService
                     ]);
                 }
 
-                // Send notifications
-                $this->notifyStakeholders($letter, $approval, 'rejected', $rejector);
+                // Dispatch event - Notify student
+                event(new ApprovalProcessed($approval, 'rejected', $reason));
             });
 
             LogHelper::logSuccess('rejected', 'approval', [
@@ -243,10 +246,15 @@ class ApprovalService
             DB::transaction(function () use ($approval, $formData, $editor) {
                 $letter = $approval->letterRequest;
 
+                $oldData = $letter->data_input;
+
                 // Update letter data
                 $letter->update([
                     'data_input' => $formData,
                 ]);
+
+                // Dispatch Event - Notify student that content was edited
+                event(new ApprovalContentEdited($approval, $oldData, $formData));
             });
 
             LogHelper::logSuccess('edited content', 'approval', [
@@ -289,6 +297,10 @@ class ApprovalService
             $letter->update([
                 'status' => 'completed',
             ]);
+
+            // Dispatch Event - Notify student that letter is final and ready for download
+            $downloadUrl = route('letters.download-pdf', $letter);
+            event(new LetterFinalized($letter, $letterNumber, $downloadUrl));
         }
     }
 
@@ -365,20 +377,13 @@ class ApprovalService
         string $action,
         User $actor
     ): void {
-        // TODO: Implement notification logic in Phase 5D
-        // For now, just log
-        LogHelper::logSuccess('notification queued', 'approval', [
+        LogHelper::logSuccess('notification dispatched via event', 'approval', [
             'letter_request_id' => $letter->id,
             'approval_id' => $approval->id,
             'action' => $action,
             'actor_id' => $actor->id,
             'student_id' => $letter->student_id,
         ]);
-
-        // Notifications to send:
-        // 1. Student (always)
-        // 2. Next approver (if exists)
-        // 3. Previous approver (for tracking)
     }
 
     /**

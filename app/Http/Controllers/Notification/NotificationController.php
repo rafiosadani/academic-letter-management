@@ -37,7 +37,7 @@ class NotificationController extends Controller
         // Get ALL unread notifications for dropdown (10 data notifikasi terakhir)
         $allUnread = $user->unreadNotifications()
             ->orderBy('created_at', 'desc')
-            ->limit(10)
+            ->limit(5)
             ->get()
             ->map(function ($notification) {
                 return [

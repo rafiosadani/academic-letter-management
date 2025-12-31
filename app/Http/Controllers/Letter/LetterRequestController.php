@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Letter;
 
 use App\Enums\LetterType;
 use App\Enums\OfficialPosition;
+use App\Events\LetterFinalized;
 use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Letter\StoreLetterRequestRequest;
@@ -435,6 +436,10 @@ class LetterRequestController extends Controller
                     'letter_number' => $request->letter_number,
                 ]);
 
+                // Dispatch Event - Notify student that letter is final and ready for download
+                $downloadUrl = route('letters.download-pdf', $letter);
+                event(new LetterFinalized($letter, $request->letter_number, $downloadUrl));
+
                 // LOG SUCCESS
                 LogHelper::logSuccess('uploaded', 'final_pdf', [
                     'letter_request_id' => $letter->id,
@@ -464,6 +469,8 @@ class LetterRequestController extends Controller
             return redirect()->back()->with('notification_data', [
                 'type' => 'error',
                 'text' => 'Gagal upload PDF: ' . $e->getMessage(),
+                'position' => 'center-top',
+                'duration' => 4000,
             ]);
         }
     }

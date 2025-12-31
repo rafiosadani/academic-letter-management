@@ -22,9 +22,8 @@ class UploadFinalPdfRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'final_pdf' => ['required', 'file', 'mimes:pdf', 'max:5120', // 5MB
-            ],
-            'letter_number' => ['required', 'string', 'max:100'],
+            'final_pdf' => ['required', 'file', 'mimes:pdf', 'max:5120'], // 5MB
+            'letter_number' => ['required', 'string', 'max:100', 'unique:letter_requests,letter_number'],
             'note' => ['nullable', 'string', 'max:500'],
         ];
     }
@@ -41,6 +40,7 @@ class UploadFinalPdfRequest extends FormRequest
             'final_pdf.max' => 'Ukuran file maksimal 5MB.',
             'letter_number.required' => 'Nomor surat harus diisi.',
             'letter_number.max' => 'Nomor surat maksimal 100 karakter.',
+            'letter_number.unique' => 'Nomor surat sudah digunakan oleh pengajuan lain.',
             'note.max' => 'Catatan maksimal 500 karakter.',
         ];
     }

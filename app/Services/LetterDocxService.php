@@ -107,7 +107,7 @@ class LetterDocxService
      */
     private function getTemplatePath(LetterType $letterType): string
     {
-        return storage_path("app/templates/letters/" . $letterType->templateFile());
+        return resource_path("templates/letters/docx/" . $letterType->templateFile());
     }
 
     /**

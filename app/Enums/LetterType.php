@@ -446,16 +446,17 @@ enum LetterType: string
         return match($this) {
             self::SKAK => 'skak_general.docx',
             self::SKAK_TUNJANGAN => 'skak_tunjangan.docx',
-            default => throw new \Exception("No template defined for this letter type"),
+            default => throw new \Exception("Template DOCX tidak didefinisikan untuk jenis surat ini"),
         };
     }
 
     public function templateView(): string
     {
         return match($this) {
-            self::PENELITIAN => 'pdf.penelitian',
-            self::DISPENSASI_KULIAH => 'pdf.dispensasi_kuliah',
-            self::DISPENSASI_MAHASISWA => 'pdf.dispensasi_mahasiswa',
+            self::PENELITIAN => 'templates.letters.pdf.penelitian',
+            self::DISPENSASI_KULIAH => 'templates.letters.pdf.dispensasi_kuliah',
+            self::DISPENSASI_MAHASISWA => 'templates.letters.pdf.dispensasi_mahasiswa',
+            default => throw new \Exception("Template PDF tidak didefinisikan untuk jenis surat ini"),
         };
     }
 }
