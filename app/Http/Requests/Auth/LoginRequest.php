@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Auth;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
@@ -39,5 +41,34 @@ class LoginRequest extends FormRequest
 
             'remember.boolean'  => 'Format remember tidak valid.',
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        $allErrors = $validator->errors()->all();
+
+        $notificationArray = [];
+        foreach ($allErrors as $error) {
+            $notificationArray[] = [
+                'type' => 'error',
+                'text' => $error,
+                'position' => 'center-top',
+                'duration' => 3000,
+            ];
+        }
+
+        session()->flash('notification_data', $notificationArray);
+
+        throw (new ValidationException($validator))
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 }

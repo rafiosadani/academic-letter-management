@@ -43,7 +43,7 @@
                         placeholder="Enter Password"
                         type="password"
                     />
-                    <span class="pointer-events-none absolute left-0 flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                    <span class="pointer-events-none absolute z-20 left-0 flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="size-5 transition-colors duration-200"

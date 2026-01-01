@@ -516,5 +516,4 @@ class UserController extends Controller
                 return [$program->id => $program->degree_name];
             });
     }
-
 }

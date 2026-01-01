@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Master\User;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
-class CreateUserRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,16 +28,11 @@ class CreateUserRequest extends FormRequest
             // User credentials
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)],
-            'status' => ['required', 'boolean'],
-            'role_id' => ['required', 'exists:roles,id'],
 
             // User profile
             'full_name' => ['required', 'string', 'max:255'],
-            'student_or_employee_id' => ['string', 'unique:user_profiles,student_or_employee_id', 'max:50'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // 2MB
-            'study_program_id' => ['nullable', 'integer', 'exists:study_programs,id'],
-            'address' => ['nullable', 'string', 'max:500'],
+            'student_or_employee_id' => ['required', 'string', 'unique:user_profiles,student_or_employee_id', 'max:50', 'regex:/^[0-9]+$/'],
+            'study_program_id' => ['required', 'integer', 'exists:study_programs,id'],
         ];
     }
 
@@ -51,14 +46,9 @@ class CreateUserRequest extends FormRequest
         return [
             'email' => 'Email',
             'password' => 'Password',
-            'status' => 'Status Akun',
-            'role_id' => 'Role',
             'full_name' => 'Nama Lengkap',
-            'student_or_employee_id' => 'NIM/NIP',
-            'phone' => 'Nomor Telepon',
-            'photo' => 'Foto Profil',
+            'student_or_employee_id' => 'NIM',
             'study_program_id' => 'Program Studi',
-            'address' => 'Alamat',
         ];
     }
 
@@ -82,10 +72,8 @@ class CreateUserRequest extends FormRequest
             'email.email' => 'Format email tidak valid.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'password.min' => 'Password minimal :min karakter.',
-            'status.boolean' => 'Nilai status tidak valid.',
-            'photo.image' => 'File harus berupa gambar.',
-            'photo.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
-            'photo.max' => 'Ukuran gambar maksimal 2MB.',
+            'student_or_employee_id.regex' => 'NIM harus berupa angka.',
+            'student_or_employee_id.unique' => 'NIM sudah terdaftar dalam sistem.',
         ];
     }
 

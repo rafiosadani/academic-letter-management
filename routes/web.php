@@ -3,6 +3,7 @@
 use App\Http\Controllers\Approval\ApprovalController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Document\DocumentController;
 use App\Http\Controllers\Letter\LetterRequestController;
@@ -29,10 +30,13 @@ Route::middleware('guest')->prefix('auth')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
 
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
+
     // Register
-    Route::get('register', function () {
-        return view('auth.register');
-    })->name('register');
+//    Route::get('register', function () {
+//        return view('auth.register');
+//    })->name('register');
 });
 
 Route::middleware('auth')->group(function () {
