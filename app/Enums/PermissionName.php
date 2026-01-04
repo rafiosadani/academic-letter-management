@@ -72,6 +72,8 @@ enum PermissionName: string
     // NOTIFICATION
     // ============================================
     case NOTIFICATION_VIEW = 'notification.view';
+    case NOTIFICATION_SETTINGS_VIEW = 'notification.settings.view';
+    case NOTIFICATION_SETTINGS_UPDATE = 'notification.settings.update';
 
     // ============================================
     // REPORT (LAPORAN)
@@ -99,10 +101,6 @@ enum PermissionName: string
     case SETTINGS_LETTER_NUMBER_CREATE = 'settings.letter_number.create';
     case SETTINGS_LETTER_NUMBER_UPDATE = 'settings.letter_number.update';
     case SETTINGS_LETTER_NUMBER_DELETE = 'settings.letter_number.delete';
-
-    // Notification Settings (Pengaturan Notifikasi)
-    case SETTINGS_NOTIFICATION_VIEW = 'settings.notification.view';
-    case SETTINGS_NOTIFICATION_UPDATE = 'settings.notification.update';
 
     // ============================================
     // PROFILE
@@ -189,6 +187,8 @@ enum PermissionName: string
 
             // Notification
             self::NOTIFICATION_VIEW => 'Lihat Notifikasi',
+            self::NOTIFICATION_SETTINGS_VIEW => 'Lihat Pengaturan Notifikasi',
+            self::NOTIFICATION_SETTINGS_UPDATE => 'Edit Pengaturan Notifikasi',
 
             // Report
             self::REPORT_STATISTIC_VIEW => 'Lihat Statistik Surat',
@@ -210,10 +210,6 @@ enum PermissionName: string
             self::SETTINGS_LETTER_NUMBER_CREATE => 'Tambah Konfigurasi Nomor Surat',
             self::SETTINGS_LETTER_NUMBER_UPDATE => 'Edit Konfigurasi Nomor Surat',
             self::SETTINGS_LETTER_NUMBER_DELETE => 'Hapus Konfigurasi Nomor Surat',
-
-            // Settings - Notification
-            self::SETTINGS_NOTIFICATION_VIEW => 'Lihat Pengaturan Notifikasi',
-            self::SETTINGS_NOTIFICATION_UPDATE => 'Edit Pengaturan Notifikasi',
 
             // Profile
             self::PROFILE_VIEW => 'Lihat Profil',

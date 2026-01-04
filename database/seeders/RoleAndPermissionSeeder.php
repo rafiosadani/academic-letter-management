@@ -88,6 +88,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Report
             PermissionName::REPORT_STATISTIC_VIEW->value,
@@ -124,6 +126,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Report
             PermissionName::REPORT_STATISTIC_VIEW->value,
@@ -158,6 +162,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Report
             PermissionName::REPORT_STATISTIC_VIEW->value,
@@ -194,6 +200,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Report
             PermissionName::REPORT_STATISTIC_VIEW->value,
@@ -230,6 +238,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Report
             PermissionName::REPORT_STATISTIC_VIEW->value,
@@ -266,6 +276,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Report
             PermissionName::REPORT_STATISTIC_VIEW->value,
@@ -311,6 +323,8 @@ class RoleAndPermissionSeeder extends Seeder
 
             // Notification
             PermissionName::NOTIFICATION_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_VIEW->value,
+            PermissionName::NOTIFICATION_SETTINGS_UPDATE->value,
 
             // Profile
             PermissionName::PROFILE_VIEW->value,

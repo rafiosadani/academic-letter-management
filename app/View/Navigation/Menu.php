@@ -196,15 +196,53 @@ class Menu
 
     private static function notifikasi(): array
     {
-        $hasPermission = auth()->user()?->hasPermissionTo(PermissionName::NOTIFICATION_VIEW->value) ?? false;
+//        $hasPermission = auth()->user()?->hasPermissionTo(PermissionName::NOTIFICATION_VIEW->value) ?? false;
+//
+//        return [
+//            'text' => 'Notifikasi',
+//            'route' => route('notifications.index'),
+//            'icon' => self::iconNotifikasi(),
+//            'active' => ['notifications.*'],
+//            'hasPanel' => false,
+//            'authorized' => $hasPermission,
+//        ];
+
+        $submenus = [
+            [
+                'text' => 'Kotak Masuk',
+                'route' => route('notifications.index'),
+                'active' => ['notifications.index'],
+                'icon' => 'fa-inbox',
+                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::NOTIFICATION_VIEW->value) ?? false,
+            ],
+            [
+                'text' => 'Pengaturan Notifikasi',
+                'route' => route('notifications.settings'),
+                'active' => ['notifications.settings'],
+                'icon' => 'fa-bell-concierge',
+                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::NOTIFICATION_SETTINGS_VIEW->value) ?? false,
+            ],
+        ];
+
+        $authorizedSubmenus = collect($submenus)
+            ->filter(fn($sub) => $sub['authorized'])
+            ->values()
+            ->toArray();
+
+        if (empty($authorizedSubmenus)) {
+            return ['authorized' => false];
+        }
 
         return [
             'text' => 'Notifikasi',
+//            'route' => $authorizedSubmenus[0]['route'],
             'route' => route('notifications.index'),
             'icon' => self::iconNotifikasi(),
-            'active' => ['notifications.index'],
-            'hasPanel' => false,
-            'authorized' => $hasPermission,
+            'active' => ['notifications.*'],
+            'hasPanel' => true,
+            'panelTitle' => 'Notifikasi',
+            'submenu' => $authorizedSubmenus,
+            'authorized' => true,
         ];
     }
 
@@ -279,13 +317,6 @@ class Menu
                 'icon' => 'fa-hashtag',
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::SETTINGS_LETTER_NUMBER_VIEW->value) ?? false,
             ],
-            [
-                'text' => 'Pengaturan Notifikasi',
-                'route' => route('notifications.settings'),
-                'active' => ['notifications.settings'],
-                'icon' => 'fa-bell',
-                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::SETTINGS_NOTIFICATION_VIEW->value) ?? false,
-            ],
         ];
 
         $authorizedSubmenus = collect($submenus)
@@ -299,9 +330,9 @@ class Menu
 
         return [
             'text' => 'Pengaturan',
-            'route' => route('notifications.settings'),
+            'route' => route('settings.general.edit'),
             'icon' => self::iconPengaturan(),
-            'active' => ['settings.*', 'notifications.settings'],
+            'active' => ['settings.*'],
             'hasPanel' => true,
             'panelTitle' => 'Pengaturan',
             'submenu' => $authorizedSubmenus,
@@ -315,7 +346,7 @@ class Menu
 
         return [
             'text' => 'Profil Saya',
-            'route' => '#', // TODO: Implement route
+            'route' => route('profile.edit'),
             'icon' => self::iconProfile(),
             'active' => ['profile.*'],
             'hasPanel' => false,

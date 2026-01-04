@@ -88,7 +88,7 @@ class LetterFinalizeNotification extends Notification implements ShouldQueue
                 'url' => route('letters.show', $this->letterRequest),
                 'method' => 'GET',
             ],
-            'icon' => 'fa-circle-check',
+            'icon' => 'fa-file-arrow-down',
             'color' => 'success',
             'category' => NotificationCategory::LETTER_STATUS->value,
             'priority' => NotificationPriority::HIGH->value,

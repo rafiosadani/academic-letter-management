@@ -405,7 +405,16 @@ class ApprovalService
 
         return Approval::where('status', 'pending')
             ->where('is_active', true)
-            ->whereJsonContains('required_positions', $userPosition->value)
+            ->where(function ($query) use ($user, $userPosition) {
+                $query->where(function ($q) use ($user) {
+                    $q->whereNotNull('assigned_approver_id')
+                        ->where('assigned_approver_id', $user->id);
+                })
+                ->orWhere(function ($q) use ($userPosition) {
+                    $q->whereNull('assigned_approver_id')
+                        ->whereJsonContains('required_positions', $userPosition->value);
+                });
+            })
             ->whereHas('letterRequest')
             ->with([
                 'letterRequest.student.profile',

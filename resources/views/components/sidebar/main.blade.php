@@ -18,20 +18,6 @@
         <!-- Bottom Links -->
         <div class="flex flex-col items-center space-y-3 py-3">
             <!-- Profile -->
-            <div id="profile-wrapper" class="flex">
-                <button id="profile-ref" class="avatar cursor-pointer size-12">
-                    <img
-                            class="rounded-full"
-                            src="{{ asset('assets/images/200x200.png') }}"
-                            alt="avatar"
-                    />
-                    <span
-                            class="absolute right-0 size-3.5 rounded-full border-2 border-white bg-success dark:border-navy-700"
-                    ></span>
-                </button>
-
-                <x-header.profile/>
-            </div>
             <x-ui.profile-dropdown location="sidebar" size="lg"/>
         </div>
     </div>

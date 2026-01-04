@@ -131,10 +131,10 @@
                         @endforeach
                     </div>
                 </div>
-                <a href="#"
+                <a href="{{ route('profile.edit') }}"
                    class="btn mt-3 inline-flex items-center space-x-2 text-xs-plus text-white bg-primary hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
                     <i class="fa-solid fa-user-pen"></i>
-                    <span>Ubah Profil</span>
+                    <span>Edit Profil</span>
                 </a>
             @endif
         </x-modal.alert>

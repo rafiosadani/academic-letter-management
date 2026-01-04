@@ -460,7 +460,7 @@
 
         {{-- Sidebar Actions --}}
         <div class="col-span-12 lg:col-span-4">
-            <div class="card sticky top-4">
+            <div class="card sticky top-18">
                 <div class="border-b border-slate-200 p-4 dark:border-navy-500">
                     <div class="flex item-center space-x-2">
                         <div class="flex size-7 items-center justify-center rounded-lg

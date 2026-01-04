@@ -8,7 +8,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-navy-900">
 <div class="min-h-screen flex items-center justify-center px-4">
-    <div class="max-w-md w-full">
+    <div class="max-w-lg w-full">
         <div class="text-center">
             {{-- Icon --}}
             <div class="flex justify-center mb-6">
@@ -48,7 +48,7 @@
                         <i class="fa-solid fa-circle-info mr-2 text-info"></i>
                         Kemungkinan penyebab:
                     </p>
-                    <ul class="text-left list-disc list-inside space-y-1 max-w-sm mx-auto">
+                    <ul class="text-center list-disc list-inside space-y-1 max-w-md mx-auto">
                         <li>Role Anda tidak memiliki permission untuk halaman ini</li>
                         <li>Anda mencoba mengakses resource yang tidak diizinkan</li>
                         <li>Permission Anda telah diubah oleh administrator</li>

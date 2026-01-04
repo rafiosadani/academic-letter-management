@@ -1,8 +1,9 @@
 <x-layouts.app title="Pusat Notifikasi">
     <x-ui.breadcrumb
-            title="Pusat Notifikasi"
-            :items="[
-            ['label' => 'Notifikasi']
+        title="Pusat Notifikasi"
+        :items="[
+            ['label' => 'Notifikasi'],
+            ['label' => 'Inbox']
         ]"
     />
 
@@ -55,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="card mt-3">
+            <div class="card mt-3 border border-slate-200 dark:border-navy-500">
                 <div class="is-scrollbar-hidden min-w-full overflow-x-auto">
                     @forelse($notifications as $notification)
                         @php
@@ -65,7 +66,7 @@
 
                         <div class="flex items-start space-x-4 border-b border-slate-150 p-4 dark:border-navy-500 {{ !$isRead ? 'bg-primary/5 dark:bg-accent/10' : '' }}">
                             {{-- Icon --}}
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg {{ !$isRead ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300' }}">
+                            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg {{ !$isRead ? 'bg-primary/20 text-primary' : 'bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300' }}">
                                 <i class="fa-solid {{ $data['icon'] ?? 'fa-solid fa-bell' }} text-lg"></i>
                             </div>
 
