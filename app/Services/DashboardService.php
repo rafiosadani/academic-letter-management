@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Approval;
 use App\Models\LetterRequest;
+use App\Models\Semester;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -11,13 +12,54 @@ use Illuminate\Support\Facades\DB;
 class DashboardService
 {
     /**
+     * Get date range based on filter
+     */
+    protected function getDateRange(string $filter): array
+    {
+        return match($filter) {
+            'this_month' => [
+                'start' => Carbon::now()->startOfMonth(),
+                'end' => Carbon::now()->endOfMonth(),
+            ],
+            'last_30_days' => [
+                'start' => Carbon::now()->subDays(30),
+                'end' => Carbon::now(),
+            ],
+            'this_semester' => [
+                'start' => $this->getCurrentSemesterStart(),
+                'end' => $this->getCurrentSemesterEnd(),
+            ],
+            'all_time' => [
+                'start' => Carbon::create(2000, 1, 1),
+                'end' => Carbon::now(),
+            ],
+            default => [
+                'start' => Carbon::now()->startOfMonth(),
+                'end' => Carbon::now()->endOfMonth(),
+            ],
+        };
+    }
+
+    protected function getCurrentSemesterStart(): Carbon
+    {
+        $activeSemester = Semester::where('is_active', true)->first();
+        return $activeSemester?->start_date ?? Carbon::now()->startOfMonth();
+    }
+
+    protected function getCurrentSemesterEnd(): Carbon
+    {
+        $activeSemester = Semester::where('is_active', true)->first();
+        return $activeSemester?->end_date ?? Carbon::now()->endOfMonth();
+    }
+
+    /**
      * Get Student Dashboard Statistics
      */
-    public function getStudentStats(int $studentId): array
+    public function getStudentStats(int $studentId, string $filter = 'this_month'): array
     {
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
 
-        // Summary counts
+        // All time totals
         $total = LetterRequest::where('student_id', $studentId)->count();
         $inProgress = LetterRequest::where('student_id', $studentId)
             ->whereIn('status', ['in_progress', 'external_processing'])
@@ -29,26 +71,37 @@ class DashboardService
             ->where('status', 'rejected')
             ->count();
 
-        // This month stats
-        $thisMonthTotal = LetterRequest::where('student_id', $studentId)
-            ->where('created_at', '>=', $currentMonth)
+        // Filtered stats
+        $thisRangeTotal = LetterRequest::where('student_id', $studentId)
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
             ->count();
 
-        // Status distribution for pie chart
+        $inProgressFiltered = LetterRequest::where('student_id', $studentId)
+            ->whereIn('status', ['in_progress', 'external_processing'])
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+            ->count();
+        $completedFiltered = LetterRequest::where('student_id', $studentId)
+            ->where('status', 'completed')
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+            ->count();
+        $rejectedFiltered = LetterRequest::where('student_id', $studentId)
+            ->where('status', 'rejected')
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+            ->count();
+
         $statusDistribution = [
-            'in_progress' => $inProgress,
-            'completed' => $completed,
-            'rejected' => $rejected,
+            'in_progress' => $inProgressFiltered,
+            'completed' => $completedFiltered,
+            'rejected' => $rejectedFiltered,
         ];
 
-        // By letter type for bar chart
         $byType = LetterRequest::where('student_id', $studentId)
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
             ->select('letter_type', DB::raw('count(*) as total'))
             ->groupBy('letter_type')
             ->pluck('total', 'letter_type')
             ->toArray();
 
-        // Average processing time (completed letters only)
         $avgTime = LetterRequest::where('student_id', $studentId)
             ->where('status', 'completed')
             ->selectRaw('AVG(TIMESTAMPDIFF(DAY, created_at, updated_at)) as avg_days')
@@ -60,7 +113,7 @@ class DashboardService
                 'in_progress' => $inProgress,
                 'completed' => $completed,
                 'rejected' => $rejected,
-                'this_month' => $thisMonthTotal,
+                'this_month' => $thisRangeTotal,
                 'success_rate' => $total > 0 ? round(($completed / $total) * 100, 1) : 0,
                 'avg_processing_time' => round($avgTime ?? 0, 1),
             ],
@@ -71,9 +124,6 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get recent letters for student
-     */
     public function getRecentLetters(int $studentId, int $limit = 5)
     {
         return LetterRequest::where('student_id', $studentId)
@@ -83,9 +133,6 @@ class DashboardService
             ->get();
     }
 
-    /**
-     * Get in-progress letters with timeline for student
-     */
     public function getInProgressLetters(int $studentId)
     {
         return LetterRequest::where('student_id', $studentId)
@@ -99,7 +146,7 @@ class DashboardService
     /**
      * Get Staff Dashboard Statistics
      */
-    public function getStaffStats(int $userId): array
+    public function getStaffStats(int $userId, string $filter = 'this_month'): array
     {
         $userPosition = User::find($userId)->currentOfficialPosition?->position;
 
@@ -107,16 +154,14 @@ class DashboardService
             return $this->getEmptyStaffStats();
         }
 
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
         $today = Carbon::today();
 
-        // Pending approvals (step 1 - Drafter)
         $pending = Approval::where('status', 'pending')
             ->where('is_active', true)
             ->whereJsonContains('required_positions', $userPosition->value)
             ->count();
 
-        // Urgent (> 3 days)
         $urgent = Approval::where('status', 'pending')
             ->where('is_active', true)
             ->whereJsonContains('required_positions', $userPosition->value)
@@ -125,42 +170,35 @@ class DashboardService
             })
             ->count();
 
-        // Approved today
         $approvedToday = Approval::where('approved_by', $userId)
             ->where('status', 'approved')
             ->whereDate('approved_at', $today)
             ->count();
 
-        // Total this month
-        $totalMonth = Approval::where('approved_by', $userId)
+        $totalInRange = Approval::where('approved_by', $userId)
             ->whereIn('status', ['approved', 'rejected'])
-            ->where('approved_at', '>=', $currentMonth)
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->count();
 
-        // Approved vs rejected this month
-        $approvedMonth = Approval::where('approved_by', $userId)
+        $approvedInRange = Approval::where('approved_by', $userId)
             ->where('status', 'approved')
-            ->where('approved_at', '>=', $currentMonth)
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->count();
 
-        $rejectedMonth = Approval::where('approved_by', $userId)
+        $rejectedInRange = Approval::where('approved_by', $userId)
             ->where('status', 'rejected')
-            ->where('approved_at', '>=', $currentMonth)
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->count();
 
-        // Average processing time (total)
         $avgTime = Approval::where('approved_by', $userId)
             ->where('status', 'approved')
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->selectRaw('AVG(TIMESTAMPDIFF(HOUR, created_at, approved_at) / 24) as avg_days')
             ->value('avg_days');
 
-        // Average time per step (NEW!)
-        $avgTimePerStep = $this->getAvgTimePerStep($userId, 'staff');
-
-        // Activity last 7 days for chart
+        $avgTimePerStep = $this->getAvgTimePerStep($userId, 'staff', $filter);
         $activityData = $this->getActivityLast7Days($userId);
 
-        // Priority breakdown for radial chart
         $priorityBreakdown = [
             'urgent' => $urgent,
             'normal' => max(0, $pending - $urgent),
@@ -171,17 +209,17 @@ class DashboardService
                 'pending' => $pending,
                 'urgent' => $urgent,
                 'approved_today' => $approvedToday,
-                'total_month' => $totalMonth,
+                'total_month' => $totalInRange,
                 'avg_time' => round($avgTime ?? 0, 1),
-                'success_rate' => $totalMonth > 0 ? round(($approvedMonth / $totalMonth) * 100, 1) : 0,
+                'success_rate' => $totalInRange > 0 ? round(($approvedInRange / $totalInRange) * 100, 1) : 0,
             ],
             'charts' => [
                 'priority_breakdown' => $priorityBreakdown,
                 'activity_7days' => $activityData,
             ],
             'performance' => [
-                'approved_month' => $approvedMonth,
-                'rejected_month' => $rejectedMonth,
+                'approved_month' => $approvedInRange,
+                'rejected_month' => $rejectedInRange,
                 'avg_time_per_step' => $avgTimePerStep,
             ],
         ];
@@ -190,10 +228,13 @@ class DashboardService
     /**
      * Get average processing time per step
      */
-    protected function getAvgTimePerStep(int $userId, string $role): array
+    protected function getAvgTimePerStep(int $userId, string $role, string $filter = 'this_month'): array
     {
+        $dateRange = $this->getDateRange($filter);
+
         $approvals = Approval::where('approved_by', $userId)
             ->where('status', 'approved')
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->selectRaw('step, AVG(TIMESTAMPDIFF(HOUR, created_at, approved_at) / 24) as avg_days')
             ->groupBy('step')
             ->get();
@@ -217,7 +258,7 @@ class DashboardService
 
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
-            $days[] = $date->format('D'); // Mon, Tue, etc
+            $days[] = $date->format('D');
 
             $approvedCount = Approval::where('approved_by', $userId)
                 ->where('status', 'approved')
@@ -311,45 +352,39 @@ class DashboardService
     /**
      * Get Kasubbag Dashboard Statistics
      */
-    public function getKasubbagStats(int $userId): array
+    public function getKasubbagStats(int $userId, string $filter = 'this_month'): array
     {
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
         $today = Carbon::today();
 
-        // Pending paraf (step 2)
         $pending = Approval::where('status', 'pending')
             ->where('is_active', true)
             ->where('step', 2)
             ->count();
 
-        // Approved today
         $approvedToday = Approval::where('status', 'approved')
             ->where('step', 2)
             ->whereDate('approved_at', $today)
             ->count();
 
-        // Total this month
-        $totalMonth = Approval::where('step', 2)
+        $totalInRange = Approval::where('step', 2)
             ->whereIn('status', ['approved', 'rejected'])
-            ->where('approved_at', '>=', $currentMonth)
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->count();
 
-        // Success rate
-        $approvedMonth = Approval::where('step', 2)
+        $approvedInRange = Approval::where('step', 2)
             ->where('status', 'approved')
-            ->where('approved_at', '>=', $currentMonth)
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
             ->count();
 
-        $successRate = $totalMonth > 0 ? round(($approvedMonth / $totalMonth) * 100, 1) : 0;
-
-        // Average time per step
-        $avgTimePerStep = $this->getAvgTimePerStep($userId, 'kasubbag');
+        $successRate = $totalInRange > 0 ? round(($approvedInRange / $totalInRange) * 100, 1) : 0;
+        $avgTimePerStep = $this->getAvgTimePerStepForRole('kasubbag', $filter);
 
         return [
             'summary' => [
                 'pending' => $pending,
                 'approved_today' => $approvedToday,
-                'total_month' => $totalMonth,
+                'total_month' => $totalInRange,
                 'success_rate' => $successRate,
             ],
             'performance' => [
@@ -358,9 +393,25 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get pending approvals for Kasubbag
-     */
+    protected function getAvgTimePerStepForRole(string $role, string $filter = 'this_month'): array
+    {
+        $dateRange = $this->getDateRange($filter);
+        $steps = [1, 2, 3];
+        $result = [];
+
+        foreach ($steps as $step) {
+            $avg = Approval::where('step', $step)
+                ->where('status', 'approved')
+                ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])
+                ->selectRaw('AVG(TIMESTAMPDIFF(HOUR, created_at, approved_at) / 24) as avg_days')
+                ->value('avg_days');
+
+            $result["step_{$step}"] = round($avg ?? 0, 1);
+        }
+
+        return $result;
+    }
+
     public function getPendingApprovalsForKasubbag(int $userId)
     {
         return Approval::where('status', 'pending')
@@ -372,33 +423,19 @@ class DashboardService
             ->groupBy('letterRequest.letter_type');
     }
 
-    /**
-     * Get approval flow metrics (funnel data)
-     */
-    public function getApprovalFlowMetrics(): array
+    public function getApprovalFlowMetrics(string $filter = 'this_month'): array
     {
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
 
-        $submitted = LetterRequest::where('created_at', '>=', $currentMonth)->count();
-
-        $step1Approved = Approval::where('step', 1)
-            ->where('status', 'approved')
-            ->where('approved_at', '>=', $currentMonth)
-            ->count();
-
-        $step2Approved = Approval::where('step', 2)
-            ->where('status', 'approved')
-            ->where('approved_at', '>=', $currentMonth)
-            ->count();
-
-        $step3Approved = Approval::where('step', 3)
-            ->where('status', 'approved')
-            ->where('approved_at', '>=', $currentMonth)
-            ->count();
-
+        $submitted = LetterRequest::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
+        $step1Approved = Approval::where('step', 1)->where('status', 'approved')
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])->count();
+        $step2Approved = Approval::where('step', 2)->where('status', 'approved')
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])->count();
+        $step3Approved = Approval::where('step', 3)->where('status', 'approved')
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])->count();
         $completed = LetterRequest::where('status', 'completed')
-            ->where('updated_at', '>=', $currentMonth)
-            ->count();
+            ->whereBetween('updated_at', [$dateRange['start'], $dateRange['end']])->count();
 
         return [
             'submitted' => $submitted,
@@ -412,9 +449,6 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get bottleneck analysis (avg time per step)
-     */
     public function getBottleneckAnalysis(): array
     {
         $steps = [1, 2, 3];
@@ -429,7 +463,6 @@ class DashboardService
 
             $avgTimes[] = round($avg ?? 0, 1);
 
-            // Step labels
             if ($step === 1) $labels[] = 'Verifikasi Drafter';
             if ($step === 2) $labels[] = 'Paraf Kasubbag';
             if ($step === 3) $labels[] = 'TTE Wakil Dekan';
@@ -441,46 +474,30 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get Wakil Dekan Dashboard Statistics
-     */
-    public function getWakilDekanStats(): array
+    // ============================================
+    // WAKIL DEKAN METHODS
+    // ============================================
+
+    public function getWakilDekanStats(string $filter = 'this_month'): array
     {
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
         $currentYear = Carbon::now()->startOfYear();
         $today = Carbon::today();
 
-        // Pending TTE (step 3)
-        $pendingTte = Approval::where('status', 'pending')
-            ->where('is_active', true)
-            ->where('step', 3)
-            ->count();
-
-        // TTE today
-        $tteToday = Approval::where('status', 'approved')
-            ->where('step', 3)
-            ->whereDate('approved_at', $today)
-            ->count();
-
-        // Total this month
-        $totalMonth = Approval::where('step', 3)
-            ->whereIn('status', ['approved', 'rejected'])
-            ->where('approved_at', '>=', $currentMonth)
-            ->count();
-
-        // YTD total
+        $pendingTte = Approval::where('status', 'pending')->where('is_active', true)->where('step', 3)->count();
+        $tteToday = Approval::where('status', 'approved')->where('step', 3)->whereDate('approved_at', $today)->count();
+        $totalInRange = Approval::where('step', 3)->whereIn('status', ['approved', 'rejected'])
+            ->whereBetween('approved_at', [$dateRange['start'], $dateRange['end']])->count();
         $ytdTotal = LetterRequest::where('created_at', '>=', $currentYear)->count();
 
-        // Growth vs last year
         $lastYearTotal = LetterRequest::whereBetween('created_at', [
             $currentYear->copy()->subYear(),
             $currentYear->copy()->subYear()->endOfYear()
         ])->count();
-
         $growth = $lastYearTotal > 0 ? round((($ytdTotal - $lastYearTotal) / $lastYearTotal) * 100, 1) : 0;
 
-        // TAT (Turnaround Time) - Total avg
         $tat = LetterRequest::where('status', 'completed')
+            ->whereBetween('updated_at', [$dateRange['start'], $dateRange['end']])
             ->selectRaw('AVG(TIMESTAMPDIFF(DAY, created_at, updated_at)) as avg_days')
             ->value('avg_days');
 
@@ -488,7 +505,7 @@ class DashboardService
             'summary' => [
                 'pending_tte' => $pendingTte,
                 'tte_today' => $tteToday,
-                'total_month' => $totalMonth,
+                'total_month' => $totalInRange,
                 'ytd_total' => $ytdTotal,
                 'growth' => $growth,
                 'tat' => round($tat ?? 0, 1),
@@ -496,15 +513,12 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get pending approvals for Wakil Dekan
-     */
     public function getPendingApprovalsForWakilDekan(int $userId)
     {
         return Approval::where('status', 'pending')
             ->where('is_active', true)
             ->where('step', 3)
-            ->with(['letterRequest.student.profile', 'letterRequest.student.programStudi'])
+            ->with(['letterRequest.student.profile', 'letterRequest.student'])
             ->latest('created_at')
             ->get();
     }
@@ -512,9 +526,9 @@ class DashboardService
     /**
      * Get stats by Program Studi
      */
-    public function getStatsByProdi(): array
+    public function getStatsByProdi(string $filter = 'this_month'): array
     {
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
 
 //        $stats = LetterRequest::where('created_at', '>=', $currentMonth)
 //            ->join('student.profiles', 'letter_requests.student_id', '=', 'student.profiles.id')
@@ -522,7 +536,7 @@ class DashboardService
 //            ->groupBy('student_profiles.studyProgram')
 //            ->get();
 
-        $stats = LetterRequest::where('letter_requests.created_at', '>=', $currentMonth)
+        $stats = LetterRequest::whereBetween('letter_requests.created_at', [$dateRange['start'], $dateRange['end']])
             ->join('users', 'letter_requests.student_id', '=', 'users.id')
             ->join('user_profiles', 'users.id', '=', 'user_profiles.user_id')
             ->join('study_programs', 'user_profiles.study_program_id', '=', 'study_programs.id')
@@ -547,52 +561,31 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get trend data (YoY comparison)
-     */
     public function getTrendData(): array
     {
         $currentYear = Carbon::now()->year;
         $lastYear = $currentYear - 1;
-
         $months = [];
         $currentYearData = [];
         $lastYearData = [];
 
         for ($month = 1; $month <= 12; $month++) {
             $months[] = Carbon::create()->month($month)->format('M');
-
-            // Current year
-            $currentCount = LetterRequest::whereYear('created_at', $currentYear)
-                ->whereMonth('created_at', $month)
-                ->count();
-            $currentYearData[] = $currentCount;
-
-            // Last year
-            $lastCount = LetterRequest::whereYear('created_at', $lastYear)
-                ->whereMonth('created_at', $month)
-                ->count();
-            $lastYearData[] = $lastCount;
+            $currentYearData[] = LetterRequest::whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $month)->count();
+            $lastYearData[] = LetterRequest::whereYear('created_at', $lastYear)
+                ->whereMonth('created_at', $month)->count();
         }
 
         return [
             'categories' => $months,
             'series' => [
-                [
-                    'name' => (string) $lastYear,
-                    'data' => $lastYearData,
-                ],
-                [
-                    'name' => (string) $currentYear,
-                    'data' => $currentYearData,
-                ],
+                ['name' => (string) $lastYear, 'data' => $lastYearData],
+                ['name' => (string) $currentYear, 'data' => $currentYearData],
             ],
         ];
     }
 
-    /**
-     * Get insights and recommendations
-     */
     public function getInsights(): array
     {
         $bottleneck = $this->getBottleneckAnalysis();
@@ -600,38 +593,34 @@ class DashboardService
         $maxIndex = array_search($maxTime, $bottleneck['avg_times']);
         $bottleneckStep = $bottleneck['labels'][$maxIndex] ?? 'Unknown';
 
-        $urgent = Approval::where('status', 'pending')
-            ->where('is_active', true)
+        $urgent = Approval::where('status', 'pending')->where('is_active', true)
             ->whereHas('letterRequest', function ($q) {
                 $q->where('created_at', '<=', Carbon::now()->subDays(5));
-            })
-            ->count();
+            })->count();
 
         $growth = $this->getWakilDekanStats()['summary']['growth'];
 
         return [
-            'bottleneck' => [
-                'step' => $bottleneckStep,
-                'avg_time' => $maxTime,
-            ],
+            'bottleneck' => ['step' => $bottleneckStep, 'avg_time' => $maxTime],
             'urgent_count' => $urgent,
             'growth' => $growth,
         ];
     }
 
-    /**
-     * Get Admin Dashboard Statistics
-     */
-    public function getAdminStats(): array
+    // ============================================
+    // ADMIN METHODS
+    // ============================================
+
+    public function getAdminStats(string $filter = 'this_month'): array
     {
-        $currentMonth = Carbon::now()->startOfMonth();
+        $dateRange = $this->getDateRange($filter);
         $today = Carbon::today();
 
         $totalUsers = User::count();
         $totalLetters = LetterRequest::count();
         $pending = LetterRequest::whereIn('status', ['in_progress', 'external_processing'])->count();
         $todaySubmissions = LetterRequest::whereDate('created_at', $today)->count();
-        $thisMonthSubmissions = LetterRequest::where('created_at', '>=', $currentMonth)->count();
+        $rangeSubmissions = LetterRequest::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
 
         return [
             'summary' => [
@@ -639,20 +628,14 @@ class DashboardService
                 'total_letters' => $totalLetters,
                 'pending' => $pending,
                 'today' => $todaySubmissions,
-                'this_month' => $thisMonthSubmissions,
+                'this_month' => $rangeSubmissions,
             ],
         ];
     }
 
-    /**
-     * Get system health status
-     */
     public function getSystemHealth(): array
     {
-        // Check failed jobs
         $failedJobs = DB::table('failed_jobs')->count();
-
-        // Database health (simple ping)
         $dbHealthy = true;
         try {
             DB::connection()->getPdo();
@@ -660,14 +643,13 @@ class DashboardService
             $dbHealthy = false;
         }
 
-        // Storage usage
         $storagePath = storage_path('app');
         $totalSpace = disk_total_space($storagePath);
         $freeSpace = disk_free_space($storagePath);
         $usedPercent = round((($totalSpace - $freeSpace) / $totalSpace) * 100, 1);
 
         return [
-            'queue_status' => 'running', // Assume running (check via supervisor in production)
+            'queue_status' => 'running',
             'scheduler_status' => 'active',
             'database_status' => $dbHealthy ? 'healthy' : 'error',
             'storage_used_percent' => $usedPercent,
@@ -675,9 +657,6 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get user distribution
-     */
     public function getUserDistribution(): array
     {
         $distribution = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -694,56 +673,58 @@ class DashboardService
             $data[] = $item->total;
         }
 
-        return [
-            'labels' => $labels,
-            'data' => $data,
-        ];
+        return ['labels' => $labels, 'data' => $data];
     }
 
-    /**
-     * Get recent activity log
-     */
-    public function getRecentActivityLog(int $limit = 20)
+    public function getRecentActivityLog(int $limit = 20, string $action = null)
     {
-        return LetterRequest::with(['student.profile'])
-            ->latest()
-            ->limit($limit)
-            ->get();
+        $query = LetterRequest::with(['student.profile']);
+
+        if ($action) {
+            switch ($action) {
+                case 'submit':
+                    $query->whereIn('status', ['in_progress', 'resubmitted']);
+                    break;
+                case 'approve':
+                    $query->whereIn('status', ['approved', 'completed']);
+                    break;
+                case 'reject':
+                    $query->where('status', 'rejected');
+                    break;
+                case 'cancel':
+                    $query->where('status', 'cancelled');
+                    break;
+            }
+        }
+
+        return $query->latest()->limit($limit)->get();
+//        return LetterRequest::with(['student.profile'])->latest()->limit($limit)->get();
     }
 
-    /**
-     * Get system usage data (last 30 days)
-     */
-    public function getSystemUsageData(): array
+    public function getSystemUsageData(string $filter = 'this_month'): array
     {
+        $dateRange = $this->getDateRange($filter);
+        $startDate = Carbon::parse($dateRange['start']);
+        $endDate = Carbon::parse($dateRange['end']);
+        $totalDays = $startDate->diffInDays($endDate);
+        $daysToShow = min($totalDays, 30);
+
         $days = [];
         $submissions = [];
         $approvals = [];
 
-        for ($i = 29; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
+        for ($i = $daysToShow - 1; $i >= 0; $i--) {
+            $date = $endDate->copy()->subDays($i);
             $days[] = $date->format('M j');
-
-            $submissionCount = LetterRequest::whereDate('created_at', $date)->count();
-            $submissions[] = $submissionCount;
-
-            $approvalCount = Approval::where('status', 'approved')
-                ->whereDate('approved_at', $date)
-                ->count();
-            $approvals[] = $approvalCount;
+            $submissions[] = LetterRequest::whereDate('created_at', $date)->count();
+            $approvals[] = Approval::where('status', 'approved')->whereDate('approved_at', $date)->count();
         }
 
         return [
             'categories' => $days,
             'series' => [
-                [
-                    'name' => 'Submissions',
-                    'data' => $submissions,
-                ],
-                [
-                    'name' => 'Approvals',
-                    'data' => $approvals,
-                ],
+                ['name' => 'Submissions', 'data' => $submissions],
+                ['name' => 'Approvals', 'data' => $approvals],
             ],
         ];
     }

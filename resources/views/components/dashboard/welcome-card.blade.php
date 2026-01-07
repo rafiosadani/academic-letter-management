@@ -1,49 +1,50 @@
 @props([
-    'user',
-    'role' => 'User',
+    'user' => 'User',
+    'image' => asset('assets/images/illustrations/doctor.svg'), // Default image
+    'subtitle' => 'Have a nice day at work',
+    'color' => 'from-blue-500 to-blue-600'
 ])
 
 @php
     $hour = now()->hour;
-    $greeting = 'Selamat Malam';
-    $icon = 'fa-moon';
-
-    if ($hour >= 5 && $hour < 11) {
-        $greeting = 'Selamat Pagi';
-        $icon = 'fa-sun';
-    } elseif ($hour >= 11 && $hour < 15) {
-        $greeting = 'Selamat Siang';
-        $icon = 'fa-cloud-sun';
-    } elseif ($hour >= 15 && $hour < 18) {
-        $greeting = 'Selamat Sore';
-        $icon = 'fa-cloud-sun';
-    }
-
-    $currentDate = now()->isoFormat('dddd, D MMMM YYYY');
+    $greeting = match(true) {
+        $hour >= 5 && $hour < 11 => 'Selamat pagi',
+        $hour >= 11 && $hour < 15 => 'Selamat siang',
+        $hour >= 15 && $hour < 18 => 'Selamat sore',
+        default => 'Selamat malam',
+    };
+    $userName = $user->profile->full_name ?? $user->name;
+    $displayTitle = $title ?? "$greeting, <span class='font-semibold'>$userName</span>";
 @endphp
 
-<div class="card bg-gradient-to-r from-primary to-accent">
-    <div class="p-6">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center space-x-2 text-white/80 mb-1">
-                    <i class="fa-solid {{ $icon }} text-lg"></i>
-                    <span class="text-sm font-medium">{{ $currentDate }}</span>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-1">
-                    {{ $greeting }}, {{ $user->profile->full_name ?? $user->name }}! 👋
-                </h2>
-                <p class="text-white/90 text-sm">
-                    {{ $role }}
-                </p>
-            </div>
+<div class="card mt-12 bg-gradient-to-r {{ $color }} p-5 sm:mt-0 sm:flex-row">
+    {{-- Gambar Ilustrasi --}}
+    <div class="flex justify-center sm:order-last">
+        <img class="-mt-16 h-40 sm:mt-0 lg:h-44 object-contain" src="{{ $image }}" alt="illustration" />
+    </div>
 
-            {{-- Optional: Add illustration or stats --}}
-            <div class="hidden sm:block">
-                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white/20">
-                    <i class="fa-solid fa-chart-line text-4xl text-white"></i>
-                </div>
+    {{-- Konten Teks --}}
+    <div class="mt-2 flex-1 items-center pt-2 text-center text-white sm:mt-0 sm:text-left">
+        <h3 class="text-xl">
+            {!! $displayTitle !!}
+        </h3>
+
+        <p class="mt-2 leading-relaxed text-white/90">
+            {{ $subtitle }}
+        </p>
+
+        {{-- Slot untuk Info Tambahan (Bisa teks progres, dsb) --}}
+        @if(isset($extraInfo))
+            <div class="flex flex-col mt-1">
+                {{ $extraInfo }}
             </div>
-        </div>
+        @endif
+
+        {{-- Slot untuk Tombol-Tombol Akses --}}
+        @if(isset($action))
+            <div class="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start">
+                {{ $action }}
+            </div>
+        @endif
     </div>
 </div>

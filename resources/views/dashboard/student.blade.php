@@ -3,7 +3,33 @@
     <div class="mt-4 grid grid-cols-12 gap-4 sm:mt-5 sm:gap-5 lg:mt-6 lg:gap-6">
         <div class="col-span-12">
             {{-- Welcome Card --}}
-            <x-dashboard.welcome-card :user="$user" role="Mahasiswa" />
+            <x-dashboard.welcome-card
+                    :user="$user"
+{{--                    image="{{ asset('images/illustrations/student.svg') }}"--}}
+                    subtitle="Have a nice day!"
+                    color="from-blue-500 to-blue-600"
+            >
+                <x-slot:extraInfo>
+                    <div>
+                        <span>Semangat belajarnya hari ini! Butuh surat akademik?</span>
+                    </div>
+                    <div>
+                        <span>Sistem siap membantu proses administrasi akademik Anda agar <span class="font-semibold">lebih cepat dan transparan.</span></span>
+                    </div>
+                </x-slot:extraInfo>
+                <x-slot:action>
+                    <a href="{{ route('letters.index') }}" class="btn border border-white/10 bg-white/20 text-white hover:bg-white/30">Daftar Semua Pengajuan</a>
+                    <a href="{{ route('letters.create') }}" class="btn border border-white/10 bg-white/20 text-white hover:bg-white/30">Ajukan Surat Baru</a>
+                </x-slot:action>
+            </x-dashboard.welcome-card>
+
+            {{-- Filter Dashboard --}}
+            <div class="mt-4 sm:mt-5 lg:mt-6 flex items-center justify-between">
+                <h2 class="text-base font-medium text-slate-700 dark:text-navy-100">
+                    Dashboard Overview
+                </h2>
+                <x-dashboard.filter-dropdown :currentFilter="$filter ?? 'this_month'" />
+            </div>
 
             {{-- Summary Cards --}}
             <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -221,6 +247,28 @@
     <x-slot:scripts>
         <script>
             const onLoad = () => {
+                // ============================================
+                // FILTER DROPDOWN - POPPER.JS INITIALIZATION
+                // ============================================
+                const dropdownConfig = {
+                    placement: "bottom-end",
+                    modifiers: [
+                        {
+                            name: "offset",
+                            options: {
+                                offset: [0, 4],
+                            },
+                        },
+                    ],
+                };
+
+                new Popper(
+                    "#dashboard-filter-menu",
+                    ".popper-ref",
+                    ".popper-root",
+                    dropdownConfig
+                );
+
                 // Status Distribution Chart (Donut)
                 const statusConfig = {
                     series: [
