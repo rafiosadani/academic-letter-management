@@ -25,6 +25,7 @@ class Document extends Model
         'file_size',
         'mime_type',
         'hash',
+        'file_hash'
     ];
 
     /**

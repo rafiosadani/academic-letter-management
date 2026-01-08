@@ -4,7 +4,7 @@
         <div class="flex pt-4">
             <a href="{{ route('dashboard') }}">
                 <img class="size-11 transition-transform duration-500 ease-in-out hover:scale-110 hover:rotate-[12deg]"
-                     src="{{ asset('assets/images/logo/vokasi-ub.png') }}"
+                     src="{{ setting('site_logo') ? Storage::url(setting('site_logo')) : asset('assets/images/logo/vokasi-ub.png') }}"
                      alt="logo"
                 />
             </a>

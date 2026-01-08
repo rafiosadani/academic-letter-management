@@ -31,6 +31,7 @@ class DocumentService
             'file_size' => $file->getSize(),
             'mime_type' => $file->getMimeType(),
             'hash' => null,
+            'file_hash' => null,
         ]);
     }
 
@@ -56,6 +57,7 @@ class DocumentService
             'file_size' => $file->getSize(),
             'mime_type' => $file->getMimeType(),
             'hash' => null,
+            'file_hash' => null,
         ]);
     }
 
@@ -85,13 +87,15 @@ class DocumentService
             'file_size' => $fileSize,
             'mime_type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'hash' => null,
+            'file_hash' => null,
         ]);
     }
 
     public function storeGeneratedPdf(
         string $filePath,
         LetterRequest $letter,
-        string $hash
+        string $hash,
+        ?string $fileHash = null
     ): Document {
         if (!file_exists($filePath)) {
             throw new \Exception("File PDF tidak ditemukan di lokasi penyimpanan: {$filePath}");
@@ -114,6 +118,7 @@ class DocumentService
             'file_size' => $fileSize,
             'mime_type' => 'application/pdf',
             'hash' => $hash,
+            'file_hash' => $fileHash,
         ]);
     }
 
@@ -170,7 +175,16 @@ class DocumentService
     public function verifyHash(string $hash): ?Document
     {
         return Document::where('hash', $hash)
-            ->whereNotNull('hash')
+            ->with([
+                'letterRequest.student.profile.studyProgram',
+                'letterRequest.semester',
+                'letterRequest.academicYear',
+                'letterRequest.approvals' => function ($query) {
+                    $query->where('status', 'approved')
+                        ->orderBy('step')
+                        ->with(['approver.profile']);
+                }
+            ])
             ->first();
     }
 

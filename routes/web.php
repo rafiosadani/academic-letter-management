@@ -212,3 +212,4 @@ Route::middleware('auth')->group(function () {
 */
 //Route::get('verify/{hash}', [DocumentController::class, 'verify'])->name('documents.verify');
 Route::get('/documents/verify/{hash}', [DocumentController::class, 'verify'])->name('documents.verify');
+Route::get('/documents/download-verified/{hash}', [DocumentController::class, 'downloadVerified'])->name('documents.download-verified');

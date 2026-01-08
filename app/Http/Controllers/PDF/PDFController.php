@@ -142,7 +142,7 @@ class PDFController extends Controller
                 'nama_instansi_tujuan' => $this->formatForDocument($letter->data_input['nama_tempat_penelitian'] ?? '-'),
                 'alamat_instansi_tujuan' => $this->formatForDocument($letter->data_input['alamat_tempat_penelitian'] ?? '-'),
                 'no_hp' => $letter->data_input['no_hp'] ?? '-',
-                'dosen_pembimbing' => $this->formatForDocument($letter->data_input['dosen_pembimbing'] ?? '-'),
+                'dosen_pembimbing' => $letter->data_input['dosen_pembimbing'] ?? '-',
                 'bulan_pelaksanaan' => $letter->data_input['bulan_pelaksanaan'] ?? '-',
                 'tembusan' => [
                     'Mahasiswa yang bersangkutan'
@@ -160,7 +160,7 @@ class PDFController extends Controller
             ],
             LetterType::DISPENSASI_MAHASISWA => [
                 'nama_instansi_tujuan' => $this->formatForDocument($letter->data_input['nama_instansi_tujuan'] ?? '-'),
-                'jabatan_penerima' => $this->formatForDocument($letter->data_input['jabatan_peneriama'] ?? '-'),
+                'jabatan_penerima' => $this->formatForDocument($letter->data_input['jabatan_penerima'] ?? '-'),
                 'alamat_instansi_tujuan' => $this->formatForDocument($letter->data_input['alamat_instansi'] ?? '-'),
                 'alasan_dispensasi' => strtolower($letter->data_input['alasan_dispensasi'] ?? '-'),
                 'posisi_magang' => $letter->data_input['posisi_magang'] ?? '-',

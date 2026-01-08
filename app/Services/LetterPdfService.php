@@ -38,31 +38,30 @@ class LetterPdfService
 
         $outputPath = "{$directory}/{$filename}";
 
-        $tempHash = 'temp_' . uniqid();
+        $documentSignature = $this->generateDocumentSignature($letter, $letterNumber);
+        $data = $this->getPdfData($letter, $letterNumber, $documentSignature);
 
-        // Prepare data
-        $data = $this->getPdfData($letter, $letterNumber, $tempHash);
-
-        // Generate PDF
         $pdf = Pdf::loadView($view, $data);
         $pdf->setPaper('A4', 'portrait');
-
-        // Save PDF
         $pdf->save($outputPath);
 
         if (!file_exists($outputPath)) {
             throw new \Exception("Gagal menyimpan file PDF pada lokasi: {$outputPath}");
         }
 
-        $realHash = $this->calculateHash($outputPath);
-        $data = $this->getPdfData($letter, $letterNumber, $realHash);
-        $pdf = Pdf::loadView($view, $data);
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->save($outputPath);
+        $fileHash = $this->calculateHash($outputPath);
+
+        $relativePath = sprintf(
+            'documents/letters/%s/%s/generated/%s',
+            $date->format('Y'),
+            $date->format('m'),
+            $filename
+        );
 
         return [
             'path' => $outputPath,
-            'hash' => $realHash,
+            'hash' => $documentSignature,
+            'file_hash' => $fileHash,
         ];
     }
 
@@ -121,77 +120,6 @@ class LetterPdfService
         }
     }
 
-//    public static function validateRequiredData(): void
-//    {
-//        $errors = [];
-//
-//        // ✅ Check Wakil Dekan data
-//        $wd = FacultyOfficial::where('position', OfficialPosition::WAKIL_DEKAN_AKADEMIK)
-//            ->where('start_date', '<=', now())
-//            ->where(function ($query) {
-//                $query->whereNull('end_date')->orWhere('end_date', '>=', now());
-//            })
-//            ->with('user.profile')
-//            ->first();
-//
-//        if (!$wd || !$wd->user?->profile) {
-//            $errors[] = 'Data Wakil Dekan Akademik tidak ditemukan atau belum diatur. Silakan tambahkan data pejabat fakultas terlebih dahulu.';
-//        }
-//
-//        // ✅ Check header logo
-//        $headerLogo = setting('header_logo');
-//        if (!$headerLogo || !file_exists(public_path('storage/' . $headerLogo))) {
-//            // Check fallback logo
-//            if (!file_exists(public_path('images/logo-ub.png'))) {
-//                $errors[] = 'Logo header tidak ditemukan. Silakan upload logo di menu Settings atau tempatkan file logo-ub.png di folder public/images/.';
-//            }
-//        }
-//
-//        // ✅ Check required header settings
-//        $requiredSettings = [
-//            'header_ministry' => 'Nama Kementerian',
-//            'header_university' => 'Nama Universitas',
-//            'header_faculty' => 'Nama Fakultas',
-//            'header_address' => 'Alamat Fakultas',
-//            'header_phone' => 'Nomor Telepon',
-//            'header_email' => 'Email Fakultas',
-//            'header_website' => 'Website Fakultas',
-//        ];
-//
-//        foreach ($requiredSettings as $key => $label) {
-//            $value = setting($key);
-//            if (empty($value)) {
-//                $errors[] = "{$label} belum diatur. Silakan lengkapi di menu Settings.";
-//            }
-//        }
-//
-//        // ✅ Optional but recommended settings
-//        $optionalSettings = [
-//            'header_fax' => 'Nomor Fax',
-//        ];
-//
-//        $warnings = [];
-//        foreach ($optionalSettings as $key => $label) {
-//            $value = setting($key);
-//            if (empty($value)) {
-//                $warnings[] = "{$label} belum diatur (opsional).";
-//            }
-//        }
-//
-//        // ✅ Throw exception if there are errors
-//        if (!empty($errors)) {
-//            $errorMessage = "Tidak dapat generate PDF. Data berikut belum lengkap:\n\n";
-//            $errorMessage .= "❌ " . implode("\n❌ ", $errors);
-//
-//            if (!empty($warnings)) {
-//                $errorMessage .= "\n\n⚠️ Peringatan (opsional):\n";
-//                $errorMessage .= "⚠️ " . implode("\n⚠️ ", $warnings);
-//            }
-//
-//            throw new \Exception($errorMessage);
-//        }
-//    }
-
     /**
      * Prepare all data for PDF template.
      */
@@ -235,7 +163,7 @@ class LetterPdfService
                 'nama_instansi_tujuan' => $this->formatForDocument($letter->data_input['nama_tempat_penelitian'] ?? '-'),
                 'alamat_instansi_tujuan' => $this->formatForDocument($letter->data_input['alamat_tempat_penelitian'] ?? '-'),
                 'no_hp' => $letter->data_input['no_hp'] ?? '-',
-                'dosen_pembimbing' => $this->formatForDocument($letter->data_input['dosen_pembimbing'] ?? '-'),
+                'dosen_pembimbing' => $letter->data_input['dosen_pembimbing'] ?? '-',
                 'bulan_pelaksanaan' => $letter->data_input['bulan_pelaksanaan'] ?? '-',
                 'tembusan' => [
                     'Mahasiswa yang bersangkutan'
@@ -253,7 +181,7 @@ class LetterPdfService
             ],
             LetterType::DISPENSASI_MAHASISWA => [
                 'nama_instansi_tujuan' => $this->formatForDocument($letter->data_input['nama_instansi_tujuan'] ?? '-'),
-                'jabatan_penerima' => $this->formatForDocument($letter->data_input['jabatan_peneriama'] ?? '-'),
+                'jabatan_penerima' => $this->formatForDocument($letter->data_input['jabatan_penerima'] ?? '-'),
                 'alamat_instansi_tujuan' => $this->formatForDocument($letter->data_input['alamat_instansi'] ?? '-'),
                 'alasan_dispensasi' => strtolower($letter->data_input['alasan_dispensasi'] ?? '-'),
                 'posisi_magang' => $letter->data_input['posisi_magang'] ?? '-',
@@ -349,5 +277,19 @@ class LetterPdfService
         }
 
         return hash_file('sha256', $filePath);
+    }
+
+    private function generateDocumentSignature(LetterRequest $letter, string $letterNumber): string
+    {
+        $components = [
+            $letter->id,
+            $letterNumber,
+            $letter->student_id,
+            $letter->letter_type->value,
+            $letter->created_at->timestamp,
+            config('app.key'),
+        ];
+
+        return hash('sha256', implode('|', $components));
     }
 }

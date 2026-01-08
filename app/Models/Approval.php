@@ -289,6 +289,17 @@ class Approval extends Model
         return $this->getStatusConfig()['label'];
     }
 
+    public function getPositionLabelsAttribute(): string
+    {
+        $positionSlug = collect($this->required_positions)->first();
+
+        if (!$positionSlug) {
+            return 'Petugas Berwenang';
+        }
+
+        return OfficialPosition::tryFrom($positionSlug)?->label() ?? $positionSlug;
+    }
+
     protected function approvedAtFormatted(): Attribute
     {
         return Attribute::make(

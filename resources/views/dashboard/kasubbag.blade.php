@@ -17,7 +17,7 @@
                     </div>
                 </x-slot:extraInfo>
                 <x-slot:action>
-                    <a href="{{ route('approvals.index') }}" class="btn border border-white/10 bg-white/20 text-white hover:bg-white/30">Verifkasi Administratif</a>
+                    <a href="{{ route('approvals.index') }}" class="btn border border-white/10 bg-white/20 text-white hover:bg-white/30">Kelola Persetujuan Surat</a>
                 </x-slot:action>
             </x-dashboard.welcome-card>
 
@@ -112,7 +112,7 @@
                                 <div class="flex items-center space-x-2">
                                     <i class="fa-solid fa-folder text-primary"></i>
                                     <h4 class="font-medium text-slate-700 dark:text-navy-100">
-                                        {{ \App\Enums\LetterType::from($letterType)->getLabel() }}
+                                        {{ \App\Enums\LetterType::from($letterType)->label() }}
                                     </h4>
                                     <span class="badge rounded-full bg-warning/10 text-warning">
                                 {{ $approvals->count() }} surat

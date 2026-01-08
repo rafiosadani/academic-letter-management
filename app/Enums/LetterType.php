@@ -362,8 +362,8 @@ enum LetterType: string
             ],
             'posisi_magang' => [
                 'type' => 'text',
-                'label' => 'Posisi Magang/Kegiatan',
-                'required' => false,
+                'label' => 'Posisi Magang / Kegiatan',
+                'required' => true,
                 'placeholder' => 'Posisi atau kegiatan yang akan ditinggalkan',
             ],
             'keperluan_detail' => [

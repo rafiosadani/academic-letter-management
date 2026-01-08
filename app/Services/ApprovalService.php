@@ -314,8 +314,14 @@ class ApprovalService
 
             $physicalPath = $result['path'];
             $documentHash = $result['hash'];
+            $fileHash = $result['file_hash'] ?? null;
 
-            $document = $this->documentService->storeGeneratedPdf($physicalPath, $letter, $documentHash);
+            $document = $this->documentService->storeGeneratedPdf(
+                $physicalPath,
+                $letter,
+                $documentHash,
+                $fileHash
+            );
 
             // LOG SUCCESS
             LogHelper::logSuccess('generated', 'pdf', [
@@ -323,6 +329,7 @@ class ApprovalService
                 'document_id' => $document->id,
                 'file_name' => $document->file_name,
                 'hash' => $documentHash,
+                'file_hash' => $fileHash,
             ]);
         } catch (\Exception $e) {
             LogHelper::logError('generate', 'pdf', $e, [

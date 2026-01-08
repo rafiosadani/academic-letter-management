@@ -81,11 +81,20 @@ class StoreLetterRequestRequest extends FormRequest
         }
 
         // Document validation
-        $requeiredDocuments = $letterType->requiredDocuments();
-        foreach ($requeiredDocuments as $key => $config) {
+        $requiredDocuments = $letterType->requiredDocuments();
+        if (count($requiredDocuments) > 0) {
+            $rules['documents'] = ['array'];
+        }
+        foreach ($requiredDocuments as $key => $config) {
             $docRules = [];
 
-            if ($config['required']) {
+//            if ($config['required']) {
+//                $docRules[] = 'required';
+//            } else {
+//                $docRules[] = 'nullable';
+//            }
+
+            if ($config['required'] && !$this->isMethod('put') && !$this->isMethod('patch')) {
                 $docRules[] = 'required';
             } else {
                 $docRules[] = 'nullable';
@@ -228,6 +237,7 @@ class StoreLetterRequestRequest extends FormRequest
             'parent_institution_address' => 'Alamat Instansi Orang Tua',
 
             'student_list' => 'Daftar Mahasiswa',
+            'documents' => 'Dokumen Pendukung',
         ];
 
         $letterType = LetterType::tryFrom($this->input('letter_type'));

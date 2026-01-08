@@ -385,7 +385,7 @@
                                     <div class="mb-3">
                                         <span class="font-medium text-slate-600 dark:text-navy-100">
                                             {{ $docConfig['label'] }}
-                                            @if($docConfig['required'])
+                                            @if($docConfig['required'] && !$isEdit)
                                                 <span class="text-error">*</span>
                                             @endif
                                         </span>
@@ -406,7 +406,7 @@
                                                 name="documents[{{ $docKey }}]"
                                                 class="hidden"
                                                 accept="{{ collect($docConfig['types'])->map(fn ($t) => '.' . $t)->join(',') }}"
-                                                {{ $docConfig['required'] && !$isEdit ? 'required' : '' }}
+{{--                                                {{ $docConfig['required'] && !$isEdit ? 'required' : '' }}--}}
                                                 @change="fileName = $event.target.files[0]?.name ?? 'Belum ada file dipilih'"
                                             >
                                         </label>
@@ -424,7 +424,7 @@
                                     </div>
 
                                     @error('documents.' . $docKey)
-                                        <span class="text-tiny+ text-error mt-1 block">{{ $message }}</span>
+                                        <span class="text-tiny-plus text-error mt-1 block">{{ $message }}</span>
                                     @enderror
                                 </div>
                             @endforeach

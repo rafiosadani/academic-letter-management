@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -148,19 +149,70 @@ class DocumentController extends Controller
     {
         $document = $this->documentService->verifyHash($hash);
 
+        // Document not found
         if (!$document) {
-            return view('documents.verify', [
-                'valid' => false,
-                'message' => 'Dokumen tidak ditemukan atau hash tidak valid',
+            return view('documents.verify-invalid', [
+                'hash' => $hash,
+                'error' => 'Dokumen tidak ditemukan',
+            ]);
+        }
+
+        // Check if file exists
+        $filePath = storage_path('app/private/' . $document->file_path);
+        if (!file_exists($filePath)) {
+            return view('documents.verify-invalid', [
+                'hash' => $hash,
+                'error' => 'File dokumen tidak ditemukan di sistem',
+            ]);
+        }
+
+        // Verify hash integrity
+        $integrityValid = true;
+        if (isset($document->file_hash)) {
+            $currentFileHash = hash_file('sha256', $filePath);
+            $integrityValid = $currentFileHash === $document->file_hash;
+        }
+
+        if (!$integrityValid) {
+            return view('documents.verify-invalid', [
+                'hash' => $hash,
+                'error' => 'Integritas dokumen tidak valid (File telah dimodifikasi)',
             ]);
         }
 
         $letter = $document->letterRequest;
 
+        // Prepare data for view
         return view('documents.verify', [
-            'valid' => true,
+            'is_valid' => $letter->status === 'completed',
+            'integrity_valid' => $integrityValid,
             'document' => $document,
             'letter' => $letter,
+            'student' => $letter->student,
+            'profile' => $letter->student->profile,
+            'approvals' => $letter->approvals,
+            'hash' => $hash,
+            'hash_short' => strtoupper(substr($hash, 15, 10)),
+            'verified_at' => now(),
         ]);
+    }
+
+    /**
+     * Download verified document
+     */
+    public function downloadVerified(string $hash)
+    {
+        $document = Document::where('hash', $hash)->first();
+
+        if (!$document) {
+            abort(404, 'Dokumen tidak ditemukan');
+        }
+
+        $filePath = storage_path('app/private/' . $document->file_path);
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::download($document->file_path, $document->file_name);
     }
 }

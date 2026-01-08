@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('mime_type', 100);
 
             $table->string('hash', 64)->nullable();
+            $table->string('file_hash', 64)->nullable();
 
             $table->timestamps();
 

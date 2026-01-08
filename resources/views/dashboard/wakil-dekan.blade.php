@@ -169,7 +169,7 @@
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                 <span class="font-medium text-slate-700 dark:text-navy-100">
-                                    {{ $approval->letterRequest->letter_type->getLabel() }}
+                                    {{ $approval->letterRequest->letter_type->label() }}
                                 </span>
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5">
