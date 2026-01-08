@@ -1,0 +1,68 @@
+{
+  "_vendor-core-CFiow4nG.js": {
+    "file": "assets/vendor-core-CFiow4nG.js",
+    "name": "vendor-core",
+    "css": [
+      "assets/vendor-core-DubPeK28.css"
+    ]
+  },
+  "_vendor-core-DubPeK28.css": {
+    "file": "assets/vendor-core-DubPeK28.css",
+    "src": "_vendor-core-DubPeK28.css"
+  },
+  "_vendor-ui-D_k1tNtl.js": {
+    "file": "assets/vendor-ui-D_k1tNtl.js",
+    "name": "vendor-ui"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-DAC6otAC.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BJNHDdJH.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-ui-D_k1tNtl.js",
+      "_vendor-core-CFiow4nG.js"
+    ]
+  },
+  "resources/lineone/fonts/fontawesome/fa-brands-400.ttf": {
+    "file": "assets/fa-brands-400-C_FnhXFt.ttf",
+    "src": "resources/lineone/fonts/fontawesome/fa-brands-400.ttf"
+  },
+  "resources/lineone/fonts/fontawesome/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400-DGgeaIc2.woff2",
+    "src": "resources/lineone/fonts/fontawesome/fa-brands-400.woff2"
+  },
+  "resources/lineone/fonts/fontawesome/fa-regular-400.ttf": {
+    "file": "assets/fa-regular-400-D_4U4xH3.ttf",
+    "src": "resources/lineone/fonts/fontawesome/fa-regular-400.ttf"
+  },
+  "resources/lineone/fonts/fontawesome/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400-BZeDGO4g.woff2",
+    "src": "resources/lineone/fonts/fontawesome/fa-regular-400.woff2"
+  },
+  "resources/lineone/fonts/fontawesome/fa-solid-900.ttf": {
+    "file": "assets/fa-solid-900-BNO9VvVv.ttf",
+    "src": "resources/lineone/fonts/fontawesome/fa-solid-900.ttf"
+  },
+  "resources/lineone/fonts/fontawesome/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900-BVqQ4OpK.woff2",
+    "src": "resources/lineone/fonts/fontawesome/fa-solid-900.woff2"
+  },
+  "resources/lineone/fonts/fontawesome/fa-v4compatibility.ttf": {
+    "file": "assets/fa-v4compatibility-BMlqg2iP.ttf",
+    "src": "resources/lineone/fonts/fontawesome/fa-v4compatibility.ttf"
+  },
+  "resources/lineone/fonts/fontawesome/fa-v4compatibility.woff2": {
+    "file": "assets/fa-v4compatibility-CxX3iInv.woff2",
+    "src": "resources/lineone/fonts/fontawesome/fa-v4compatibility.woff2"
+  }
+}
