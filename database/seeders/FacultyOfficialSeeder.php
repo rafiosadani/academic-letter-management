@@ -40,6 +40,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::DEKAN,
                 'user_index' => 1, // First user
+                'rank' => null,
                 'study_program_id' => null,
                 'start_date' => '2023-01-01',
                 'end_date' => null, // Still active
@@ -52,6 +53,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::WAKIL_DEKAN_AKADEMIK,
                 'user_index' => 2,
+                'rank' => null,
                 'study_program_id' => null,
                 'start_date' => '2023-01-01',
                 'end_date' => null,
@@ -64,6 +66,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::KETUA_PROGRAM_STUDI,
                 'user_index' => 3,
+                'rank' => null,
                 'study_program_index' => 0, // First study program
                 'start_date' => '2024-01-01',
                 'end_date' => null,
@@ -72,6 +75,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::KETUA_PROGRAM_STUDI,
                 'user_index' => 4,
+                'rank' => null,
                 'study_program_index' => 1, // Second study program
                 'start_date' => '2024-01-01',
                 'end_date' => null,
@@ -80,6 +84,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::KETUA_PROGRAM_STUDI,
                 'user_index' => 5,
+                'rank' => null,
                 'study_program_index' => 2, // Third study program
                 'start_date' => '2024-01-01',
                 'end_date' => null,
@@ -88,6 +93,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::KETUA_PROGRAM_STUDI,
                 'user_index' => 6,
+                'rank' => null,
                 'study_program_index' => 3, // Third study program
                 'start_date' => '2024-01-01',
                 'end_date' => null,
@@ -96,6 +102,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::KETUA_PROGRAM_STUDI,
                 'user_index' => 7,
+                'rank' => null,
                 'study_program_index' => 4, // Third study program
                 'start_date' => '2024-01-01',
                 'end_date' => null,
@@ -108,6 +115,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::KASUBBAG_AKADEMIK,
                 'user_index' => 8,
+                'rank' => null,
                 'study_program_id' => null,
                 'start_date' => '2023-06-01',
                 'end_date' => null,
@@ -120,6 +128,7 @@ class FacultyOfficialSeeder extends Seeder
             [
                 'position' => OfficialPosition::STAF_AKADEMIK,
                 'user_index' => 9,
+                'rank' => null,
                 'study_program_id' => null,
                 'start_date' => '2023-06-01',
                 'end_date' => null,
@@ -193,6 +202,7 @@ class FacultyOfficialSeeder extends Seeder
             $official = FacultyOfficial::create([
                 'user_id' => $user->id,
                 'position' => $data['position'],
+                'rank' => $data['rank'],
                 'study_program_id' => $studyProgramId,
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],

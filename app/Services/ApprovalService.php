@@ -56,13 +56,13 @@ class ApprovalService
 
                 // Check if this is final approval
                 if ($approval->is_final) {
+                    event(new ApprovalProcessed($approval, 'approved', $note));
                     $this->handleFinalApproval($letter);
                 } else {
                     $this->moveToNextStep($letter);
+                    // Dispatch event - Notify student + next approver
+                    event(new ApprovalProcessed($approval, 'approved', $note));
                 }
-
-                // Dispatch event - Notify student + next approver
-                event(new ApprovalProcessed($approval, 'approved', $note));
             });
 
             LogHelper::logSuccess('approved', 'approval', [
@@ -212,6 +212,7 @@ class ApprovalService
 
                     $letter->approvals()->where('status', 'pending')->update([
                         'is_active' => false,
+                        'status' => 'skipped'
                     ]);
                 }
 

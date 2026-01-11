@@ -29,7 +29,7 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="absolute right-0 top-full mt-3.5 w-[calc(100vw-1rem)] rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark sm:w-96 md:w-[28rem] z-50"
+            class="absolute -right-[52px] sm:right-0 top-full mt-5 sm:mt-3.5 w-[calc(100vw-1rem)] rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark sm:w-96 md:w-[28rem] z-50"
             style="display: none;"
     >
         {{-- Header --}}

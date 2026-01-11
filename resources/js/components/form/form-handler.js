@@ -16,8 +16,6 @@ import { initPasswordToggle } from "./password-toggle.js";
  * Initialize semua form components
  */
 export function initFormComponents() {
-    console.log('[Form Handler] Initializing all form components...');
-
     // Initialize semua handlers
     initTomSelect();
     initFilePreview();
@@ -25,8 +23,6 @@ export function initFormComponents() {
     initQuillEditor();
     initFlatpickr();
     initPasswordToggle();
-
-    console.log('[Form Handler] ✓ All form components initialized');
 }
 
 /**
@@ -44,8 +40,6 @@ if (typeof window !== 'undefined') {
  * Re-initialize untuk dynamic content (modal, ajax, etc)
  */
 export function reinitFormComponents(container = document) {
-    console.log('[Form Handler] Re-initializing components in container...');
-
     initTomSelect(container);
     initFilePreview(container);
     initFilePond(container);

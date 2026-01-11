@@ -126,6 +126,7 @@ class LetterRequestController extends Controller
         $this->authorize('create', LetterRequest::class);
 
         $letterType = LetterType::tryFrom($request->letter_type);
+        $user = auth()->user();
 
         $formData = [];
         foreach ($letterType->formFields() as $fieldName => $config) {
@@ -136,18 +137,29 @@ class LetterRequestController extends Controller
             }
         }
 
+        if ($letterType === LetterType::SKAK_TUNJANGAN) {
+            $user->profile()->update([
+                'parent_name'                => $request->parent_name,
+                'parent_nip'                 => $request->parent_nip,
+                'parent_rank'                => $request->parent_rank,
+                'parent_institution'         => $request->parent_institution,
+                'parent_institution_address' => $request->parent_institution_address,
+            ]);
+        }
+
         $data = [
             'letter_type' => $letterType,
             'form_data' => $formData,
         ];
 
-        // Add parent info if SKAK Tunjangan
         if ($letterType === LetterType::SKAK_TUNJANGAN) {
-            $data['parent_name'] = $request->parent_name;
-            $data['parent_nip'] = $request->parent_nip;
-            $data['parent_rank'] = $request->parent_rank;
-            $data['parent_institution'] = $request->parent_institution;
-            $data['parent_institution_address'] = $request->parent_institution_address;
+            $data = array_merge($data, [
+                'parent_name'                => $request->parent_name,
+                'parent_nip'                 => $request->parent_nip,
+                'parent_rank'                => $request->parent_rank,
+                'parent_institution'         => $request->parent_institution,
+                'parent_institution_address' => $request->parent_institution_address,
+            ]);
         }
 
         $letter = $this->letterRequestService->create($data, auth()->user());
@@ -221,18 +233,34 @@ class LetterRequestController extends Controller
         $this->authorize('update', $letter);
 
         $letterType = $letter->letter_type;
+        $user = auth()->user();
 
         $formData = [];
         foreach ($letterType->formFields() as $fieldName => $config) {
-            $formData[$fieldName] = $request->input($fieldName);
+            if ($config['type'] === 'student_list') {
+                $formData[$fieldName] = json_decode($request->input($fieldName), true);
+            } else {
+                $formData[$fieldName] = $request->input($fieldName);
+            }
         }
 
         $data = [
             'form_data' => $formData,
         ];
 
-        // Add parent info if SKAK Tunjangan
         if ($letterType === LetterType::SKAK_TUNJANGAN) {
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'parent_name'                => $request->parent_name,
+                    'parent_nip'                 => $request->parent_nip,
+                    'parent_rank'                => $request->parent_rank,
+                    'parent_institution'         => $request->parent_institution,
+                    'parent_institution_address' => $request->parent_institution_address,
+                ]
+            );
+
+            // Snapshot data untuk tabel surat
             $data['parent_name'] = $request->parent_name;
             $data['parent_nip'] = $request->parent_nip;
             $data['parent_rank'] = $request->parent_rank;
@@ -266,7 +294,6 @@ class LetterRequestController extends Controller
                 'position' => 'center-top',
                 'duration' => 3000,
             ]);
-
     }
 
     /**

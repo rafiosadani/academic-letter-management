@@ -27,10 +27,10 @@
     >{{ old($name, $value) }}</textarea>
 
     @error($name)
-        <span class="text-tiny-plus text-error mt-1 block">{{ $message }}</span>
+        <span class="text-tiny-plus text-error ms-1 block">{{ $message }}</span>
     @enderror
 
     @if($helper)
-        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 ms-1 mt-1 block">{{ $helper }}</span>
+        <span class="text-tiny-plus text-slate-500 dark:text-navy-300 ms-1 block">{{ $helper }}</span>
     @endif
 </label>

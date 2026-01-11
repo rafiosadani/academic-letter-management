@@ -34,7 +34,7 @@
                                 <i class="fa-solid fa-file-lines text-lg"></i>
                             </div>
                             <div>
-                                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                                <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">
                                     {{ $letter->letter_type->label() }}
                                 </h4>
                                 <p class="text-xs text-slate-400 dark:text-navy-300">
@@ -62,7 +62,7 @@
                         </div>
 
                         {{-- Content --}}
-                        <div class="flex items-start gap-4">
+                        <div class="flex flex-col sm:flex-row items-start gap-4">
                             <div class="avatar size-16 shrink-0">
                                 <img
                                     src="{{ $letter->student->profile->photo_url ?? asset('assets/default.png') }}"
@@ -156,36 +156,32 @@
                                 </h5>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2 text-xs pl-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2 text-xs">
                                 @if($profile->parent_name)
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-user fa-fw text-slate-400"></i>
-                                        <span>Nama</span>
-                                        <span class="font-medium">: {{ $profile->parent_name }}</span>
+                                    <div class="flex flex-col sm:flex-row item-start sm:items-center gap-1 sm:gap-2">
+                                        <span>Nama: </span>
+                                        <span class="font-medium">{{ $profile->parent_name }}</span>
                                     </div>
                                 @endif
 
                                 @if($profile->parent_nip)
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-id-badge fa-fw text-slate-400"></i>
-                                        <span>NIP</span>
-                                        <span class="font-medium">: {{ $profile->parent_nip }}</span>
+                                    <div class="flex flex-col sm:flex-row item-start sm:items-center gap-1 sm:gap-2">
+                                        <span>NIP: </span>
+                                        <span class="font-medium">{{ $profile->parent_nip }}</span>
                                     </div>
                                 @endif
 
                                 @if($profile->parent_rank)
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-ranking-star fa-fw text-slate-400"></i>
-                                        <span>Pangkat</span>
-                                        <span class="font-medium">: {{ $profile->parent_rank }}</span>
+                                    <div class="flex flex-col sm:flex-row item-start sm:items-center gap-1 sm:gap-2">
+                                        <span>Pangkat: </span>
+                                        <span class="font-medium">{{ $profile->parent_rank }}</span>
                                     </div>
                                 @endif
 
                                 @if($profile->parent_institution)
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-building-columns fa-fw text-slate-400"></i>
-                                        <span>Instansi</span>
-                                        <span class="font-medium">: {{ $profile->parent_institution }}</span>
+                                    <div class="flex flex-col sm:flex-row item-start sm:items-center gap-1 sm:gap-2">
+                                        <span>Instansi:</span>
+                                        <span class="font-medium">{{ $profile->parent_institution }}</span>
                                     </div>
                                 @endif
                             </div>
@@ -215,60 +211,6 @@
                         </div>
                     </div>
 
-{{--                    @if($letter->hasStudentList())--}}
-{{--                        <div class="mb-5 rounded-lg border border-slate-200 p-4 dark:border-navy-500">--}}
-{{--                            --}}{{-- Header --}}
-{{--                            <div class="mb-4 flex items-center justify-between">--}}
-{{--                                <div class="flex items-center gap-2">--}}
-{{--                                    <div class="flex size-6 items-center justify-center rounded-lg bg-info/10 text-info">--}}
-{{--                                        <i class="fa-solid fa-users text-xs"></i>--}}
-{{--                                    </div>--}}
-{{--                                    <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100">--}}
-{{--                                        Daftar Mahasiswa Kolektif--}}
-{{--                                    </h5>--}}
-{{--                                </div>--}}
-{{--                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">--}}
-{{--                                    Total: {{ count($letter->student_list) }} Orang--}}
-{{--                                </span>--}}
-{{--                            </div>--}}
-
-{{--                            --}}{{-- List Mahasiswa --}}
-{{--                            <div class="space-y-4">--}}
-{{--                                @foreach($letter->student_list as $index => $student)--}}
-{{--                                    <div class="flex flex-col space-y-2 border-b border-slate-200 pb-4 last:border-0 last:pb-0 dark:border-navy-500">--}}
-{{--                                        --}}{{-- Baris Atas: No & Nama --}}
-{{--                                        <div class="flex items-center gap-3">--}}
-{{--                                            <span class="flex size-5 shrink-0 items-center justify-center rounded bg-slate-100 text-[10px] font-bold text-slate-500 dark:bg-navy-600 dark:text-navy-200">--}}
-{{--                                                {{ $index + 1 }}--}}
-{{--                                            </span>--}}
-{{--                                            <div class="flex flex-col">--}}
-{{--                                                <span class="text-xs font-semibold text-slate-700 dark:text-navy-100">--}}
-{{--                                                    {{ $student['name'] ?? '-' }}--}}
-{{--                                                </span>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-
-{{--                                        --}}{{-- Baris Bawah: Detail NIM & Prodi --}}
-{{--                                        <div class="grid grid-cols-2 gap-4 pl-8">--}}
-{{--                                            <div class="flex flex-col">--}}
-{{--                                                <span class="text-tiny uppercase tracking-tight text-slate-400 dark:text-navy-300">NIM</span>--}}
-{{--                                                <span class="text-xs font-medium text-slate-600 dark:text-navy-100 font-mono italic">--}}
-{{--                                                    {{ $student['nim'] ?? '-' }}--}}
-{{--                                                </span>--}}
-{{--                                            </div>--}}
-{{--                                            <div class="flex flex-col">--}}
-{{--                                                <span class="text-tiny uppercase tracking-tight text-slate-400 dark:text-navy-300">Program Studi</span>--}}
-{{--                                                <span class="text-xs font-medium text-slate-600 dark:text-navy-100">--}}
-{{--                                                    {{ $student['program'] ?? '-' }}--}}
-{{--                                            </span>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                @endforeach--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
-
                     @if($letter->hasStudentList())
                         <div class="mb-5 rounded-lg border border-slate-200 p-4 dark:border-navy-500">
                             {{-- Header Card --}}
@@ -291,16 +233,16 @@
                                 <table class="w-full text-left">
                                     <thead>
                                     <tr class="bg-slate-200 dark:bg-navy-800">
-                                        <th class="w-12 border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100 text-center">
+                                        <th class="w-12 border-r border-slate-300 whitespace-nowrap px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100 text-center">
                                             No
                                         </th>
-                                        <th class="border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                        <th class="border-r border-slate-300 whitespace-nowrap px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
                                             Nama Mahasiswa
                                         </th>
-                                        <th class="border-r border-slate-300 px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                        <th class="border-r border-slate-300 whitespace-nowrap px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
                                             NIM
                                         </th>
-                                        <th class="px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
+                                        <th class="whitespace-nowrap px-4 py-3 text-xs font-medium text-slate-800 dark:border-navy-500 dark:text-navy-100">
                                             Program Studi
                                         </th>
                                     </tr>
@@ -308,16 +250,16 @@
                                     <tbody class="divide-y divide-slate-200 dark:divide-navy-500">
                                     @foreach($letter->student_list as $index => $student)
                                         <tr class="hover:bg-slate-50/50 dark:hover:bg-navy-800/50">
-                                            <td class="border-r border-slate-200 px-4 py-3 text-center text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                            <td class="border-r border-slate-200 whitespace-nowrap px-4 py-3 text-center text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
                                                 {{ $index + 1 }}
                                             </td>
-                                            <td class="border-r border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                            <td class="border-r border-slate-200 whitespace-nowrap px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
                                                 {{ $student['name'] ?? '-' }}
                                             </td>
-                                            <td class="border-r border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
+                                            <td class="border-r border-slate-200 whitespace-nowrap px-4 py-3 text-sm text-slate-700 dark:border-navy-500 dark:text-navy-100">
                                                 {{ $student['nim'] ?? '-' }}
                                             </td>
-                                            <td class="px-4 py-3 text-sm text-slate-700 dark:text-navy-100">
+                                            <td class="whitespace-nowrap px-4 py-3 text-sm text-slate-700 dark:text-navy-100">
                                                 {{ $student['program'] ?? '-' }}
                                             </td>
                                         </tr>
@@ -417,6 +359,8 @@
                                             <p class="text-xs text-slate-400 dark:text-navy-300 mt-1">
                                                 @if($timelineApproval->assigned_approver_id)
                                                     {{ $timelineApproval->assignedApprover->profile->full_name }}
+                                                @elseif($timelineApproval->approved_by)
+                                                    {{ $timelineApproval->approver->profile->full_name }}
                                                 @else
                                                     Menunggu:
                                                     @foreach($timelineApproval->required_positions as $index => $position)

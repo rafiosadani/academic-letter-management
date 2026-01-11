@@ -187,6 +187,10 @@
                                         :required="$config['required']"
                                         :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? []) : [])"
                                         :studyPrograms="$studyPrograms ?? []"
+                                        :helper="$config['helper'] ?? null"
+                                        :placeholder="$config['placeholder']"
+                                        :min_students="$config['min_students'] ?? 1"
+                                        :max_students="$config['max_students'] ?? 50"
                                 />
                             @elseif($config['type'] === 'select')
                                 <x-form.select
@@ -200,8 +204,8 @@
                                 />
                             @elseif($config['type'] === 'select_or_other')
                                 <div x-data="{
-                                    selectedValue: '{{ old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '') }}',
-                                    isOther: {{ (old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '') && !in_array(old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ''), array_keys($config['options']))) ? 'true' : 'false' }}
+                                    selectedValue: '{{ old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? '')) }}',
+                                    isOther: {{ (old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? '')) && !in_array(old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? '')), array_keys($config['options']))) ? 'true' : 'false' }}
                                 }">
                                     <label class="block">
                                         <span class="text-xs+ font-medium text-slate-600 dark:text-navy-100">
@@ -215,7 +219,7 @@
                                                 x-model="selectedValue"
                                                 name="{{ $fieldName }}"
                                                 class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
-                                                {{ $config['required'] ? 'required' : '' }}
+{{--                                                {{ $config['required'] ? 'required' : '' }}--}}
                                                 x-show="!isOther"
                                         >
                                             <option value="">{{ $config['placeholder'] ?? '-- Pilih --' }}</option>
@@ -243,16 +247,21 @@
                                                     <i class="fa-solid fa-xmark"></i>
                                                 </button>
                                             </div>
+{{--                                            @if(isset($config['other_placeholder']))--}}
+{{--                                                <span class="text-tiny text-slate-400 dark:text-navy-300 mt-1 block">--}}
+{{--                                                    {{ $config['other_placeholder'] }}--}}
+{{--                                                </span>--}}
+{{--                                            @endif--}}
                                         </div>
 
                                         @if(isset($config['helper']))
-                                            <span class="text-tiny text-slate-400 dark:text-navy-300 mt-1 block">
+                                            <span class="text-tiny-plus text-slate-500 dark:text-navy-300 ms-1 mt-1 block">
                                                 {{ $config['helper'] }}
                                             </span>
                                         @endif
                                     </label>
                                     @error($fieldName)
-                                    <span class="text-tiny text-error mt-1 block">{{ $message }}</span>
+                                    <span class="text-tiny-plus text-error mt-1 block">{{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -273,7 +282,7 @@
                                         type="date"
                                         :label="$config['label']"
                                         :name="$fieldName"
-                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '')"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? ''))"
                                         :required="$config['required']"
                                         :helper="$config['helper'] ?? ''"
                                 />
@@ -283,7 +292,7 @@
                                         type="time"
                                         :label="$config['label']"
                                         :name="$fieldName"
-                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : '')"
+                                        :value="old($fieldName, $isEdit ? ($letter->data_input[$fieldName] ?? '') : ($config['value'] ?? ''))"
                                         :required="$config['required']"
                                         :helper="$config['helper'] ?? ''"
                                 />
@@ -303,67 +312,6 @@
                         @endforeach
                     </div>
                 </div>
-
-                {{-- Parent Info for SKAK Tunjangan --}}
-                @if($letterType === App\Enums\LetterType::SKAK_TUNJANGAN)
-                    <div class="card">
-                        <div class="border-b border-slate-200 p-4 dark:border-navy-500 sm:px-5">
-                            <div class="flex items-center space-x-2">
-                                <div class="flex size-7 items-center justify-center rounded-lg bg-success/10 p-1 text-success">
-                                    <i class="fa-solid fa-users"></i>
-                                </div>
-                                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">
-                                    Data Orang Tua
-                                </h4>
-                            </div>
-                        </div>
-
-                        <div class="p-4 sm:p-5 space-y-4">
-                            <x-form.input
-                                    label="Nama Orang Tua"
-                                    name="parent_name"
-                                    :value="old('parent_name', auth()->user()->profile->parent_name ?? '')"
-                                    placeholder="Nama lengkap orang tua"
-                                    required
-                            />
-
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <x-form.input
-                                        label="NIP Orang Tua"
-                                        name="parent_nip"
-                                        :value="old('parent_nip', auth()->user()->profile->parent_nip ?? '')"
-                                        placeholder="Nomor Induk Pegawai"
-                                        required
-                                />
-
-                                <x-form.input
-                                        label="Pangkat/Golongan"
-                                        name="parent_rank"
-                                        :value="old('parent_rank', auth()->user()->profile->parent_rank ?? '')"
-                                        placeholder="Contoh: Pembina Tingkat I / IV b"
-                                        required
-                                />
-                            </div>
-
-                            <x-form.input
-                                    label="Nama Instansi Orang Tua"
-                                    name="parent_institution"
-                                    :value="old('parent_institution', auth()->user()->profile->parent_institution ?? '')"
-                                    placeholder="Nama instansi tempat bekerja"
-                                    required
-                            />
-
-                            <x-form.textarea
-                                    label="Alamat Instansi"
-                                    name="parent_institution_address"
-                                    :value="old('parent_institution_address', auth()->user()->profile->parent_institution_address ?? '')"
-                                    placeholder="Alamat lengkap instansi"
-                                    rows="2"
-                                    required
-                            />
-                        </div>
-                    </div>
-                @endif
 
                 {{-- Document Upload (if required) --}}
                 @if(count($requiredDocuments) > 0)

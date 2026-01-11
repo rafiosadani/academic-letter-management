@@ -33,6 +33,4 @@ export function initUniversalPopperFix() {
             }
         }
     });
-
-    console.log('Universal Popper Fix Initialized.');
 }

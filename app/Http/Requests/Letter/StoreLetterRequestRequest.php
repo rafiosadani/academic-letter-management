@@ -5,6 +5,8 @@ namespace App\Http\Requests\Letter;
 use App\Enums\LetterType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Validation\Validator;
 
 class StoreLetterRequestRequest extends FormRequest
 {
@@ -47,10 +49,15 @@ class StoreLetterRequestRequest extends FormRequest
                 $fieldRules[] = 'nullable';
             }
 
+            if ($fieldName === 'parent_nip') {
+                $fieldRules[] = 'regex:/^(\d{18}|-)$/';
+            }
+
             // Add type-specific rules
             switch ($config['type']) {
                 case 'text':
                 case 'select':
+                case 'select_or_other':
                     $fieldRules[] = 'string';
                     $fieldRules[] = 'max:255';
                     break;
@@ -71,15 +78,6 @@ class StoreLetterRequestRequest extends FormRequest
             $rules[$fieldName] = $fieldRules;
         }
 
-        // Add parent info validation for SKAK Tunjangan
-        if ($letterType === LetterType::SKAK_TUNJANGAN) {
-            $rules['parent_name'] = ['required', 'string', 'max:255'];
-            $rules['parent_nip'] = ['required', 'string', 'max:30'];
-            $rules['parent_rank'] = ['required', 'string', 'max:255'];
-            $rules['parent_institution'] = ['required', 'string', 'max:255'];
-            $rules['parent_institution_address'] = ['required', 'string'];
-        }
-
         // Document validation
         $requiredDocuments = $letterType->requiredDocuments();
         if (count($requiredDocuments) > 0) {
@@ -87,12 +85,6 @@ class StoreLetterRequestRequest extends FormRequest
         }
         foreach ($requiredDocuments as $key => $config) {
             $docRules = [];
-
-//            if ($config['required']) {
-//                $docRules[] = 'required';
-//            } else {
-//                $docRules[] = 'nullable';
-//            }
 
             if ($config['required'] && !$this->isMethod('put') && !$this->isMethod('patch')) {
                 $docRules[] = 'required';
@@ -123,6 +115,13 @@ class StoreLetterRequestRequest extends FormRequest
                 foreach ($formFields as $fieldName => $config) {
                     if ($config['type'] === 'student_list' && $this->has($fieldName)) {
                         $this->validateStudentList($validator, $fieldName);
+                    }
+
+                    if ($fieldName === 'parent_nip' && $this->filled($fieldName)) {
+                        $nip = $this->input($fieldName);
+                        if ($nip !== '-' && !preg_match('/^\d{18}$/', $nip)) {
+                            $validator->errors()->add($fieldName, 'NIP harus berupa 18 digit angka atau tanda (-) jika tidak ada.');
+                        }
                     }
                 }
             }
@@ -194,11 +193,11 @@ class StoreLetterRequestRequest extends FormRequest
             'letter_type.enum' => ':attribute tidak valid',
 
             // Parent info
-            'parent_name.required' => ':attribute harus diisi',
-            'parent_nip.required' => ':attribute harus diisi',
-            'parent_rank.required' => ':attribute harus diisi',
-            'parent_institution.required' => ':attribute harus diisi',
-            'parent_institution_address.required' => ':attribute harus diisi',
+//            'parent_name.required' => ':attribute harus diisi',
+//            'parent_nip.required' => ':attribute harus diisi',
+//            'parent_rank.required' => ':attribute harus diisi',
+//            'parent_institution.required' => ':attribute harus diisi',
+//            'parent_institution_address.required' => ':attribute harus diisi',
 
             'required' => ':attribute wajib diisi',
             'string' => ':attribute harus berupa teks',
@@ -230,11 +229,11 @@ class StoreLetterRequestRequest extends FormRequest
             'letter_type' => 'Jenis Surat',
 
             // Parent info
-            'parent_name' => 'Nama Orang Tua',
-            'parent_nip' => 'NIP Orang Tua',
-            'parent_rank' => 'Pangkat/Golongan Orang Tua',
-            'parent_institution' => 'Instansi Orang Tua',
-            'parent_institution_address' => 'Alamat Instansi Orang Tua',
+//            'parent_name' => 'Nama Orang Tua',
+//            'parent_nip' => 'NIP Orang Tua',
+//            'parent_rank' => 'Pangkat/Golongan Orang Tua',
+//            'parent_institution' => 'Instansi Orang Tua',
+//            'parent_institution_address' => 'Alamat Instansi Orang Tua',
 
             'student_list' => 'Daftar Mahasiswa',
             'documents' => 'Dokumen Pendukung',
@@ -253,5 +252,30 @@ class StoreLetterRequestRequest extends FormRequest
         }
 
         return $attributes;
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        $allErrors = $validator->errors()->all();
+
+        $notificationArray = [];
+        foreach ($allErrors as $error) {
+            $notificationArray[] = [
+                'type' => 'error',
+                'text' => $error,
+                'position' => 'center-top',
+                'duration' => 3000,
+            ];
+        }
+
+        // Flashing ke session agar bisa dibaca oleh komponen toast/notifikasi Anda
+        session()->flash('notification_data', $notificationArray);
+
+        throw (new ValidationException($validator))
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 }

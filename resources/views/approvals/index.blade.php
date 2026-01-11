@@ -35,21 +35,20 @@
                         </label>
                     </div>
 
-                    {{-- Status Filter --}}
-{{--                    <div>--}}
-{{--                        <label class="block">--}}
-{{--                            <span class="text-xs-plus font-medium text-slate-600 dark:text-navy-100">Status</span>--}}
-{{--                            <select name="status"--}}
-{{--                                    class="form-select mt-1 h-8 w-full rounded-lg border border-slate-300 bg-white px-2.5 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent text-xs">--}}
-{{--                                <option value="">Semua Status</option>--}}
-{{--                                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu</option>--}}
-{{--                                <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Disetujui</option>--}}
-{{--                                <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>--}}
-{{--                                <option value="skipped" {{ request('status') === 'skipped' ? 'selected' : '' }}>Dilewati</option>--}}
-{{--                                <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Dipublikasikan</option>--}}
-{{--                            </select>--}}
-{{--                        </label>--}}
-{{--                    </div>--}}
+                    @if($isAdmin)
+                        <div>
+                            <label class="block">
+                                <span class="text-xs-plus font-medium text-slate-600 dark:text-navy-100">Status Persetujuan</span>
+                                <select name="status" class="form-select mt-1 h-8 w-full rounded-lg border border-slate-300 bg-white px-2.5 text-xs">
+                                    <option value="">Semua Status</option>
+                                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu</option>
+                                    <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Disetujui</option>
+                                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                    <option value="skipped" {{ request('status') === 'skipped' ? 'selected' : '' }}>Dilewati (Batal/Selesai Awal)</option>
+                                </select>
+                            </label>
+                        </div>
+                    @endif
 
                     {{-- Actions --}}
                     <div class="flex self-end items-center justify-between sm:justify-start space-x-2">
@@ -66,34 +65,36 @@
                 </form>
             </div>
 
-            <div class="card mt-3 p-4">
-                <div id="approval-tabs" class="tabs flex flex-col">
-                    <div class="is-scrollbar-hidden overflow-x-auto">
-                        <div class="tabs-list flex px-2 py-2 gap-2 border border-slate-200 dark:border-navy-500 rounded-lg bg-slate-100 text-slate-600 dark:bg-navy-800 dark:text-navy-200">
-                            <a href="{{ route('approvals.index', ['tab' => 'pending']) }}"
-                               class="tab btn shrink-0 space-x-2 px-3 py-2 font-medium text-xs ring-1 transition-all duration-300
+            @if(!$isAdmin)
+                <div class="card mt-3 p-4">
+                    <div id="approval-tabs" class="tabs flex flex-col">
+                        <div class="is-scrollbar-hidden overflow-x-auto">
+                            <div class="tabs-list flex px-2 py-2 gap-2 border border-slate-200 dark:border-navy-500 rounded-lg bg-slate-100 text-slate-600 dark:bg-navy-800 dark:text-navy-200">
+                                <a href="{{ route('approvals.index', ['tab' => 'pending']) }}"
+                                   class="tab btn shrink-0 space-x-2 px-3 py-2 font-medium text-xs ring-1 transition-all duration-300
                                     {{ $tab === 'pending'
                                         ? 'bg-warning/10 text-warning ring-warning/30 shadow-sm dark:bg-warning/15 dark:text-warning dark:ring-warning/40'
                                         : 'ring-slate-300 text-slate-600 hover:bg-white/70 hover:text-slate-800 dark:ring-navy-400 dark:text-navy-300 dark:hover:bg-navy-700/70 dark:hover:text-navy-100'
                                     }}
                                ">
-                                <i class="fa-solid fa-clock"></i>
-                                <span>Menunggu Saya</span>
-                            </a>
-                            <a href="{{ route('approvals.index', ['tab' => 'approved']) }}"
-                               class="tab btn shrink-0 space-x-2 px-3 py-1.5 font-medium text-xs ring-1 transition-all duration-300
+                                    <i class="fa-solid fa-clock"></i>
+                                    <span>Menunggu Saya</span>
+                                </a>
+                                <a href="{{ route('approvals.index', ['tab' => 'approved']) }}"
+                                   class="tab btn shrink-0 space-x-2 px-3 py-1.5 font-medium text-xs ring-1 transition-all duration-300
                                    {{ $tab === 'approved'
                                         ? 'bg-success/10 text-success ring-success/30 shadow-sm dark:bg-success/15 dark:text-success dark:ring-success/40'
                                         : 'ring-slate-300 text-slate-600 hover:bg-white/70 hover:text-slate-800 dark:ring-navy-400 dark:text-navy-300 dark:hover:bg-navy-700/70 dark:hover:text-navy-100'
                                    }}
                                ">
-                                <i class="fa-solid fa-check-circle"></i>
-                                <span>Sudah Disetujui</span>
-                            </a>
+                                    <i class="fa-solid fa-check-circle"></i>
+                                    <span>Sudah Disetujui</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
             <div class="card mt-3 p-4">
                 <div class="is-scrollbar-hidden min-w-full overflow-x-auto border-1 border-slate-200 dark:border-navy-500 rounded-lg">
@@ -207,7 +208,11 @@
                                     <div class="flex flex-col items-center justify-center">
                                         <i class="fa-solid fa-inbox text-4xl text-slate-300 dark:text-navy-400"></i>
                                         <p class="mt-3 text-xs text-slate-400 dark:text-navy-300">
-                                            {{ $tab === 'pending' ? 'Tidak ada pengajuan yang menunggu persetujuan' : 'Belum ada pengajuan yang disetujui' }}
+                                            @if($isAdmin)
+                                                Tidak ada data persetujuan yang ditemukan.
+                                            @else
+                                                {{ $tab === 'pending' ? 'Tidak ada pengajuan yang menunggu persetujuan' : 'Belum ada pengajuan yang disetujui' }}
+                                            @endif
                                         </p>
                                     </div>
                                 </td>
