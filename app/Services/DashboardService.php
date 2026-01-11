@@ -300,7 +300,11 @@ class DashboardService
             ->orderByRaw('TIMESTAMPDIFF(DAY, created_at, NOW()) DESC') // Oldest first
             ->get()
             ->map(function ($approval) {
-                $daysWaiting = Carbon::parse($approval->created_at)->diffInDays(Carbon::now());
+                $totalHours = $approval->created_at->diffInHours(Carbon::now());
+                $decimalDays = $totalHours / 24;
+                $daysWaiting = (int) round($decimalDays);
+                $daysWaiting = $daysWaiting < 1 ? 0 : $daysWaiting;
+
                 $approval->days_waiting = $daysWaiting;
                 $approval->priority = $daysWaiting > 3 ? 'urgent' : ($daysWaiting > 1 ? 'normal' : 'recent');
                 return $approval;

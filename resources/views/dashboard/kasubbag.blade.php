@@ -33,7 +33,7 @@
             <div class="mt-4 sm:mt-5 lg:mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <x-dashboard.card-stat
                         icon="fa-signature"
-                        label="Pending Paraf"
+                        label="Menunggu Paraf"
                         :value="$stats['summary']['pending']"
                         subtitle="Menunggu persetujuan"
                         color="warning"
@@ -43,7 +43,7 @@
                         icon="fa-check-double"
                         label="Paraf Hari Ini"
                         :value="$stats['summary']['approved_today']"
-                        subtitle="Keep it up!"
+                        subtitle="Kerja bagus!"
                         color="success"
                 />
 
@@ -57,109 +57,113 @@
 
                 <x-dashboard.card-stat
                         icon="fa-chart-pie"
-                        label="Success Rate"
+                        label="Tingkat Keberhasilan"
                         :value="$stats['summary']['success_rate'] . '%'"
-                        subtitle="Approval rate"
+                        subtitle="Persentase persetujuan"
                         color="info"
                 />
             </div>
 
             {{-- Charts Section --}}
-            <div class="mt-4 sm:mt-5 lg:mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-                {{-- Approval Flow Chart (Funnel) --}}
-                <x-dashboard.card-chart title="Approval Flow Fakultas" chartId="flow-chart" />
+{{--            <div class="mt-4 sm:mt-5 lg:mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">--}}
+{{--                --}}{{-- Approval Flow Chart (Funnel) --}}
+{{--                <x-dashboard.card-chart title="Approval Flow Fakultas" chartId="flow-chart" />--}}
 
-                {{-- Bottleneck Analysis Chart (Horizontal Bar) --}}
-                <x-dashboard.card-chart title="Bottleneck Analysis" chartId="bottleneck-chart" />
-            </div>
+{{--                --}}{{-- Bottleneck Analysis Chart (Horizontal Bar) --}}
+{{--                <x-dashboard.card-chart title="Bottleneck Analysis" chartId="bottleneck-chart" />--}}
+{{--            </div>--}}
 
             {{-- Avg Time Per Step Card --}}
-            @if(!empty($stats['performance']['avg_time_per_step']))
-                <div class="card mt-4 sm:mt-5 lg:mt-6">
-                    <div class="border-b border-slate-200 px-4 py-3 dark:border-navy-500">
-                        <h3 class="font-medium text-slate-700 dark:text-navy-100">
-                            ⏱️ Rata-rata Waktu Pemrosesan Per Step
-                        </h3>
-                    </div>
-                    <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">
-                        @foreach($stats['performance']['avg_time_per_step'] as $step => $time)
-                            <div class="rounded-lg border border-slate-200 p-4 dark:border-navy-500">
-                                <p class="mb-1 text-xs font-medium uppercase text-slate-400 dark:text-navy-300">
-                                    {{ ucfirst(str_replace('_', ' ', $step)) }}
-                                </p>
-                                <p class="text-3xl font-bold text-primary dark:text-accent-light">
-                                    {{ $time }}
-                                    <span class="text-sm font-normal text-slate-400">hari</span>
-                                </p>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
+{{--            @if(!empty($stats['performance']['avg_time_per_step']))--}}
+{{--                <div class="card mt-4 sm:mt-5 lg:mt-6">--}}
+{{--                    <div class="border-b border-slate-200 px-4 py-3 dark:border-navy-500">--}}
+{{--                        <h3 class="font-medium text-slate-700 dark:text-navy-100">--}}
+{{--                            ⏱️ Rata-rata Waktu Pemrosesan Per Step--}}
+{{--                        </h3>--}}
+{{--                    </div>--}}
+{{--                    <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">--}}
+{{--                        @foreach($stats['performance']['avg_time_per_step'] as $step => $time)--}}
+{{--                            <div class="rounded-lg border border-slate-200 p-4 dark:border-navy-500">--}}
+{{--                                <p class="mb-1 text-xs font-medium uppercase text-slate-400 dark:text-navy-300">--}}
+{{--                                    {{ ucfirst(str_replace('_', ' ', $step)) }}--}}
+{{--                                </p>--}}
+{{--                                <p class="text-3xl font-bold text-primary dark:text-accent-light">--}}
+{{--                                    {{ $time }}--}}
+{{--                                    <span class="text-sm font-normal text-slate-400">hari</span>--}}
+{{--                                </p>--}}
+{{--                            </div>--}}
+{{--                        @endforeach--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            @endif--}}
 
             {{-- Pending Approvals by Type --}}
-            <div class="card mt-4 sm:mt-5 lg:mt-6">
-                <div class="border-b border-slate-200 px-4 py-3 dark:border-navy-500">
-                    <h3 class="font-medium text-slate-700 dark:text-navy-100">
-                        ⏳ Surat Menunggu Paraf (Grouped by Type)
-                    </h3>
-                </div>
+{{--            <div class="card mt-4 sm:mt-5 lg:mt-6">--}}
+{{--                <div class="border-b border-slate-200 px-4 py-3 dark:border-navy-500">--}}
+{{--                    <h3 class="font-medium text-slate-700 dark:text-navy-100">--}}
+{{--                        Surat Menunggu Paraf--}}
+{{--                    </h3>--}}
+{{--                </div>--}}
 
-                <div class="p-4">
-                    @forelse($pendingApprovals as $letterType => $approvals)
-                        <div class="mb-4 rounded-lg border border-slate-200 dark:border-navy-500">
-                            <div class="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-navy-500 dark:bg-navy-600">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-folder text-primary"></i>
-                                    <h4 class="font-medium text-slate-700 dark:text-navy-100">
-                                        {{ \App\Enums\LetterType::from($letterType)->label() }}
-                                    </h4>
-                                    <span class="badge rounded-full bg-warning/10 text-warning">
-                                {{ $approvals->count() }} surat
-                            </span>
-                                </div>
-                            </div>
+{{--                <div class="p-4">--}}
+{{--                    @forelse($pendingApprovals as $letterType => $approvals)--}}
+{{--                        <div class="mb-4 rounded-lg border border-slate-200 dark:border-navy-500">--}}
+{{--                            <div class="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-navy-500 dark:bg-navy-600">--}}
+{{--                                <div class="flex items-center space-x-2">--}}
+{{--                                    <i class="fa-solid fa-folder text-primary"></i>--}}
+{{--                                    <h4 class="font-medium text-slate-700 dark:text-navy-100">--}}
+{{--                                        {{ \App\Enums\LetterType::from($letterType)->label() }}--}}
+{{--                                    </h4>--}}
+{{--                                    <span class="badge rounded-full bg-warning/10 text-warning">--}}
+{{--                                {{ $approvals->count() }} surat--}}
+{{--                            </span>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
-                            <div class="divide-y divide-slate-200 dark:divide-navy-500">
-                                @foreach($approvals as $approval)
-                                    @php
-                                        $daysWaiting = \Carbon\Carbon::parse($approval->created_at)->diffInDays(\Carbon\Carbon::now());
-                                        $priority = $daysWaiting > 3 ? 'urgent' : ($daysWaiting > 1 ? 'normal' : 'recent');
-                                    @endphp
-                                    <div class="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-navy-600">
-                                        <div class="flex-1">
-                                            <p class="font-medium text-slate-700 dark:text-navy-100">
-                                                {{ $approval->letterRequest->student->profile->full_name }}
-                                            </p>
-                                            <p class="text-xs text-slate-400">
-                                                {{ $approval->letterRequest->student->nim }} • Diajukan {{ $daysWaiting }} hari lalu
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center space-x-3">
-                                            @if($priority === 'urgent')
-                                                <span class="badge rounded-full bg-error/10 text-error">🔴 Urgent</span>
-                                            @elseif($priority === 'normal')
-                                                <span class="badge rounded-full bg-warning/10 text-warning">🟡 Normal</span>
-                                            @else
-                                                <span class="badge rounded-full bg-success/10 text-success">🟢 Recent</span>
-                                            @endif
-                                            <a href="{{ route('approvals.show', $approval) }}"
-                                               class="btn bg-primary font-medium text-white hover:bg-primary-focus">
-                                                Proses
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @empty
-                        <div class="rounded-lg border border-slate-200 p-8 text-center dark:border-navy-500">
-                            <i class="fa-solid fa-check-circle mb-2 text-4xl text-success"></i>
-                            <p class="text-slate-400">🎉 Semua surat sudah diproses!</p>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
+{{--                            <div class="divide-y divide-slate-200 dark:divide-navy-500">--}}
+{{--                                @foreach($approvals as $approval)--}}
+{{--                                    @php--}}
+{{--                                            $totalHours = $approval->created_at->diffInHours(\Carbon\Carbon::now());--}}
+{{--                                            $decimalDays = $totalHours / 24;--}}
+{{--                                            $daysWaiting = (int) round($decimalDays);--}}
+{{--                                            $daysWaiting = $daysWaiting < 1 ? 0 : $daysWaiting;--}}
+
+{{--                                            $priority = $daysWaiting > 3 ? 'urgent' : ($daysWaiting > 1 ? 'normal' : 'recent');--}}
+{{--                                    @endphp--}}
+{{--                                    <div class="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-navy-600">--}}
+{{--                                        <div class="flex-1">--}}
+{{--                                            <p class="font-medium text-slate-700 dark:text-navy-100">--}}
+{{--                                                {{ $approval->letterRequest->student->profile->full_name }}--}}
+{{--                                            </p>--}}
+{{--                                            <p class="text-xs text-slate-400">--}}
+{{--                                                {{ $approval->letterRequest->student->nim }} Diajukan {{ $daysWaiting }} hari lalu--}}
+{{--                                            </p>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="flex items-center space-x-3">--}}
+{{--                                            @if($priority === 'urgent')--}}
+{{--                                                <span class="badge rounded-full bg-error/10 text-error">Urgent</span>--}}
+{{--                                            @elseif($priority === 'normal')--}}
+{{--                                                <span class="badge rounded-full bg-warning/10 text-warning">Normal</span>--}}
+{{--                                            @else--}}
+{{--                                                <span class="badge rounded-full bg-success/10 text-success">Recent</span>--}}
+{{--                                            @endif--}}
+{{--                                            <a href="{{ route('approvals.show', $approval) }}"--}}
+{{--                                               class="badge bg-primary font-medium text-white hover:bg-primary-focus">--}}
+{{--                                                Proses--}}
+{{--                                            </a>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                @endforeach--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @empty--}}
+{{--                        <div class="rounded-lg border border-slate-200 p-8 text-center dark:border-navy-500">--}}
+{{--                            <i class="fa-solid fa-check-circle mb-2 text-4xl text-success"></i>--}}
+{{--                            <p class="text-slate-400">Semua surat sudah diproses!</p>--}}
+{{--                        </div>--}}
+{{--                    @endforelse--}}
+{{--                </div>--}}
+{{--            </div>--}}
         </div>
     </div>
 

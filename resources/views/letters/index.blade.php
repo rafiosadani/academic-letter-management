@@ -154,6 +154,14 @@
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         @endcan
+
+                                        @if($letter->status === 'completed')
+                                            <a href="{{ route('letters.download-pdf', $letter) }}"
+                                               class="btn size-8 p-0 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25 dark:bg-success/15"
+                                               title="Unduh PDF">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

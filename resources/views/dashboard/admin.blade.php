@@ -37,12 +37,6 @@
             </div>
 
             {{-- Summary Cards --}}
-            document.getElementById('total-users-count').textContent = data.total_users;
-            document.getElementById('total-study-programs').textContent = data.total_study_programs;
-            document.getElementById('total-letters-count').textContent = data.total_letters;
-            document.getElementById('pending-count').textContent = data.pending;
-            document.getElementById('today-count').textContent = data.today;
-            document.getElementById('this-month-count').textContent = data.this_month;
             <div class="mt-4 sm:mt-5 lg:mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
                 <x-dashboard.card-stat icon="fa-users" label="Total Pengguna" :value="$stats['summary']['total_users']" color="info" />
                 <x-dashboard.card-stat icon="fa-graduation-cap" label="Total Program Studi" :value="$stats['summary']['total_study_programs'] ?? 0" color="primary" />

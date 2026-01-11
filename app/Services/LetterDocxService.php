@@ -155,11 +155,11 @@ class LetterDocxService
                 'keperluan' => $this->formatForDocument($letter->data_input['keperluan'] ?? '-'),
             ],
             LetterType::SKAK_TUNJANGAN => [
-                'parent_name' => $letter->data_input['nama_orangtua'] ?? '-',
-                'parent_nip' => $letter->data_input['nip_orangtua'] ?? '-',
-                'parent_rank' => $letter->data_input['pangkat_golongan_orangtua'] ?? '-',
-                'parent_institution' => $this->formatForDocument($letter->data_input['nama_instansi_orangtua'] ?? '-'),
-                'parent_address' => $this->formatForDocument($letter->data_input['alamat_instansi_orangtua'] ?? '-'),
+                'parent_name' => $letter->data_input['parent_name'] ?? '-',
+                'parent_nip' => $letter->data_input['parent_nip'] ?? '-',
+                'parent_rank' => $letter->data_input['parent_rank'] ?? '-',
+                'parent_institution' => $this->formatForDocument($letter->data_input['parent_institution'] ?? '-'),
+                'parent_address' => $this->formatForDocument($letter->data_input['parent_institution_address'] ?? '-'),
             ],
             default => [],
         };

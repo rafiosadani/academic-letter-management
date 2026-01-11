@@ -116,13 +116,6 @@ class StoreLetterRequestRequest extends FormRequest
                     if ($config['type'] === 'student_list' && $this->has($fieldName)) {
                         $this->validateStudentList($validator, $fieldName);
                     }
-
-                    if ($fieldName === 'parent_nip' && $this->filled($fieldName)) {
-                        $nip = $this->input($fieldName);
-                        if ($nip !== '-' && !preg_match('/^\d{18}$/', $nip)) {
-                            $validator->errors()->add($fieldName, 'NIP harus berupa 18 digit angka atau tanda (-) jika tidak ada.');
-                        }
-                    }
                 }
             }
         });
@@ -192,12 +185,7 @@ class StoreLetterRequestRequest extends FormRequest
             'letter_type.required' => ':attribute harus dipilih',
             'letter_type.enum' => ':attribute tidak valid',
 
-            // Parent info
-//            'parent_name.required' => ':attribute harus diisi',
-//            'parent_nip.required' => ':attribute harus diisi',
-//            'parent_rank.required' => ':attribute harus diisi',
-//            'parent_institution.required' => ':attribute harus diisi',
-//            'parent_institution_address.required' => ':attribute harus diisi',
+            'parent_nip.regex' => 'NIP Orang Tua harus 18 digit angka atau tanda (-) jika tidak memiliki NIP.',
 
             'required' => ':attribute wajib diisi',
             'string' => ':attribute harus berupa teks',
@@ -229,11 +217,11 @@ class StoreLetterRequestRequest extends FormRequest
             'letter_type' => 'Jenis Surat',
 
             // Parent info
-//            'parent_name' => 'Nama Orang Tua',
-//            'parent_nip' => 'NIP Orang Tua',
-//            'parent_rank' => 'Pangkat/Golongan Orang Tua',
-//            'parent_institution' => 'Instansi Orang Tua',
-//            'parent_institution_address' => 'Alamat Instansi Orang Tua',
+            'parent_name' => 'Nama Orang Tua',
+            'parent_nip' => 'NIP Orang Tua',
+            'parent_rank' => 'Pangkat/Golongan Orang Tua',
+            'parent_institution' => 'Instansi Orang Tua',
+            'parent_institution_address' => 'Alamat Instansi Orang Tua',
 
             'student_list' => 'Daftar Mahasiswa',
             'documents' => 'Dokumen Pendukung',

@@ -6,7 +6,7 @@
     $filters = [
         'this_month' => 'Bulan Ini',
         'last_30_days' => '30 Hari Terakhir',
-        'this_semester' => 'Semester Ini',
+//        'this_semester' => 'Semester Ini',
         'all_time' => 'Semua Waktu',
     ];
 @endphp
