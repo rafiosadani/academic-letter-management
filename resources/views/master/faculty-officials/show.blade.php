@@ -54,6 +54,11 @@
                             {{ $facultyOfficial->user->email }}
                         </p>
                     @endif
+                    @if($facultyOfficial->rank)
+                        <p class="text-xs text-slate-400 dark:text-navy-300">
+                            {{ $facultyOfficial->rank }}
+                        </p>
+                    @endif
 
                     {{-- Status Badge --}}
                     <div class="mt-3">
@@ -230,6 +235,14 @@
                             <span class="text-xs text-slate-500 dark:text-navy-300">Email</span>
                             <p class="text-slate-700 dark:text-navy-100 break-all mt-1">
                                 {{ $facultyOfficial->user->email }}
+                            </p>
+                        </div>
+
+                        {{-- Rank --}}
+                        <div>
+                            <span class="text-xs text-slate-500 dark:text-navy-300">Pangkat / Golongan</span>
+                            <p class="text-slate-700 dark:text-navy-100 break-all mt-1">
+                                {{ $facultyOfficial->rank ?? '-' }}
                             </p>
                         </div>
 

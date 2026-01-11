@@ -30,6 +30,7 @@ class CreateFacultyOfficialRequest extends FormRequest
         return [
             'user_id' => ['required', 'exists:users,id'],
             'position' => ['required', Rule::in($positionValues)],
+            'rank' => ['nullable', 'string', 'max:100', 'regex:/^[a-zA-Z0-9\s\/\-\(\)]+$/'],
             'study_program_id' => ['nullable', 'exists:study_programs,id'],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after:start_date'],
@@ -53,6 +54,16 @@ class CreateFacultyOfficialRequest extends FormRequest
             // Auto-clear study_program_id if position doesn't require it
             if (!$position->requiresStudyProgram()) {
                 $this->merge(['study_program_id' => null]);
+            }
+
+            // Auto-clean rank if empty
+            if ($this->rank === '' || $this->rank === null) {
+                $this->merge(['rank' => null]);
+            }
+
+            // Trim rank input
+            if ($this->rank) {
+                $this->merge(['rank' => trim($this->rank)]);
             }
 
             // 1. Validate Kaprodi must have study_program_id
@@ -142,6 +153,8 @@ class CreateFacultyOfficialRequest extends FormRequest
             'user_id.exists' => 'User yang dipilih tidak valid.',
             'position.required' => 'Posisi jabatan harus dipilih.',
             'position.in' => 'Posisi jabatan tidak valid.',
+            'rank.max' => 'Pangkat / Golongan maksimal 100 karakter.',
+            'rank.regex' => 'Pangkat / Golongan hanya boleh mengandung huruf, angka, spasi, garis miring (/) dan tanda kurung.',
             'study_program_id.exists' => 'Program Studi tidak valid.',
             'start_date.required' => 'Tanggal mulai harus diisi.',
             'start_date.date' => 'Format tanggal mulai tidak valid.',
@@ -159,6 +172,7 @@ class CreateFacultyOfficialRequest extends FormRequest
         return [
             'user_id' => 'User',
             'position' => 'Posisi Jabatan',
+            'rank' => 'Pangkat / Golongan',
             'study_program_id' => 'Program Studi',
             'start_date' => 'Tanggal Mulai',
             'end_date' => 'Tanggal Selesai',

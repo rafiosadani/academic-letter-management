@@ -32,7 +32,6 @@
 
         // Check if elements exist
         if (!notificationBadge || !notificationCountBadge || !notificationList) {
-            console.warn('Notification elements not found. Polling disabled.');
             return;
         }
 

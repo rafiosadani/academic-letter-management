@@ -47,12 +47,10 @@ const toolbarConfigs = {
  * Initialize Quill Editor
  */
 export function initQuillEditor(container = document) {
-    console.log('[Quill] Initializing...');
 
     const editors = container.querySelectorAll('[data-quill-editor]');
 
     if (editors.length === 0) {
-        console.log('[Quill] No editors found');
         return;
     }
 
@@ -63,20 +61,16 @@ export function initQuillEditor(container = document) {
 
         // Skip if already initialized
         if (quillInstances.has(editorId)) {
-            console.log('[Quill] Already initialized:', fieldName);
             return;
         }
 
         try {
             const instance = createQuillInstance(editorContainer, fieldName, toolbarType);
             quillInstances.set(editorId, instance);
-            console.log('[Quill] ✓ Initialized:', fieldName);
         } catch (error) {
             console.error('[Quill] ✗ Failed to initialize:', fieldName, error);
         }
     });
-
-    console.log(`[Quill] ✓ Initialized ${editors.length} editor(s)`);
 }
 
 /**
@@ -175,7 +169,6 @@ export function destroyQuillEditor(editorId) {
     if (instance) {
         // Quill doesn't have destroy method, but we can cleanup
         quillInstances.delete(editorId);
-        console.log('[Quill] Destroyed:', editorId);
     }
 }
 
@@ -184,7 +177,6 @@ export function destroyQuillEditor(editorId) {
  */
 export function destroyAllQuill() {
     quillInstances.clear();
-    console.log('[Quill] All instances destroyed');
 }
 
 /**

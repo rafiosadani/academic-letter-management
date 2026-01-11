@@ -9,7 +9,7 @@
 
     <div class="mt-4 grid grid-cols-12 gap-4 sm:mt-5 sm:gap-5 lg:mt-6 lg:gap-6">
         <div class="col-span-12">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
                 <div>
                     <h2 class="text-base font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100">
                         Semua Notifikasi
@@ -19,40 +19,42 @@
                     </p>
                 </div>
 
-                <div class="flex items-center space-x-2">
+                <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-x-2 sm:space-y-0 mt-2 sm:mt-0 text-xs sm:text-sm">
                     {{-- Filter Buttons --}}
-                    <div class="flex space-x-1">
+                    <div class="flex w-full space-x-1">
                         <a href="{{ route('notifications.index') }}"
-                           class="btn h-9 {{ !request('unread_only') && !request('category') ? 'bg-primary text-white' : 'border border-slate-300 text-slate-700 dark:border-navy-450 dark:text-navy-100' }}">
+                           class="btn sm:h-9 w-full sm:w-auto {{ !request('unread_only') && !request('category') ? 'bg-primary text-white' : 'border border-slate-300 text-slate-700 dark:border-navy-450 dark:text-navy-100' }}">
                             <i class="fa-solid fa-inbox mr-1"></i>
                             Semua
                         </a>
                         <a href="{{ route('notifications.index', ['unread_only' => 1]) }}"
-                           class="btn h-9 {{ request('unread_only') ? 'bg-primary text-white' : 'border border-slate-300 text-slate-700 dark:border-navy-450 dark:text-navy-100' }}">
+                           class="btn h-9 w-full sm:w-auto whitespace-nowrap flex items-center justify-center {{ request('unread_only') ? 'bg-primary text-white' : 'border border-slate-300 text-slate-700 dark:border-navy-450 dark:text-navy-100' }}">
                             <i class="fa-solid fa-envelope mr-1"></i>
                             Belum Dibaca ({{ $unreadCount }})
                         </a>
                     </div>
 
-                    {{-- Mark All as Read --}}
-                    @if($unreadCount > 0)
-                        <button
-                            type="button"
-                            data-toggle="modal"
-                            data-target="#mark-all-notifications-read-modal"
-                            class="btn h-9 bg-success font-medium text-white hover:bg-success-focus focus:bg-success-focus active:bg-success-focus/90"
-                        >
-                            <i class="fa-solid fa-check-double mr-1"></i>
-                            Tandai Semua Dibaca
-                        </button>
-                    @endif
+                    <div class="flex w-full space-x-1">
+                        {{-- Mark All as Read --}}
+                        @if($unreadCount > 0)
+                            <button
+                                    type="button"
+                                    data-toggle="modal"
+                                    data-target="#mark-all-notifications-read-modal"
+                                    class="btn h-9 w-full sm:w-auto whitespace-nowrap flex items-center justify-center bg-success font-medium text-white hover:bg-success-focus focus:bg-success-focus active:bg-success-focus/90"
+                            >
+                                <i class="fa-solid fa-check-double mr-1"></i>
+                                Tandai Semua Dibaca
+                            </button>
+                        @endif
 
-                    {{-- Settings --}}
-                    <a href="{{ route('notifications.settings') }}"
-                       class="btn h-9 border border-slate-300 text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500"
-                       title="Pengaturan Notifikasi">
-                        <i class="fa-solid fa-cog"></i>
-                    </a>
+                        {{-- Settings --}}
+                        <a href="{{ route('notifications.settings') }}"
+                           class="btn h-9 w-fit border border-slate-300 text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500"
+                           title="Pengaturan Notifikasi">
+                            <i class="fa-solid fa-cog"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -64,20 +66,20 @@
                             $isRead = $notification->read_at !== null;
                         @endphp
 
-                        <div class="flex items-start space-x-4 border-b border-slate-150 p-4 dark:border-navy-500 {{ !$isRead ? 'bg-primary/5 dark:bg-accent/10' : '' }}">
+                        <div class="flex items-start space-x-2 sm:space-x-4 border-b border-slate-150 p-3 sm:p-4 dark:border-navy-500 {{ !$isRead ? 'bg-primary/5 dark:bg-accent/10' : '' }}">
                             {{-- Icon --}}
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-lg {{ !$isRead ? 'bg-primary/20 text-primary' : 'bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300' }}">
-                                <i class="fa-solid {{ $data['icon'] ?? 'fa-solid fa-bell' }} text-lg"></i>
+                            <div class="flex size-7 sm:size-10 shrink-0 items-center justify-center rounded-lg {{ !$isRead ? 'bg-primary/20 text-primary' : 'bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300' }}">
+                                <i class="fa-solid {{ $data['icon'] ?? 'fa-solid fa-bell' }} text-sm sm:text-lg"></i>
                             </div>
 
                             {{-- Content --}}
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-2 sm:gap-0 sm:justify-between">
                                     <div class="flex-1">
                                         <h3 class="font-medium text-slate-700 dark:text-navy-100 {{ !$isRead ? 'font-semibold' : '' }}">
                                             {{ $data['title'] ?? 'Notifikasi' }}
                                         </h3>
-                                        <p class="mt-1 text-xs text-slate-600 dark:text-navy-200">
+                                        <p class="mt-1 text-xs text-justify text-slate-600 dark:text-navy-200">
                                             {{ $data['message'] ?? '' }}
                                         </p>
 
@@ -105,14 +107,6 @@
                                             title="Tandai Dibaca">
                                             <i class="fa-solid fa-check"></i>
                                         </button>
-{{--                                        <button--}}
-{{--                                                type="button"--}}
-{{--                                                data-toggle="modal"--}}
-{{--                                                data-target="#mark-notification-read-modal-{{ $notification->id }}"--}}
-{{--                                                class="btn size-8 p-0 text-success hover:bg-success/20 focus:bg-success/20 active:bg-success/25"--}}
-{{--                                                title="Tandai Dibaca">--}}
-{{--                                            <i class="fa-solid fa-check"></i>--}}
-{{--                                        </button>--}}
                                     @else
                                         <div class="text-xs text-success flex items-center">
                                             <i class="fa-solid fa-check-circle mr-1"></i>

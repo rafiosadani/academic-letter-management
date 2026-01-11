@@ -154,8 +154,4 @@
             :submitType="isset($role) ? 'warning' : 'primary'"
         />
     </form>
-
-    <x-slot:scripts>
-        @vite('resources/js/pages/roles/role-form.js')
-    </x-slot:scripts>
 </x-layouts.app>

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Approval;
 use App\Models\LetterRequest;
 use App\Models\Semester;
+use App\Models\StudyProgram;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -616,8 +617,9 @@ class DashboardService
         $dateRange = $this->getDateRange($filter);
         $today = Carbon::today();
 
-        $totalUsers = User::count();
-        $totalLetters = LetterRequest::count();
+        $totalUsers = User::where('status', 1)->count();
+        $totalStudyPrograms = StudyProgram::count();
+        $totalLetters = LetterRequest::where('status', 'completed')->count();
         $pending = LetterRequest::whereIn('status', ['in_progress', 'external_processing'])->count();
         $todaySubmissions = LetterRequest::whereDate('created_at', $today)->count();
         $rangeSubmissions = LetterRequest::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
@@ -625,6 +627,7 @@ class DashboardService
         return [
             'summary' => [
                 'total_users' => $totalUsers,
+                'total_study_programs' => $totalStudyPrograms,
                 'total_letters' => $totalLetters,
                 'pending' => $pending,
                 'today' => $todaySubmissions,
@@ -723,8 +726,8 @@ class DashboardService
         return [
             'categories' => $days,
             'series' => [
-                ['name' => 'Submissions', 'data' => $submissions],
-                ['name' => 'Approvals', 'data' => $approvals],
+                ['name' => 'Pengajuan', 'data' => $submissions],
+                ['name' => 'Persetujuan', 'data' => $approvals],
             ],
         ];
     }

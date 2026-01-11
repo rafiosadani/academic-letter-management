@@ -16,32 +16,25 @@ const flatpickrInstances = new Map();
  * Initialize Flatpickr
  */
 export function initFlatpickr(container = document) {
-    console.log('[Flatpickr] Initializing...');
-
     const dateInputs = container.querySelectorAll('input[data-flatpickr="true"]');
 
     if (dateInputs.length === 0) {
-        console.log('[Flatpickr] No date inputs found');
         return;
     }
 
     dateInputs.forEach(input => {
         // Skip if already initialized
         if (input._flatpickr) {
-            console.log('[Flatpickr] Already initialized:', input.name);
             return;
         }
 
         try {
             const instance = createFlatpickrInstance(input);
             flatpickrInstances.set(input, instance);
-            console.log('[Flatpickr] ✓ Initialized:', input.name);
         } catch (error) {
             console.error('[Flatpickr] ✗ Failed to initialize:', input.name, error);
         }
     });
-
-    console.log(`[Flatpickr] ✓ Initialized ${dateInputs.length} input(s)`);
 }
 
 /**
@@ -81,12 +74,9 @@ function createFlatpickrInstance(input) {
         // Callbacks
         onReady: function(selectedDates, dateStr, instance) {
             applyDarkMode(instance);
-            console.log('[Flatpickr] Ready:', input.name);
         },
 
         onChange: function(selectedDates, dateStr, instance) {
-            console.log('[Flatpickr] Date changed:', dateStr);
-
             // Trigger change event untuk validation
             input.dispatchEvent(new Event('change', { bubbles: true }));
         },
@@ -127,7 +117,6 @@ export function destroyFlatpickr(input) {
     if (instance) {
         instance.destroy();
         flatpickrInstances.delete(input);
-        console.log('[Flatpickr] Destroyed:', input.name);
     }
 }
 
@@ -139,7 +128,6 @@ export function destroyAllFlatpickr() {
         instance.destroy();
     });
     flatpickrInstances.clear();
-    console.log('[Flatpickr] All instances destroyed');
 }
 
 /**

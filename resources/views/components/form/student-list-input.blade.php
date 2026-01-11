@@ -2,7 +2,11 @@
     'name' => 'student_list',
     'required' => false,
     'value' => [],
-    'studyPrograms' => []
+    'studyPrograms' => [],
+    'placeholder' => 'Klik tombol tambah data...',
+    'helper' => '',
+    'min_students' => 1,
+    'max_students' => 50
 ])
 
 <div x-data="studentListManager{{ $name }}()" x-init="init()" class="w-full">
@@ -11,6 +15,11 @@
             <span class="font-medium text-slate-600 dark:text-navy-100">
                 Daftar Mahasiswa @if($required)<span class="text-red-500">*</span>@endif
             </span>
+            @if($helper)
+                <p class="text-tiny-plus text-slate-500 dark:text-navy-300 mt-1">
+                    {{ $helper }}
+                </p>
+            @endif
         </div>
         <button type="button"
                 @click.stop.prevent="addStudent()"
@@ -85,7 +94,7 @@
 
             <tr x-show="students.length === 0">
                 <td colspan="5" class="px-3 py-2 text-center text-tiny-plus italic text-slate-400">
-                    Belum ada data mahasiswa. Klik tombol "Tambah Data" untuk menambahkan.
+                    {{ $placeholder ?? 'Belum ada data mahasiswa. Klik tombol "Tambah Data" untuk menambahkan.' }}
                 </td>
             </tr>
             </tbody>

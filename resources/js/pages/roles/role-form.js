@@ -4,8 +4,6 @@
  */
 
 const initRoleForm = () => {
-    console.log('[Role Form] Initialized');
-
     // Setup permission checkbox handlers
     setupPermissionHandlers();
 
@@ -31,7 +29,6 @@ window.checkAllPermissions = function() {
     });
 
     updateAllGroupCheckboxes();
-    console.log('[Role Form] ✓ Semua permissions dipilih (' + checkboxes.length + ' items)');
 }
 
 /**
@@ -45,7 +42,6 @@ window.uncheckAllPermissions = function() {
     });
 
     updateAllGroupCheckboxes();
-    console.log('[Role Form] ✗ Semua permissions dibatalkan');
 }
 
 /**
@@ -60,8 +56,6 @@ window.toggleGroupPermissions = function(masterCheckbox, groupSlug) {
     groupCheckboxes.forEach(checkbox => {
         checkbox.checked = isChecked;
     });
-
-    console.log(`[Role Form] Group "${groupSlug}": ${isChecked ? 'checked' : 'unchecked'} (${groupCheckboxes.length} items)`);
 }
 
 // =============================================
@@ -75,7 +69,6 @@ function setupPermissionHandlers() {
     const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
 
     if (permissionCheckboxes.length === 0) {
-        console.warn('[Role Form] Tidak ada permission checkbox ditemukan');
         return;
     }
 
@@ -87,8 +80,6 @@ function setupPermissionHandlers() {
             }
         });
     });
-
-    console.log('[Role Form] Setup handlers untuk', permissionCheckboxes.length, 'checkboxes');
 }
 
 /**
@@ -144,8 +135,6 @@ function updateAllGroupCheckboxes() {
 
     // Update setiap group
     groupSlugs.forEach(slug => updateGroupCheckbox(slug));
-
-    console.log('[Role Form] Updated', groupSlugs.size, 'group checkboxes');
 }
 
 // =============================================
@@ -172,7 +161,7 @@ function setupFormValidation() {
             e.preventDefault();
 
             // Tampilkan alert
-            alert('⚠️ Harap pilih minimal satu permission untuk role ini!');
+            alert('Harap pilih minimal satu permission untuk role ini!');
 
             // Scroll ke permission table
             const permissionCard = document.querySelector('.card:has(input[name="permissions[]"])');
@@ -182,15 +171,9 @@ function setupFormValidation() {
                     block: 'center'
                 });
             }
-
-            console.warn('[Role Form] ✗ Form validation failed: No permissions selected');
             return false;
         }
-
-        console.log('[Role Form] ✓ Form valid, submitting... (' + selectedPermissions.length + ' permissions selected)');
     });
-
-    console.log('[Role Form] Form validation setup');
 }
 
 // =============================================

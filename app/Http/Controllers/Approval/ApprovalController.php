@@ -31,20 +31,34 @@ class ApprovalController extends Controller
     public function index(Request $request): View
     {
         $this->authorize('viewAny', Approval::class);
-
+        $user = auth()->user();
         $filters = $request->only(['letter_type', 'status', 'search']);
 
-        $tab = $request->query('tab', 'pending');
+        $isAdmin = $user->hasRole('Administrator');
 
-        if ($tab === 'pending') {
-            $approvals = $this->approvalService->getPendingApprovalsForUser(auth()->user(), $filters);
+        if ($isAdmin) {
+            $tab = 'all';
+            $approvals = Approval::with([
+                'letterRequest.student.profile',
+                'letterRequest.semester',
+                'letterRequest.academicYear',
+            ])
+                ->latest('created_at')
+                ->filter($filters)
+                ->paginate(15)
+                ->withQueryString();
         } else {
-            $approvals = $this->approvalService->getApprovedByUser(auth()->user());
-        }
+            $tab = $request->query('tab', 'pending');
 
+            if ($tab === 'pending') {
+                $approvals = $this->approvalService->getPendingApprovalsForUser(auth()->user(), $filters);
+            } else {
+                $approvals = $this->approvalService->getApprovedByUser(auth()->user());
+            }
+        }
         $letterTypes = LetterType::cases();
 
-        return view('approvals.index', compact('approvals', 'letterTypes', 'tab'));
+        return view('approvals.index', compact('approvals', 'letterTypes', 'tab', 'isAdmin'));
     }
 
     /**

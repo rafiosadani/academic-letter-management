@@ -42,8 +42,6 @@ function handleToggleClick(event) {
  * Initialize password toggle listeners
  */
 export function initPasswordToggle(container = document) {
-    console.log('👁️ [Password Toggle] Initializing...');
-
     // Cari semua tombol dengan hook data-toggle-password
     const toggleButtons = container.querySelectorAll('button[data-toggle-password="true"]');
 
@@ -57,8 +55,6 @@ export function initPasswordToggle(container = document) {
         // Tambah listener baru
         button.addEventListener('click', handleToggleClick);
     });
-
-    console.log(`👁️ [Password Toggle] ✓ Initialized ${toggleButtons.length} toggle button(s)`);
 }
 
 // Export untuk global access

@@ -193,8 +193,6 @@
  */
 
 export function initModalErrorReopener() {
-    console.log('[Modal Reopener] Initialized');
-
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', openErrorModals);
     } else {
@@ -210,12 +208,9 @@ function openErrorModals() {
     // Filter modal yang punya ID valid
     const validModals = Array.from(errorModals).filter(modal => modal.id && modal.id.trim() !== '');
 
-    console.log('[Modal Reopener] Mencari modal dengan error...', validModals.length, 'ditemukan');
-
     if (validModals.length === 0) return;
 
     validModals.forEach(modalElement => {
-        console.log('[Modal Reopener] Membuka modal:', modalElement.id);
         setTimeout(() => {
             openModalProgrammatically(modalElement);
         }, 150);
@@ -226,13 +221,10 @@ function openModalProgrammatically(modalElement) {
     const triggerButton = document.querySelector(`[data-target="#${modalElement.id}"]`);
 
     if (triggerButton) {
-        console.log('[Modal Reopener] Trigger ditemukan, klik...');
         triggerButton.click();
         setTimeout(() => focusFirstInput(modalElement), 300);
         return;
     }
-
-    console.log('[Modal Reopener] Membuka manual...');
 
     modalElement.style.display = 'flex';
     modalElement.classList.add('is-open');
@@ -259,7 +251,6 @@ function openModalProgrammatically(modalElement) {
     document.body.style.overflow = 'hidden';
 
     setTimeout(() => focusFirstInput(modalElement), 300);
-    console.log('[Modal Reopener] ✓ Modal dibuka:', modalElement.id);
 }
 
 function focusFirstInput(modalElement) {
@@ -267,7 +258,6 @@ function focusFirstInput(modalElement) {
     const targetInput = errorInput || modalElement.querySelector('input:not([type="hidden"]):not([readonly]), select, textarea');
 
     if (targetInput) {
-        console.log('[Modal Reopener] Fokus ke:', targetInput.name || targetInput.id);
         targetInput.focus();
         targetInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
 

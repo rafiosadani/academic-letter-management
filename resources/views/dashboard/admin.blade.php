@@ -6,7 +6,7 @@
             <x-dashboard.welcome-card
                 :user="$user"
 {{--                    image="{{ asset('images/illustrations/admin.svg') }}"--}}
-                    color="from-slate-700 to-slate-800"
+                color="from-slate-700 to-slate-800"
             >
                 <x-slot:extraInfo>
                     <div>
@@ -37,105 +37,111 @@
             </div>
 
             {{-- Summary Cards --}}
+            document.getElementById('total-users-count').textContent = data.total_users;
+            document.getElementById('total-study-programs').textContent = data.total_study_programs;
+            document.getElementById('total-letters-count').textContent = data.total_letters;
+            document.getElementById('pending-count').textContent = data.pending;
+            document.getElementById('today-count').textContent = data.today;
+            document.getElementById('this-month-count').textContent = data.this_month;
             <div class="mt-4 sm:mt-5 lg:mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-                <x-dashboard.card-stat icon="fa-users" label="Total Users" :value="$stats['summary']['total_users']" color="primary" />
-                <x-dashboard.card-stat icon="fa-file-alt" label="Total Letters" :value="$stats['summary']['total_letters']" color="info" />
-                <x-dashboard.card-stat icon="fa-clock" label="Pending" :value="$stats['summary']['pending']" color="warning" />
-                <x-dashboard.card-stat icon="fa-calendar-day" label="Today" :value="$stats['summary']['today']" color="success" />
-                <x-dashboard.card-stat icon="fa-calendar-check" label="This Month" :value="$stats['summary']['this_month']" color="primary" />
-                <x-dashboard.card-stat icon="fa-exclamation-triangle" label="Failed Jobs" :value="$systemHealth['failed_jobs']" :color="$systemHealth['failed_jobs'] > 0 ? 'danger' : 'success'" />
+                <x-dashboard.card-stat icon="fa-users" label="Total Pengguna" :value="$stats['summary']['total_users']" color="info" />
+                <x-dashboard.card-stat icon="fa-graduation-cap" label="Total Program Studi" :value="$stats['summary']['total_study_programs'] ?? 0" color="primary" />
+                <x-dashboard.card-stat icon="fa-file-alt" label="Total Pengajuan Surat" :value="$stats['summary']['total_letters']" color="secondary" />
+                <x-dashboard.card-stat icon="fa-clock" label="Menunggu Persetujuan" :value="$stats['summary']['pending']" color="warning" />
+                <x-dashboard.card-stat icon="fa-calendar-day" label="Pengajuan Hari Ini" :value="$stats['summary']['today']" color="success" />
+                <x-dashboard.card-stat icon="fa-calendar-check" label="Pengajuan Bulan Ini" :value="$stats['summary']['this_month']" color="primary" />
             </div>
 
             {{-- System Health Card --}}
-            <div class="mt-4 sm:mt-5 lg:mt-6">
-                <div class="flex h-8 items-center justify-between">
-                    <h2 class="text-base font-medium tracking-wide text-slate-700 dark:text-navy-100">
-                        System Health
-                    </h2>
-                    <button
-                            onclick="location.reload()"
-                            class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
-                            title="Refresh Status"
-                    >
-                        <i class="fa-solid fa-refresh"></i>
-                    </button>
-                </div>
-                <div class="card mt-3">
-                    <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['queue_status'] === 'running' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">
-                                <i class="fa-solid fa-server"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400">Queue Worker</p>
-                                <p class="font-medium {{ $systemHealth['queue_status'] === 'running' ? 'text-success' : 'text-error' }}">
-                                    {{ ucfirst($systemHealth['queue_status']) }}
-                                </p>
-                            </div>
-                        </div>
+{{--            <div class="mt-4 sm:mt-5 lg:mt-6">--}}
+{{--                <div class="flex h-8 items-center justify-between">--}}
+{{--                    <h2 class="text-base font-medium tracking-wide text-slate-700 dark:text-navy-100">--}}
+{{--                        System Health--}}
+{{--                    </h2>--}}
+{{--                    <button--}}
+{{--                            onclick="location.reload()"--}}
+{{--                            class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"--}}
+{{--                            title="Refresh Status"--}}
+{{--                    >--}}
+{{--                        <i class="fa-solid fa-refresh"></i>--}}
+{{--                    </button>--}}
+{{--                </div>--}}
+{{--                <div class="card mt-3">--}}
+{{--                    <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">--}}
+{{--                        <div class="flex items-center space-x-3">--}}
+{{--                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['queue_status'] === 'running' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">--}}
+{{--                                <i class="fa-solid fa-server"></i>--}}
+{{--                            </div>--}}
+{{--                            <div>--}}
+{{--                                <p class="text-xs text-slate-400">Queue Worker</p>--}}
+{{--                                <p class="font-medium {{ $systemHealth['queue_status'] === 'running' ? 'text-success' : 'text-error' }}">--}}
+{{--                                    {{ ucfirst($systemHealth['queue_status']) }}--}}
+{{--                                </p>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
-                        <div class="flex items-center space-x-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['scheduler_status'] === 'active' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">
-                                <i class="fa-solid fa-clock"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400">Scheduler</p>
-                                <p class="font-medium {{ $systemHealth['scheduler_status'] === 'active' ? 'text-success' : 'text-error' }}">
-                                    {{ ucfirst($systemHealth['scheduler_status']) }}
-                                </p>
-                            </div>
-                        </div>
+{{--                        <div class="flex items-center space-x-3">--}}
+{{--                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['scheduler_status'] === 'active' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">--}}
+{{--                                <i class="fa-solid fa-clock"></i>--}}
+{{--                            </div>--}}
+{{--                            <div>--}}
+{{--                                <p class="text-xs text-slate-400">Scheduler</p>--}}
+{{--                                <p class="font-medium {{ $systemHealth['scheduler_status'] === 'active' ? 'text-success' : 'text-error' }}">--}}
+{{--                                    {{ ucfirst($systemHealth['scheduler_status']) }}--}}
+{{--                                </p>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
-                        <div class="flex items-center space-x-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['database_status'] === 'healthy' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">
-                                <i class="fa-solid fa-database"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400">Database</p>
-                                <p class="font-medium {{ $systemHealth['database_status'] === 'healthy' ? 'text-success' : 'text-error' }}">
-                                    {{ ucfirst($systemHealth['database_status']) }}
-                                </p>
-                            </div>
-                        </div>
+{{--                        <div class="flex items-center space-x-3">--}}
+{{--                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['database_status'] === 'healthy' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">--}}
+{{--                                <i class="fa-solid fa-database"></i>--}}
+{{--                            </div>--}}
+{{--                            <div>--}}
+{{--                                <p class="text-xs text-slate-400">Database</p>--}}
+{{--                                <p class="font-medium {{ $systemHealth['database_status'] === 'healthy' ? 'text-success' : 'text-error' }}">--}}
+{{--                                    {{ ucfirst($systemHealth['database_status']) }}--}}
+{{--                                </p>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
-                        <div class="flex items-center space-x-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['storage_used_percent'] < 80 ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning' }}">
-                                <i class="fa-solid fa-hard-drive"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400">Storage</p>
-                                <p class="font-medium {{ $systemHealth['storage_used_percent'] < 80 ? 'text-success' : 'text-warning' }}">
-                                    {{ $systemHealth['storage_used_percent'] }}% used
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+{{--                        <div class="flex items-center space-x-3">--}}
+{{--                            <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $systemHealth['storage_used_percent'] < 80 ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning' }}">--}}
+{{--                                <i class="fa-solid fa-hard-drive"></i>--}}
+{{--                            </div>--}}
+{{--                            <div>--}}
+{{--                                <p class="text-xs text-slate-400">Storage</p>--}}
+{{--                                <p class="font-medium {{ $systemHealth['storage_used_percent'] < 80 ? 'text-success' : 'text-warning' }}">--}}
+{{--                                    {{ $systemHealth['storage_used_percent'] }}% used--}}
+{{--                                </p>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
 
-                    @if($systemHealth['failed_jobs'] > 0)
-                        <div class="border-t border-slate-200 bg-error/5 px-4 py-3 dark:border-navy-500">
-                            <div class="flex items-center space-x-2 text-error">
-                                <i class="fa-solid fa-exclamation-circle"></i>
-                                <p class="text-sm">
-                                    <strong>{{ $systemHealth['failed_jobs'] }} failed jobs</strong> detected.
-                                    <a href="#" class="underline">View Details →</a>
-                                </p>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
+{{--                    @if($systemHealth['failed_jobs'] > 0)--}}
+{{--                        <div class="border-t border-slate-200 bg-error/5 px-4 py-3 dark:border-navy-500">--}}
+{{--                            <div class="flex items-center space-x-2 text-error">--}}
+{{--                                <i class="fa-solid fa-exclamation-circle"></i>--}}
+{{--                                <p class="text-sm">--}}
+{{--                                    <strong>{{ $systemHealth['failed_jobs'] }} failed jobs</strong> detected.--}}
+{{--                                    <a href="#" class="underline">View Details →</a>--}}
+{{--                                </p>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
+{{--                </div>--}}
+{{--            </div>--}}
 
             {{-- Charts --}}
             <div class="mt-4 sm:mt-5 lg:mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <x-dashboard.card-chart title="System Activity (30 Days)" chartId="activity-chart" />
-                <x-dashboard.card-chart title="User Distribution" chartId="user-dist-chart" />
+                <x-dashboard.card-chart title="Aktivitas Sistem (30 Hari Terakhir)" chartId="activity-chart" />
+                <x-dashboard.card-chart title="Distribusi Pengguna (Role)" chartId="user-dist-chart" />
             </div>
 
             {{-- Recent Activity Log --}}
             <div id="activity-log-section" class="mt-4 sm:mt-5 lg:mt-6">
                 <div class="flex h-12 items-center justify-between">
                     <h2 class="text-base font-medium tracking-wide text-slate-700 dark:text-navy-100">
-                        Recent Activity Log
+                        Log Aktivitas Terbaru
                     </h2>
 
                     {{-- Filter Dropdown di Kanan dengan Style Tombol Tetap --}}
@@ -151,11 +157,11 @@
                                     @default All Actions
                                 @endswitch
                             </span>
-                            <i class="fa-solid fa-chevron-down text-tiny-plus"></i>
+                            <i class="fa-solid fa-chevron-down text-tiny"></i>
                         </button>
 
                         <div class="popper-root">
-                            <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter dark:border-navy-500 dark:bg-navy-700 shadow-soft">
+                            <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 text-xs font-medium dark:border-navy-500 dark:bg-navy-700 shadow-soft">
                                 <ul style="min-width: 160px;">
                                     @php
                                         $actionList = [
@@ -170,12 +176,10 @@
                                     @foreach($actionList as $key => $label)
                                         <li>
                                             <a href="{{ request()->fullUrlWithQuery(['action' => $key]) . '#activity-log-section' }}"
-                                               class="flex h-8 items-center px-3 pr-8 text-xs+ font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-navy-600 {{ request('action') === $key || (is_null($key) && !request('action')) ? 'text-primary dark:text-accent-light' : '' }}">
-                                                <div class="flex w-5 items-center">
-                                                    @if(request('action') === $key || (is_null($key) && !request('action')))
-                                                        <i class="fa-solid fa-check text-xs"></i>
-                                                    @endif
-                                                </div>
+                                               class="flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-navy-600 {{ request('action') === $key || (is_null($key) && !request('action')) ? 'text-primary dark:text-accent-light' : '' }}">
+                                                @if(request('action') === $key || (is_null($key) && !request('action')))
+                                                    <i class="fa-solid fa-check mr-2 text-tiny"></i>
+                                                @endif
                                                 {{ $label }}
                                             </a>
                                         </li>
@@ -366,7 +370,7 @@
                         }
                     },
                     yaxis: {
-                        title: { text: 'Count' }
+                        title: { text: 'Jumlah' }
                     },
                     legend: {
                         position: 'top',
@@ -387,12 +391,16 @@
                     chart: {
                         type: 'donut',
                         height: 300,
-                        parentHeightOffset: 0
+                        parentHeightOffset: 0,
+                        foreColor: '#ffffff'
                     },
                     labels: @json($userDistribution['labels']),
                     colors: ['#4467EF', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            colors: '#ffffff', // Warna teks legenda (putih)
+                        }
                     },
                     plotOptions: {
                         pie: {
@@ -402,9 +410,16 @@
                                     show: true,
                                     total: {
                                         show: true,
-                                        label: 'Total Users',
-                                        fontSize: '14px',
-                                        fontWeight: 600
+                                        label: 'Total Pengguna',
+                                        fontSize: '12px',
+                                        fontWeight: 600,
+                                        color: '#ffffff'
+                                    },
+                                    value: {
+                                        show: true,
+                                        fontSize: '16px',
+                                        color: '#ffffff',
+                                        offsetY: 5
                                     }
                                 }
                             }
@@ -412,9 +427,13 @@
                     },
                     dataLabels: {
                         enabled: true,
+                        style: {
+                            fontSize: '10px',
+                            colors: ['#ffffff']
+                        },
                         formatter: function (val) {
                             return Math.round(val) + '%';
-                        }
+                        },
                     },
                     responsive: [{
                         breakpoint: 768,
@@ -430,11 +449,11 @@
                         .then(res => res.json())
                         .then(data => {
                             document.getElementById('total-users-count').textContent = data.total_users;
+                            document.getElementById('total-study-programs').textContent = data.total_study_programs;
                             document.getElementById('total-letters-count').textContent = data.total_letters;
                             document.getElementById('pending-count').textContent = data.pending;
                             document.getElementById('today-count').textContent = data.today;
                             document.getElementById('this-month-count').textContent = data.this_month;
-                            document.getElementById('failed-jobs-count').textContent = data.failed_jobs;
                         })
                         .catch(err => console.error('Polling error:', err));
                 }, 30000);

@@ -8,7 +8,8 @@ use Illuminate\Support\Collection;
 class PermissionHelper {
     public static function getGroupedPermissions(): Collection
     {
-        $permissions = Permission::orderBy('display_group_name')
+        $permissions = Permission::where('display_group_name', 'not like', 'laporan')
+            ->orderBy('display_group_name')
             ->orderBy('name')
             ->get();
 

@@ -68,22 +68,37 @@ class UserSeeder extends Seeder
                 'full_name' => 'Rafio Sadani',
                 'email' => 'rafioosadani@gmail.com',
                 'role' => 'Mahasiswa',
+                'place_of_birth' => 'Ponorogo',
+                'date_of_birth' => '2001-12-13',
+                'student_or_employee_id' => '213140707111073'
             ],
         ];
 
         foreach ($usersToSeed as $data) {
-            $user = User::create([
-                'code' => (new CodeGeneration(User::class, 'code', 'USR'))->getGeneratedCode(),
-                'email' => $data['email'],
-                'password' => bcrypt('password'), // Password default
-                'status' => 1, // 1 = aktif
-            ]);
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'code' => (new CodeGeneration(User::class, 'code', 'USR'))->getGeneratedCode(),
+                    'password' => bcrypt('password'),
+                    'status' => 1,
+                ]
+            );
 
-            $user->profile()->create([
-                'full_name' => $data['full_name'],
-            ]);
+            // Profile (update jika sudah ada)
+            $user->profile()->updateOrCreate(
+                [],
+                [
+                    'full_name' => $data['full_name'],
+                    'place_of_birth' => $data['place_of_birth'] ?? null,
+                    'date_of_birth' => $data['date_of_birth'] ?? null,
+                    'student_or_employee_id' => $data['student_or_employee_id'] ?? null,
+                ]
+            );
 
-            $user->assignRole($data['role']);
+            // Role (cek dulu)
+            if (!$user->hasRole($data['role'])) {
+                $user->assignRole($data['role']);
+            }
 
             $this->command->info("  ✅  Created: {$data['full_name']} ({$data['role']})");
         }

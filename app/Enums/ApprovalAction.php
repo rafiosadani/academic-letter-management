@@ -55,5 +55,4 @@ enum ApprovalAction: string
             self::TERMINATE => 'error',
         };
     }
-
 }

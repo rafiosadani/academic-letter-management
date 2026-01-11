@@ -197,19 +197,23 @@ enum LetterType: string
                     'Lainnya' => 'Lainnya',
                 ],
                 'placeholder' => '-- Pilih Keperluan --',
+                'helper' => 'Pilih alasan utama Anda mengajukan surat keterangan aktif kuliah ini.',
             ],
             'keterangan' => [
                 'type' => 'textarea',
                 'label' => 'Keterangan Tambahan',
                 'required' => false,
                 'rows' => 3,
-                'helper' => 'Isi jika ada informasi tambahan yang perlu dicantumkan',
+                'placeholder' => 'Contoh: Untuk keperluan pendaftaran beasiswa Bank Indonesia...',
+                'helper' => 'Opsional: Berikan informasi tambahan jika diperlukan dicantumkan',
             ],
         ];
     }
 
     private function skakTunjanganFields(): array
     {
+        $profile = auth()->user()->profile;
+
         return [
             'keperluan' => [
                 'type' => 'text',
@@ -217,23 +221,29 @@ enum LetterType: string
                 'required' => true,
                 'readonly' => true,
                 'value' => 'Persyaratan Tunjangan Orang Tua',
+                'helper' => 'Kolom ini otomatis terisi untuk pengajuan SKAK Tunjangan Orang Tua.',
             ],
-            'nama_orangtua' => [
+            'parent_name' => [
                 'type' => 'text',
                 'label' => 'Nama Orang Tua',
                 'required' => true,
-                'placeholder' => 'Nama lengkap orang tua',
+                'value' => $profile?->parent_name ?? '',
+                'placeholder' => 'Contoh: Agus Subiyantoro',
+                'helper' => 'Gunakan nama lengkap sesuai dengan yang tertera di SK Jabatan/Daftar Gaji.',
             ],
-            'nip_orangtua' => [
+            'parent_nip' => [
                 'type' => 'text',
                 'label' => 'NIP Orang Tua',
                 'required' => true,
-                'placeholder' => 'Nomor Induk Pegawai',
+                'value' => $profile?->parent_nip ?? '',
+                'placeholder' => 'Contoh: 198510122010121003',
+                'helper' => 'Masukkan 18 digit NIP tanpa spasi. Gunakan tanda (-) jika orang tua tidak memiliki NIP/Pensiunan.',
             ],
-            'pangkat_golongan_orangtua' => [
+            'parent_rank' => [
                 'type' => 'select_or_other',
                 'label' => 'Pangkat/Golongan Orang Tua',
                 'required' => true,
+                'value' => $profile?->parent_rank ?? '',
                 'options' => [
                     'Juru Muda / I a' => 'Juru Muda / I a',
                     'Juru Muda Tingkat I / I b' => 'Juru Muda Tingkat I / I b',
@@ -256,26 +266,32 @@ enum LetterType: string
                 ],
                 'placeholder' => '-- Pilih Pangkat/Golongan --',
                 'other_placeholder' => 'Masukkan pangkat/golongan lainnya',
+                'helper' => 'Pilih golongan terakhir. Jika memilih "Lainnya", sebutkan secara detail (Contoh: Pembina Tingkat I / IV b).',
             ],
-            'nama_instansi_orangtua' => [
+            'parent_institution' => [
                 'type' => 'text',
                 'label' => 'Nama Instansi Orang Tua',
                 'required' => true,
-                'placeholder' => 'Nama instansi tempat bekerja',
+                'value' => $profile?->parent_institution ?? '',
+                'placeholder' => 'Contoh: Dinas Pendidikan Provinsi Jawa Timur',
+                'helper' => 'Nama kantor atau instansi tempat orang tua bekerja.',
             ],
-            'alamat_instansi_orangtua' => [
+            'parent_institution_address' => [
                 'type' => 'textarea',
                 'label' => 'Alamat Instansi Orang Tua',
                 'required' => true,
+                'value' => $profile?->parent_institution_address ?? '',
                 'rows' => 2,
-                'placeholder' => 'Alamat lengkap instansi',
+                'placeholder' => 'Contoh: Jl. Ahmad Yani No. 1, Surabaya',
+                'helper' => 'Alamat lengkap instansi (Jalan, Kota/Kabupaten).',
             ],
             'keterangan' => [
                 'type' => 'textarea',
                 'label' => 'Keterangan Tambahan',
                 'required' => false,
-                'rows' => 3,
-                'helper' => 'Isi jika ada informasi tambahan',
+                'rows' => 2,
+                'placeholder' => 'Isi jika ada informasi tambahan lainnya...',
+                'helper' => 'Opsional: Berikan informasi tambahan jika diperlukan dicantumkan',
             ],
         ];
     }
@@ -288,45 +304,52 @@ enum LetterType: string
                 'label' => 'Judul Penelitian',
                 'required' => true,
                 'rows' => 2,
-                'placeholder' => 'Judul lengkap penelitian',
+                'placeholder' => 'Contoh: Analisis Kinerja Sistem Keuangan Daerah Berbasis Cloud Computing',
+                'helper' => 'Tuliskan judul lengkap skripsi atau penelitian Anda.',
             ],
             'nama_tempat_penelitian' => [
                 'type' => 'text',
                 'label' => 'Nama Tempat Penelitian',
                 'required' => true,
-                'placeholder' => 'Nama instansi/perusahaan',
+                'placeholder' => 'Contoh: PT. Bank Mandiri (Persero) Tbk. Cabang Malang',
+                'helper' => 'Nama perusahaan, instansi pemerintah, atau laboratorium tujuan.',
             ],
             'alamat_tempat_penelitian' => [
                 'type' => 'textarea',
                 'label' => 'Alamat Tempat Penelitian',
                 'required' => true,
                 'rows' => 2,
-                'placeholder' => 'Alamat lengkap lokasi penelitian',
+                'placeholder' => 'Contoh: Jl. Pemuda No. 123, Kota Malang',
+                'helper' => 'Pastikan alamat benar agar surat permohonan sampai ke tujuan yang tepat.',
             ],
             'no_hp' => [
                 'type' => 'text',
                 'label' => 'Nomor HP/WhatsApp',
                 'required' => true,
-                'placeholder' => '08xxxxxxxxxx',
+                'placeholder' => 'Contoh: 081234567890',
+                'helper' => 'Nomor yang dapat dihubungi oleh pihak instansi jika diperlukan.',
             ],
             'dosen_pembimbing' => [
                 'type' => 'text',
                 'label' => 'Dosen Pembimbing',
                 'required' => true,
-                'placeholder' => 'Nama dosen pembimbing',
+                'placeholder' => 'Contoh: Dr. Budi Santoso, S.E., M.M.',
+                'helper' => 'Tulis nama lengkap dosen pembimbing beserta gelar',
             ],
             'bulan_pelaksanaan' => [
                 'type' => 'text',
                 'label' => 'Bulan Pelaksanaan',
                 'required' => true,
-                'placeholder' => 'Contoh: Juli 2025',
+                'placeholder' => 'Contoh: Agustus - September 2025',
+                'helper' => 'Perkiraan durasi waktu Anda melakukan pengambilan data/penelitian.',
             ],
             'keterangan' => [
                 'type' => 'textarea',
                 'label' => 'Keterangan Tambahan',
                 'required' => false,
-                'rows' => 3,
-                'helper' => 'Isi jika ada informasi tambahan',
+                'rows' => 2,
+                'placeholder' => 'Isi jika ada informasi tambahan lainnya...',
+                'helper' => 'Opsional: Berikan informasi tambahan jika diperlukan dicantumkan',
             ],
         ];
     }
@@ -338,20 +361,23 @@ enum LetterType: string
                 'type' => 'text',
                 'label' => 'Nama Instansi Tujuan Surat',
                 'required' => true,
-                'placeholder' => 'Contoh: KPPN Kediri',
+                'placeholder' => 'Contoh: PT. Sumber Alfaria Trijaya',
+                'helper' => 'Instansi tempat Anda memohon dispensasi.',
             ],
             'jabatan_penerima' => [
                 'type' => 'text',
                 'label' => 'Jabatan Penerima Surat',
                 'required' => true,
-                'placeholder' => 'Contoh: Kepala Sub Bagian Umum',
+                'placeholder' => 'Contoh: Manajer Human Resource Development',
+                'helper' => 'Gunakan "Pimpinan" jika tidak tahu jabatan spesifiknya.',
             ],
             'alamat_instansi' => [
                 'type' => 'textarea',
                 'label' => 'Alamat Instansi',
                 'required' => true,
                 'rows' => 2,
-                'placeholder' => 'Alamat lengkap instansi',
+                'placeholder' => 'Contoh: Jl. Pemuda No. 123, Kota Malang',
+                'helper' => 'Pastikan alamat benar agar surat dispensasi sampai ke tujuan yang tepat.',
             ],
             'alasan_dispensasi' => [
                 'type' => 'textarea',
@@ -359,12 +385,14 @@ enum LetterType: string
                 'required' => true,
                 'rows' => 2,
                 'placeholder' => 'Contoh: tidak mengikuti kegiatan magang',
+                'helper' => 'Sebutkan kegiatan utama yang menjadi alasan permohonan.',
             ],
             'posisi_magang' => [
                 'type' => 'text',
                 'label' => 'Posisi Magang / Kegiatan',
                 'required' => true,
-                'placeholder' => 'Posisi atau kegiatan yang akan ditinggalkan',
+                'placeholder' => 'Contoh: Web Developer / Peserta Pelatihan',
+                'helper' => 'Posisi Anda di instansi/kegiatan tersebut.',
             ],
             'keperluan_detail' => [
                 'type' => 'textarea',
@@ -372,23 +400,27 @@ enum LetterType: string
                 'required' => true,
                 'rows' => 2,
                 'placeholder' => 'Contoh: menghadiri acara pernikahan saudara',
+                'helper' => 'Jelaskan alasan mendesak mengapa Anda memerlukan dispensasi ini.',
             ],
             'tanggal_mulai' => [
                 'type' => 'date',
                 'label' => 'Tanggal Mulai',
                 'required' => true,
+                'helper' => 'Tanggal awal dimulainya izin dispensasi.',
             ],
             'tanggal_selesai' => [
                 'type' => 'date',
                 'label' => 'Tanggal Selesai',
                 'required' => true,
+                'helper' => 'Tanggal akhir masa dispensasi.',
             ],
             'keterangan' => [
                 'type' => 'textarea',
                 'label' => 'Keterangan Tambahan',
                 'required' => false,
-                'rows' => 3,
-                'helper' => 'Isi jika ada informasi tambahan',
+                'rows' => 2,
+                'placeholder' => 'Isi jika ada informasi tambahan lainnya...',
+                'helper' => 'Opsional: Berikan informasi tambahan jika diperlukan dicantumkan',
             ],
         ];
     }
@@ -400,34 +432,40 @@ enum LetterType: string
                 'type' => 'text',
                 'label' => 'Nama Kegiatan',
                 'required' => true,
-                'placeholder' => 'Nama kegiatan fakultas/universitas',
+                'placeholder' => 'Contoh: Seminar Nasional Teknologi Informasi 2025',
+                'helper' => 'Sebutkan nama kegiatan resmi yang diikuti.',
             ],
             'tanggal_kegiatan' => [
                 'type' => 'date',
                 'label' => 'Tanggal Kegiatan',
                 'required' => true,
+                'helper' => 'Tanggal pelaksanaan kegiatan yang menyebabkan dispensasi.',
             ],
             'waktu_mulai' => [
                 'type' => 'time',
                 'label' => 'Waktu Mulai',
                 'required' => true,
+                'helper' => 'Jam dimulainya dispensasi (Contoh: 08:00).',
             ],
             'waktu_selesai' => [
                 'type' => 'time',
                 'label' => 'Waktu Selesai',
                 'required' => true,
+                'helper' => 'Perkiraan jam berakhirnya kegiatan (Contoh: 16:00).',
             ],
             'tempat_kegiatan' => [
                 'type' => 'text',
                 'label' => 'Tempat Kegiatan',
                 'required' => true,
-                'placeholder' => 'Lokasi kegiatan',
+                'placeholder' => 'Contoh: Hotel Lotus Kediri / Ruang Sidang Lt. 2 Gedung Dieng',
+                'helper' => 'Lokasi spesifik tempat kegiatan berlangsung.',
             ],
             'student_list' => [
                 'type' => 'student_list',
                 'label' => 'Daftar Mahasiswa',
                 'required' => true,
-                'helper' => 'Tambahkan mahasiswa yang akan mengikuti kegiatan',
+                'placeholder' => 'Belum ada data mahasiswa. Klik tombol "Tambah Data" untuk menambahkan.',
+                'helper' => 'Tambahkan Nama mahasiswa, NIM, dan Program Studi yang terlibat dalam kegiatan ini.',
                 'min_students' => 1,
                 'max_students' => 50,
             ],
@@ -435,8 +473,9 @@ enum LetterType: string
                 'type' => 'textarea',
                 'label' => 'Keterangan Tambahan',
                 'required' => false,
-                'rows' => 3,
-                'helper' => 'Isi jika ada informasi tambahan',
+                'rows' => 2,
+                'placeholder' => 'Isi jika ada catatan tambahan untuk dosen pengampu mata kuliah...',
+                'helper' => 'Opsional: Informasi lain yang relevan dengan permohonan dispensasi.',
             ],
         ];
     }

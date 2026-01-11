@@ -9,94 +9,6 @@
 
     <div class="mt-4 grid grid-cols-12 gap-4 sm:mt-5 sm:gap-5 lg:mt-6 lg:gap-6">
         <div class="col-span-12">
-{{--            <div class="card p-4">--}}
-{{--                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:items-center sm:justify-between w-full">--}}
-{{--                    <div>--}}
-{{--                        <h2 class="text-sm sm:text-base font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100">--}}
-{{--                            {{ request()->has('view_deleted') ? 'Data Role - Deleted Records' : 'Data Role' }}--}}
-{{--                        </h2>--}}
-{{--                        <p class="text-tiny-plus sm:text-xs+">--}}
-{{--                            {{ request()->has('view_deleted')--}}
-{{--                                ? 'Kelola role yang telah dihapus.'--}}
-{{--                                : 'Kelola peran pengguna dan pengaturan akses pada sistem.'--}}
-{{--                            }}--}}
-{{--                        </p>--}}
-{{--                    </div>--}}
-{{--                    <div class="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">--}}
-{{--                        <!-- Search Form -->--}}
-{{--                        <form method="GET" class="w-full sm:w-80">--}}
-{{--                            @if(request()->has('view_deleted'))--}}
-{{--                                <input type="hidden" name="view_deleted" value="1">--}}
-{{--                            @endif--}}
-{{--                            <label class="relative flex">--}}
-{{--                                <input--}}
-{{--                                        name="search"--}}
-{{--                                        value="{{ request('search') }}"--}}
-{{--                                        class="form-input peer h-8 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 pl-9 text-tiny sm:text-xs placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"--}}
-{{--                                        placeholder="Search roles..."--}}
-{{--                                        type="text"--}}
-{{--                                />--}}
-{{--                                <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">--}}
-{{--                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4 transition-colors duration-200" fill="currentColor" viewBox="0 0 24 24">--}}
-{{--                                        <path d="M3.316 13.781l.73-.171-.73.171zm0-5.457l.73.171-.73-.171zm15.473 0l.73-.171-.73.171zm0 5.457l.73.171-.73-.171zm-5.008 5.008l-.171-.73.171.73zm-5.457 0l-.171.73.171-.73zm0-15.473l-.171-.73.171.73zm5.457 0l.171-.73-.171.73zM20.47 21.53a.75.75 0 101.06-1.06l-1.06 1.06zM4.046 13.61a11.198 11.198 0 010-5.115l-1.46-.342a12.698 12.698 0 000 5.8l1.46-.343zm14.013-5.115a11.196 11.196 0 010 5.115l1.46.342a12.698 12.698 0 000-5.8l-1.46.343zm-4.45 9.564a11.196 11.196 0 01-5.114 0l-.342 1.46c1.907.448 3.892.448 5.8 0l-.343-1.46zM8.496 4.046a11.198 11.198 0 015.115 0l.342-1.46a12.698 12.698 0 00-5.8 0l.343 1.46zm0 14.013a5.97 5.97 0 01-4.45-4.45l-1.46.343a7.47 7.47 0 005.568 5.568l.342-1.46zm5.457 1.46a7.47 7.47 0 005.568-5.567l-1.46-.342a5.97 5.97 0 01-4.45 4.45l.342 1.46zM13.61 4.046a5.97 5.97 0 014.45 4.45l1.46-.343a7.47 7.47 0 00-5.568-5.567l-.342 1.46zm-5.457-1.46a7.47 7.47 0 00-5.567 5.567l1.46.342a5.97 5.97 0 014.45-4.45l-.343-1.46zm8.652 15.28l3.665 3.664 1.06-1.06-3.665-3.665-1.06 1.06z"/>--}}
-{{--                                    </svg>--}}
-{{--                                </span>--}}
-{{--                            </label>--}}
-{{--                        </form>--}}
-
-{{--                        --}}{{--                        <form method="GET">--}}
-{{--                        --}}{{--                            <div class="table-search-wrapper flex items-center">--}}
-{{--                        --}}{{--                                <label class="block">--}}
-{{--                        --}}{{--                                    <input--}}
-{{--                        --}}{{--                                            name="search"--}}
-{{--                        --}}{{--                                            value="{{ request('search') }}"--}}
-{{--                        --}}{{--                                            class="table-search-input form-input {{ request('search') ? 'w-40' : 'w-0' }} bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 dark:placeholder:text-navy-200"--}}
-{{--                        --}}{{--                                            placeholder="Search here..."--}}
-{{--                        --}}{{--                                            type="text"--}}
-{{--                        --}}{{--                                            onkeydown="if(event.key === 'Enter'){ this.form.submit(); }"--}}
-{{--                        --}}{{--                                    />--}}
-{{--                        --}}{{--                                </label>--}}
-{{--                        --}}{{--                                <button--}}
-{{--                        --}}{{--                                        type="button"--}}
-{{--                        --}}{{--                                        class="table-search-toggle btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"--}}
-{{--                        --}}{{--                                >--}}
-{{--                        --}}{{--                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">--}}
-{{--                        --}}{{--                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />--}}
-{{--                        --}}{{--                                    </svg>--}}
-{{--                        --}}{{--                                </button>--}}
-{{--                        --}}{{--                            </div>--}}
-{{--                        --}}{{--                        </form>--}}
-{{--                        <!-- Action Buttons -->--}}
-{{--                        @if(request()->has('view_deleted'))--}}
-{{--                            <a href="{{ route('master.roles.index') }}"--}}
-{{--                               class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">--}}
-{{--                                <i class="fa-solid fa-list mr-2 text-tiny sm:text-xs"></i>--}}
-{{--                                <span class="text-tiny sm:text-xs">Lihat Semua</span>--}}
-{{--                            </a>--}}
-{{--                            @if($roles->total() > 0)--}}
-{{--                                <button type="button"--}}
-{{--                                    data-toggle="modal"--}}
-{{--                                    data-target="#restore-all-roles-modal"--}}
-{{--                                    class="btn w-full sm:w-auto justify-center bg-success font-normal text-white hover:bg-success/90 focus:bg-success/90 active:bg-success/80">--}}
-{{--                                        <i class="fa-solid fa-undo mr-2 text-tiny sm:text-xs"></i>--}}
-{{--                                        <span class="text-tiny sm:text-xs">Restore All</span>--}}
-{{--                                </button>--}}
-{{--                            @endif--}}
-{{--                        @else--}}
-{{--                            <a href="{{ route('master.roles.index', ['view_deleted' => 1]) }}"--}}
-{{--                               class="btn w-full sm:w-auto justify-center bg-slate-500 font-normal text-white hover:bg-slate-600 focus:bg-slate-600 active:bg-slate-600/90">--}}
-{{--                                <i class="fa-solid fa-trash-alt mr-2 text-tiny sm:text-xs"></i>--}}
-{{--                                <span class="text-tiny sm:text-xs">Deleted Records</span>--}}
-{{--                            </a>--}}
-{{--                            <a href="{{ route('master.roles.create') }}"--}}
-{{--                               class="btn w-full sm:w-auto justify-center bg-primary font-normal text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">--}}
-{{--                                <i class="fa-solid fa-plus mr-2 text-tiny sm:text-xs"></i>--}}
-{{--                                <span class="text-tiny sm:text-xs">Tambah Role</span>--}}
-{{--                            </a>--}}
-{{--                        @endif--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
 
             <x-ui.table-header
                 title="Data Role"
@@ -171,15 +83,6 @@
                                 @endif
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs leading-4">
                                     <div class="flex items-center gap-3">
-                                        <div>
-                                            <div class="avatar size-8 shadow rounded-md">
-                                                <img
-                                                    class="mask is-squircle"
-                                                    src="{{ asset('assets/images/default.png') }}"
-                                                    alt="avatar-{{ $role->create_by_name }}"
-                                                />
-                                            </div>
-                                        </div>
                                         <div class="flex flex-col">
                                             <span class="font-medium text-slate-500">
                                                 {{ request()->has('view_deleted') ? $role->deleted_by_name : $role->created_by_name }}
@@ -243,33 +146,6 @@
                                         @endif
                                     </div>
                                 </td>
-                                {{--                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-600 dark:text-navy-100 sm:px-5 text-center">--}}
-                                {{--                                    <div class="flex gap-1 items-center justify-center">--}}
-                                {{--                                        <a href="{{ route('master.roles.show', $role) }}"--}}
-                                {{--                                            class="badge bg-info text-xs text-white shadow-primary/50 dark:bg-info dark:shadow-accent/50 transition-all duration-200 hover:bg-info/90 hover:shadow-lg focus:scale-105 active:scale-95">--}}
-                                {{--                                            <i class="fa-solid fa-eye mr-1 fa-sm"></i> Detail--}}
-                                {{--                                        </a>--}}
-                                {{--                                        --}}
-                                {{--                                        @if($role->is_editable)--}}
-                                {{--                                            |--}}
-                                {{--                                            <a href="{{ route('master.roles.edit', $role) }}"--}}
-                                {{--                                               class="badge bg-warning text-xs text-white shadow-primary/50 dark:bg-warning dark:shadow-accent/50 transition-all duration-200 hover:bg-warning/90 hover:shadow-lg focus:scale-105 active:scale-95">--}}
-                                {{--                                                <i class="fa-solid fa-pen-to-square mr-1 fa-sm"></i> Edit--}}
-                                {{--                                            </a>--}}
-                                {{--                                        @endif--}}
-
-                                {{--                                        @if($role->is_deletable)--}}
-                                {{--                                        |--}}
-                                {{--                                        <button--}}
-                                {{--                                            type="button"--}}
-                                {{--                                            data-toggle="modal"--}}
-                                {{--                                            data-target="#delete-role-modal-{{ $role->id }}"--}}
-                                {{--                                            class="badge bg-error text-xs text-white shadow-primary/50 dark:bg-error dark:shadow-accent/50 transition-all duration-200 hover:bg-error/90 hover:shadow-lg focus:scale-105 active:scale-95 cursor-pointer">--}}
-                                {{--                                            <i class="fa-solid fa-trash mr-1 fa-sm"></i> Hapus--}}
-                                {{--                                        </button>--}}
-                                {{--                                        @endif--}}
-                                {{--                                    </div>--}}
-                                {{--                                </td>--}}
                             </tr>
                         @empty
                             <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">

@@ -9,3 +9,4 @@ export { initModalFormReset } from './modal-form-reset.js';
 export { initFormComponents, reinitFormComponents } from './form/form-handler.js';
 export { initStatusToggle } from './status-toggle.js';
 export { initDocumentUpload } from './documents/document-upload.js';
+export { initMobileSidebar } from './mobile-sidebar.js';

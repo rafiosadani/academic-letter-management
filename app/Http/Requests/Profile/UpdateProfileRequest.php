@@ -45,7 +45,11 @@ class UpdateProfileRequest extends FormRequest
             // User profile - Parent Info (Optional, tapi required untuk SKAK Tunjangan)
             // Hanya divalidasi jika usernya Mahasiswa
             'parent_name' => [$isMahasiswa ? 'nullable' : 'prohibited', 'string', 'max:255'],
-            'parent_nip' => [$isMahasiswa ? 'nullable' : 'prohibited', 'string', 'max:30'],
+            'parent_nip' => [
+                $isMahasiswa ? 'nullable' : 'prohibited',
+                'string',
+                'regex:/^(\d{18}|-)$/'
+            ],
             'parent_rank' => [$isMahasiswa ? 'nullable' : 'prohibited', 'string', 'max:255'],
             'parent_institution' => [$isMahasiswa ? 'nullable' : 'prohibited', 'string', 'max:255'],
             'parent_institution_address' => [$isMahasiswa ? 'nullable' : 'prohibited', 'string', 'max:500'],
@@ -87,19 +91,17 @@ class UpdateProfileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            // General
             'required' => ':attribute wajib diisi.',
             'string' => ':attribute harus berupa teks.',
             'max' => ':attribute maksimal :max karakter.',
             'exists' => ':attribute yang dipilih tidak valid.',
-
-            // Specific
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan oleh pengguna lain.',
             'date_of_birth.date' => 'Format tanggal lahir tidak valid.',
             'photo.image' => 'File harus berupa gambar.',
             'photo.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
             'photo.max' => 'Ukuran gambar maksimal 2MB.',
+            'parent_nip.regex' => 'NIP Orang Tua harus 18 digit angka atau tanda (-) jika tidak memiliki NIP.',
         ];
     }
 

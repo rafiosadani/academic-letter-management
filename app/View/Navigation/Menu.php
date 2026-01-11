@@ -15,9 +15,10 @@ class Menu
             self::dashboard(),
             self::masterData(),
             self::suratSaya(),
+//            self::transaksiSurat(),
             self::transaksiSurat(),
             self::notifikasi(),
-            self::laporan(),
+//            self::laporan(),
             self::pengaturan(),
             self::profile(),
         ];
@@ -116,15 +117,13 @@ class Menu
             [
                 'text' => 'Daftar Pengajuan Saya',
                 'route' => route('letters.index'),
-//                'active' => ['letter.my.*'],
-                'active' => ['letters.index'],
+                'active' => ['letters.index', 'letters.show', 'letters.edit'],
                 'icon' => 'fa-list-alt',
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MY_VIEW->value) ?? false,
             ],
             [
                 'text' => 'Ajukan Surat Baru',
                 'route' => route('letters.create'),
-//                'active' => ['letter.my.create'],
                 'active' => ['letters.create'],
                 'icon' => 'fa-plus-circle',
                 'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MY_CREATE->value) ?? false,
@@ -142,7 +141,6 @@ class Menu
 
         return [
             'text' => 'Surat Saya',
-//            'route' => route('letter.my.index'),
             'route' => route('letters.index'),
             'icon' => self::iconSuratSaya(),
 //            'active' => ['letter.my.*'],
@@ -156,57 +154,60 @@ class Menu
 
     private static function transaksiSurat(): array
     {
-        $submenus = [
-            [
-                'text' => 'Surat Masuk',
-                'route' => '#', // TODO: Implement route
-                'active' => ['letter.incoming.*'],
-                'icon' => 'fa-inbox',
-                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_INCOMING_VIEW->value) ?? false,
-            ],
-            [
-                'text' => 'Kelola Semua Surat',
-                'route' => '#', // TODO: Implement route
-                'active' => ['letter.manage.*'],
-                'icon' => 'fa-folder-open',
-                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MANAGE_VIEW->value) ?? false,
-            ],
-        ];
-
-        $authorizedSubmenus = collect($submenus)
-            ->filter(fn($sub) => $sub['authorized'])
-            ->values()
-            ->toArray();
-
-        if (empty($authorizedSubmenus)) {
-            return ['authorized' => false];
-        }
+        $hasPermission = auth()->user()?->hasPermissionTo(PermissionName::LETTER_MANAGE_VIEW->value) ?? false;
 
         return [
             'text' => 'Transaksi Surat',
             'route' => route('approvals.index'),
             'icon' => self::iconTransaksiSurat(),
             'active' => ['approvals.*'],
-            'hasPanel' => true,
-            'panelTitle' => 'Transaksi Surat',
-            'submenu' => $authorizedSubmenus,
-            'authorized' => true,
+            'hasPanel' => false,
+            'authorized' => $hasPermission,
         ];
     }
 
-    private static function notifikasi(): array
-    {
-//        $hasPermission = auth()->user()?->hasPermissionTo(PermissionName::NOTIFICATION_VIEW->value) ?? false;
+//    private static function transaksiSurat(): array
+//    {
+//        $submenus = [
+//            [
+//                'text' => 'Surat Masuk',
+//                'route' => '#', // TODO: Implement route
+//                'active' => ['letter.incoming.*'],
+//                'icon' => 'fa-inbox',
+//                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_INCOMING_VIEW->value) ?? false,
+//            ],
+//            [
+//                'text' => 'Kelola Semua Surat',
+//                'route' => '#', // TODO: Implement route
+//                'active' => ['letter.manage.*'],
+//                'icon' => 'fa-folder-open',
+//                'authorized' => auth()->user()?->hasPermissionTo(PermissionName::LETTER_MANAGE_VIEW->value) ?? false,
+//            ],
+//        ];
+//
+//        $authorizedSubmenus = collect($submenus)
+//            ->filter(fn($sub) => $sub['authorized'])
+//            ->values()
+//            ->toArray();
+//
+//        if (empty($authorizedSubmenus)) {
+//            return ['authorized' => false];
+//        }
 //
 //        return [
-//            'text' => 'Notifikasi',
-//            'route' => route('notifications.index'),
-//            'icon' => self::iconNotifikasi(),
-//            'active' => ['notifications.*'],
-//            'hasPanel' => false,
-//            'authorized' => $hasPermission,
+//            'text' => 'Transaksi Surat',
+//            'route' => route('approvals.index'),
+//            'icon' => self::iconTransaksiSurat(),
+//            'active' => ['approvals.*'],
+//            'hasPanel' => true,
+//            'panelTitle' => 'Transaksi Surat',
+//            'submenu' => $authorizedSubmenus,
+//            'authorized' => true,
 //        ];
+//    }
 
+    private static function notifikasi(): array
+    {
         $submenus = [
             [
                 'text' => 'Kotak Masuk',
@@ -443,7 +444,4 @@ class Menu
             </svg>
         SVG;
     }
-
-
-
 }

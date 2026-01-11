@@ -51,7 +51,6 @@ class ProfileController extends Controller
 
         try {
             DB::transaction(function () use ($request, $user, $isMahasiswa) {
-//                dd($request);
                 // 1. Update User Table (Email)
                 $user->update([
                     'email' => $request->email,

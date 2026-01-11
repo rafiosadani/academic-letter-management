@@ -15,6 +15,7 @@
         'warning' => 'bg-warning/10 text-warning',
         'danger' => 'bg-error/10 text-error',
         'info' => 'bg-info/10 text-info',
+        'secondary' => 'bg-secondary/10 text-secondary'
     ];
 
     $iconColorClass = $colorClasses[$color] ?? $colorClasses['primary'];

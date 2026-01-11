@@ -2,7 +2,7 @@
 
 <x-layouts.base title="Error 404 Not Found">
     <!-- Page Wrapper -->
-    <div id="root" class="min-h-100vh cloak flex grow bg-slate-50 dark:bg-navy-900">
+    <div id="root" data-page="error-404" class="min-h-100vh cloak flex grow bg-slate-50 dark:bg-navy-900">
         <!-- Main Content Wrapper -->
         <main class="grid w-full grow grid-cols-1 place-items-center">
             <div class="max-w-2xl p-6 text-center">
@@ -36,9 +36,4 @@
             </div>
         </main>
     </div>
-
-    <x-slot:scripts>
-        @vite('resources/lineone/js/pages/pages-error-404-3.js')
-    </x-slot:scripts>
-
 </x-layouts.base>

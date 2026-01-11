@@ -13,19 +13,16 @@ const tomSelectInstances = new Map();
  * Initialize Tom Select pada semua select elements
  */
 export function initTomSelect(container = document) {
-    console.log('[Tom Select] Initializing...');
 
     const selects = container.querySelectorAll('select[data-tom-select="true"]');
 
     if (selects.length === 0) {
-        console.log('[Tom Select] No select elements found');
         return;
     }
 
     selects.forEach(select => {
         // Skip jika sudah diinisialisasi
         if (select.tomselect) {
-            console.log('[Tom Select] Already initialized:', select.name);
             return;
         }
 
@@ -63,8 +60,6 @@ export function initTomSelect(container = document) {
             console.error('[Tom Select] ✗ Failed to initialize:', select.name, error);
         }
     });
-
-    console.log(`[Tom Select] ✓ Initialized ${selects.length} select(s)`);
 }
 
 /**
@@ -75,7 +70,6 @@ export function destroyTomSelect(select) {
     if (instance) {
         instance.destroy();
         tomSelectInstances.delete(select);
-        console.log('[Tom Select] Destroyed:', select.name);
     }
 }
 
@@ -87,7 +81,6 @@ export function destroyAllTomSelect() {
         instance.destroy();
     });
     tomSelectInstances.clear();
-    console.log('[Tom Select] All instances destroyed');
 }
 
 /**

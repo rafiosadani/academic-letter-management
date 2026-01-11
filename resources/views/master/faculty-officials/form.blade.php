@@ -90,6 +90,134 @@
                             @enderror
                         </label>
 
+                        {{-- Rank/Golongan (NEW!) --}}
+                        <div x-data="{
+                            selectedValue: '{{ old('rank', $facultyOfficial->rank ?? '') }}',
+                            predefinedRanks: {
+                                'Juru Muda / I a': 'Juru Muda / I a',
+                                'Juru Muda Tingkat I / I b': 'Juru Muda Tingkat I / I b',
+                                'Juru / I c': 'Juru / I c',
+                                'Juru Tingkat I / I d': 'Juru Tingkat I / I d',
+                                'Pengatur Muda / II a': 'Pengatur Muda / II a',
+                                'Pengatur Muda Tingkat I / II b': 'Pengatur Muda Tingkat I / II b',
+                                'Pengatur / II c': 'Pengatur / II c',
+                                'Pengatur Tingkat I / II d': 'Pengatur Tingkat I / II d',
+                                'Penata Muda / III a': 'Penata Muda / III a',
+                                'Penata Muda Tingkat I / III b': 'Penata Muda Tingkat I / III b',
+                                'Penata / III c': 'Penata / III c',
+                                'Penata Tingkat I / III d': 'Penata Tingkat I / III d',
+                                'Pembina / IV a': 'Pembina / IV a',
+                                'Pembina Tingkat I / IV b': 'Pembina Tingkat I / IV b',
+                                'Pembina Utama Muda / IV c': 'Pembina Utama Muda / IV c',
+                                'Pembina Utama Madya / IV d': 'Pembina Utama Madya / IV d',
+                                'Pembina Utama / IV e': 'Pembina Utama / IV e',
+                            },
+                            isOther: {{ (old('rank', $facultyOfficial->rank ?? '') && !in_array(old('rank', $facultyOfficial->rank ?? ''), [
+                                'Juru Muda / I a',
+                                'Juru Muda Tingkat I / I b',
+                                'Juru / I c',
+                                'Juru Tingkat I / I d',
+                                'Pengatur Muda / II a',
+                                'Pengatur Muda Tingkat I / II b',
+                                'Pengatur / II c',
+                                'Pengatur Tingkat I / II d',
+                                'Penata Muda / III a',
+                                'Penata Muda Tingkat I / III b',
+                                'Penata / III c',
+                                'Penata Tingkat I / III d',
+                                'Pembina / IV a',
+                                'Pembina Tingkat I / IV b',
+                                'Pembina Utama Muda / IV c',
+                                'Pembina Utama Madya / IV d',
+                                'Pembina Utama / IV e',
+                            ])) ? 'true' : 'false' }},
+                            isPredefined() {
+                                return this.predefinedRanks.hasOwnProperty(this.selectedValue);
+                            }
+                        }">
+                            <label class="block">
+                                <span class="font-medium text-slate-600 dark:text-navy-100">
+                                    Pangkat / Golongan
+                                </span>
+
+                                {{-- Dropdown Select --}}
+                                <select
+                                        @change="if (selectedValue === 'Lainnya') { isOther = true; selectedValue = ''; } else { isOther = false; }"
+                                        x-model="selectedValue"
+                                        name="rank"
+                                        class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent @error('rank') border-error @enderror"
+                                        x-show="!isOther"
+                                >
+                                    <option value="">-- Pilih Pangkat / Golongan --</option>
+
+                                    {{-- Golongan I --}}
+                                    <optgroup label="Golongan I">
+                                        <option value="Juru Muda / I a">Juru Muda / I a</option>
+                                        <option value="Juru Muda Tingkat I / I b">Juru Muda Tingkat I / I b</option>
+                                        <option value="Juru / I c">Juru / I c</option>
+                                        <option value="Juru Tingkat I / I d">Juru Tingkat I / I d</option>
+                                    </optgroup>
+
+                                    {{-- Golongan II --}}
+                                    <optgroup label="Golongan II">
+                                        <option value="Pengatur Muda / II a">Pengatur Muda / II a</option>
+                                        <option value="Pengatur Muda Tingkat I / II b">Pengatur Muda Tingkat I / II b</option>
+                                        <option value="Pengatur / II c">Pengatur / II c</option>
+                                        <option value="Pengatur Tingkat I / II d">Pengatur Tingkat I / II d</option>
+                                    </optgroup>
+
+                                    {{-- Golongan III --}}
+                                    <optgroup label="Golongan III">
+                                        <option value="Penata Muda / III a">Penata Muda / III a</option>
+                                        <option value="Penata Muda Tingkat I / III b">Penata Muda Tingkat I / III b</option>
+                                        <option value="Penata / III c">Penata / III c</option>
+                                        <option value="Penata Tingkat I / III d">Penata Tingkat I / III d</option>
+                                    </optgroup>
+
+                                    {{-- Golongan IV --}}
+                                    <optgroup label="Golongan IV">
+                                        <option value="Pembina / IV a">Pembina / IV a</option>
+                                        <option value="Pembina Tingkat I / IV b">Pembina Tingkat I / IV b</option>
+                                        <option value="Pembina Utama Muda / IV c">Pembina Utama Muda / IV c</option>
+                                        <option value="Pembina Utama Madya / IV d">Pembina Utama Madya / IV d</option>
+                                        <option value="Pembina Utama / IV e">Pembina Utama / IV e</option>
+                                    </optgroup>
+                                </select>
+
+                                {{-- Custom Input --}}
+                                <div x-show="isOther" x-cloak>
+                                    <div class="flex gap-2 mt-1.5">
+                                        <input
+                                                type="text"
+                                                name="rank"
+                                                x-model="selectedValue"
+                                                class="form-input flex-1 rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                                                placeholder="Contoh: Pembina Tingkat I / IV b"
+                                        >
+                                        <button
+                                                type="button"
+                                                @click="isOther = false; selectedValue = ''"
+                                                class="btn size-10 rounded-lg p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25"
+                                                title="Kembali ke pilihan"
+                                        >
+                                            <i class="fa-solid fa-xmark text-lg"></i>
+                                        </button>
+                                    </div>
+                                    <span class="text-tiny-plus text-slate-500 dark:text-navy-300 ms-1 mt-1 block">
+                                        <i class="fa-solid fa-info-circle"></i>
+                                        Format: Nama Pangkat / Golongan (contoh: Pembina Tingkat I / IV b)
+                                    </span>
+                                </div>
+
+                                <span class="text-tiny-plus text-slate-500 dark:text-navy-300 ms-1 mt-1 block">
+                                    Pilih dari daftar atau input manual
+                                </span>
+                            </label>
+                            @error('rank')
+                                <span class="text-tiny-plus text-error mt-1 ms-1 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         {{-- Study Program (Conditional) --}}
                         <div id="study_program_field" style="display: none;">
                             <x-form.select

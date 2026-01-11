@@ -89,6 +89,7 @@ class FacultyOfficialController extends Controller
                 $facultyOfficial = FacultyOfficial::create([
                     'user_id' => $request->user_id,
                     'position' => $request->position,
+                    'rank' => $request->rank,
                     'study_program_id' => $request->study_program_id,
                     'start_date' => $request->start_date,
                     'end_date' => $request->end_date,
@@ -178,6 +179,7 @@ class FacultyOfficialController extends Controller
         $this->authorize('update', $facultyOfficial);
 
         $oldPosition = $facultyOfficial->position;
+        $oldRank = $facultyOfficial->rank;
         $oldStartDate = $facultyOfficial->start_date->format('Y-m-d');
         $oldEndDate = $facultyOfficial->end_date?->format('Y-m-d');
 
@@ -186,6 +188,7 @@ class FacultyOfficialController extends Controller
                 $facultyOfficial->update([
                     'user_id' => $request->user_id,
                     'position' => $request->position,
+                    'rank' => $request->rank,
                     'study_program_id' => $request->study_program_id,
                     'start_date' => $request->start_date,
                     'end_date' => $request->end_date,
@@ -204,6 +207,8 @@ class FacultyOfficialController extends Controller
                 'user_name' => $userName,
                 'old_position' => $oldPosition,
                 'new_position' => $facultyOfficial->position,
+                'old_rank' => $oldRank,
+                'new_rank' => $facultyOfficial->rank,
                 'old_start_date' => $oldStartDate,
                 'new_start_date' => $facultyOfficial->start_date->format('Y-m-d'),
                 'old_end_date' => $oldEndDate,

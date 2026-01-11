@@ -34,32 +34,25 @@ const filePondInstances = new Map();
  * Initialize FilePond
  */
 export function initFilePond(container = document) {
-    console.log('[FilePond] Initializing...');
-
     const fileInputs = container.querySelectorAll('input[type="file"][data-filepond="true"]');
 
     if (fileInputs.length === 0) {
-        console.log('[FilePond] No filepond inputs found');
         return;
     }
 
     fileInputs.forEach(input => {
         // Skip if already initialized
         if (filePondInstances.has(input)) {
-            console.log('[FilePond] Already initialized:', input.name);
             return;
         }
 
         try {
             const instance = createFilePondInstance(input);
             filePondInstances.set(input, instance);
-            console.log('[FilePond] ✓ Initialized:', input.name);
         } catch (error) {
             console.error('[FilePond] ✗ Failed to initialize:', input.name, error);
         }
     });
-
-    console.log(`[FilePond] ✓ Initialized ${fileInputs.length} input(s)`);
 }
 
 /**
@@ -131,7 +124,6 @@ function createFilePondInstance(input) {
                 console.error('[FilePond] Error processing file:', error);
                 return;
             }
-            console.log('[FilePond] File processed:', file.filename);
         },
     };
 
@@ -200,7 +192,6 @@ export function destroyAllFilePond() {
         instance.destroy();
     });
     filePondInstances.clear();
-    console.log('[FilePond] All instances destroyed');
 }
 
 /**
