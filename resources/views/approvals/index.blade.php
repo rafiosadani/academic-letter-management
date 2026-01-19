@@ -128,7 +128,8 @@
                         @forelse($approvals as $index => $approval)
                             @php
                                 $letter = $approval->letterRequest;
-                                $student = $letter->student;
+                                $student = $letter?->student;
+                                $profile = $student?->profile;
                             @endphp
                             <tr class="border-y border-transparent {{ !$loop->last ? 'border-b-slate-200 dark:border-b-navy-500' : '' }} text-xs">
                                 <td class="whitespace-nowrap px-3 py-3 lg:px-4 text-center">
@@ -138,17 +139,17 @@
                                     <div class="flex items-center gap-3">
                                         <div class="avatar size-10 shrink-0">
                                             <img
-                                                    src="{{ $student->profile->photo_url ?? asset('images/default-avatar.png') }}"
-                                                    alt="{{ $student->profile->full_name }}"
+                                                    src="{{ $student?->profile->photo_url ?? asset('images/default-avatar.png') }}"
+                                                    alt="{{ $student?->profile->full_name }}"
                                                     class="rounded-full object-cover"
                                             >
                                         </div>
                                         <div>
                                             <p class="font-medium text-slate-700 dark:text-navy-100">
-                                                {{ $student->profile->full_name }}
+                                                {{ $student?->profile?->full_name ?? '-' }}
                                             </p>
                                             <p class="text-tiny text-slate-400 dark:text-navy-300">
-                                                {{ $student->profile->student_or_employee_id }}
+                                                {{ $student?->profile?->student_or_employee_id ?? '-' }}
                                             </p>
                                         </div>
                                     </div>
@@ -160,10 +161,10 @@
                                         </div>
                                         <div>
                                             <p class="font-medium text-slate-700 dark:text-navy-100">
-                                                {{ $letter->letter_type->label() }}
+                                                {{ $letter->letter_type?->label() ?? '-' }}
                                             </p>
                                             <p class="text-tiny text-slate-400 dark:text-navy-300">
-                                                {{ $letter->semester->semester_type }} - {{ $letter->academicYear->year_label }}
+                                                {{ $letter->semester?->semester_type ?? '-' }} - {{ $letter->academicYear?->year_label ?? '-' }}
                                             </p>
                                         </div>
                                     </div>
