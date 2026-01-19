@@ -10,7 +10,8 @@
             size: A4;
             /* Margin ini memberikan ruang agar konten tidak menabrak header/footer fixed */
             margin-top: 48mm;
-            margin-bottom: 10mm;
+            /*margin-bottom: 10mm;*/
+            margin-bottom: 0mm;
             margin-left: 21mm;
             margin-right: 21mm;
         }
@@ -24,7 +25,7 @@
             color: #000;
         }
 
-        /* ✅ HEADER - Muncul di setiap halaman */
+        /* Header - muncul di setiap halaman */
         .main-header {
             position: fixed;
             top: -40mm; /* Naik ke area margin-top @page */
@@ -94,7 +95,7 @@
             letter-spacing: -1px;
         }
 
-        /* ✅ FOOTER - Muncul di setiap halaman */
+        /* Footer - muncul di setiap halaman */
         .legal-footer {
             position: fixed;
             bottom: -5mm; /* Turun ke area margin-bottom @page */
@@ -127,7 +128,6 @@
             padding-left: 10px;
         }
 
-        /* ✅ KONTEN UTAMA */
         .main-content {
             margin-top: 30px;
             width: 100%;
@@ -174,26 +174,26 @@
     </table>
 </header>
 
-<footer class="legal-footer">
-    <table class="legal-footer-table">
-        <tr>
-            <td class="legal-logo-cell">
-                @if(setting('footer_logo'))
-                    <img src="{{ public_path('storage/' . setting('footer_logo')) }}" alt="Logo BSRE">
-                @else
-                    <img src="{{ public_path('assets/images/logo-bsre.png') }}" alt="Logo BSRE">
-                @endif
-            </td>
-            <td class="legal-notice-text">
-                @foreach(explode('|', setting('footer_text', 'UU ITE No. 11 Tahun 2008 Pasal 5 Ayat 1 | "Informasi Elektronik dan/atau Dokumen Elektronik dan/atau hasil cetaknya merupakan alat bukti hukum yang sah." | Dokumen ini telah ditandatangani secara elektronik menggunakan sertifikat elektronik yang diterbitkan BSrE')) as $baris)
-                    <div>
-                        {{ trim($baris) }}
-                    </div>
-                @endforeach
-            </td>
-        </tr>
-    </table>
-</footer>
+{{--<footer class="legal-footer">--}}
+{{--    <table class="legal-footer-table">--}}
+{{--        <tr>--}}
+{{--            <td class="legal-logo-cell">--}}
+{{--                @if(setting('footer_logo'))--}}
+{{--                    <img src="{{ public_path('storage/' . setting('footer_logo')) }}" alt="Logo BSRE">--}}
+{{--                @else--}}
+{{--                    <img src="{{ public_path('assets/images/logo-bsre.png') }}" alt="Logo BSRE">--}}
+{{--                @endif--}}
+{{--            </td>--}}
+{{--            <td class="legal-notice-text">--}}
+{{--                @foreach(explode('|', setting('footer_text', 'UU ITE No. 11 Tahun 2008 Pasal 5 Ayat 1 | "Informasi Elektronik dan/atau Dokumen Elektronik dan/atau hasil cetaknya merupakan alat bukti hukum yang sah." | Dokumen ini telah ditandatangani secara elektronik menggunakan sertifikat elektronik yang diterbitkan BSrE')) as $baris)--}}
+{{--                    <div>--}}
+{{--                        {{ trim($baris) }}--}}
+{{--                    </div>--}}
+{{--                @endforeach--}}
+{{--            </td>--}}
+{{--        </tr>--}}
+{{--    </table>--}}
+{{--</footer>--}}
 
 <main class="main-content">
     @yield('content')
