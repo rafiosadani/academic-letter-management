@@ -50,7 +50,7 @@ class SemesterController extends Controller
                 $semester->update(['is_active' => 1]);
 
                 // Activate parent academic year
-                $semester->academicYear->update(['is_active' => 1]);
+                $semester->academicYear()->update(['is_active' => 1]);
             });
 
             // Send notification to admins

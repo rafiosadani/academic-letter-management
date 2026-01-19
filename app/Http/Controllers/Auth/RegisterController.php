@@ -59,26 +59,18 @@ class RegisterController extends Controller
             LogHelper::logSuccess('registered', 'user', [
                 'user_id' => $user->id,
                 'user_email' => $user->email,
-                'user_role' => 'mahasiswa',
+                'user_role' => 'Mahasiswa',
                 'user_full_name' => $user->profile->full_name,
             ], $request);
 
-            // 5. Auto Login
-            Auth::login($user);
-
-            // Regenerate session untuk keamanan
-            $request->session()->regenerate();
-
-            // 6. Redirect dengan notifikasi sukses (konsisten dengan LoginController)
             $request->session()->flash('notification_data', [
-                'type' => 'success',
-                'text' => "Selamat datang, {$user->profile->full_name}! Akun Anda berhasil dibuat.",
+                'type'     => 'success',
+                'text'     => 'Registrasi berhasil. Silakan login menggunakan akun Anda.',
                 'position' => 'center-top',
-                'duration' => 4000
+                'duration' => 4000,
             ]);
 
-            return redirect()->intended(route('dashboard'));
-
+            return redirect()->route('login');
         } catch (\Exception $e) {
             // LOG ERROR
             LogHelper::logError('register', 'user', $e, [

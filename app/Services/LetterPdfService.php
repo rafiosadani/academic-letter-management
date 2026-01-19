@@ -160,7 +160,7 @@ class LetterPdfService
         return match($letter->letter_type) {
             LetterType::PENELITIAN => [
                 'judul_penelitian' => $this->formatForDocument($letter->data_input['judul_penelitian'] ?? '-'),
-                'nama_instansi_tujuan' => $this->formatForDocument($letter->data_input['nama_tempat_penelitian'] ?? '-'),
+                'nama_instansi_tujuan' => $letter->data_input['nama_tempat_penelitian'] ?? '-',
                 'alamat_instansi_tujuan' => $this->formatForDocument($letter->data_input['alamat_tempat_penelitian'] ?? '-'),
                 'no_hp' => $letter->data_input['no_hp'] ?? '-',
                 'dosen_pembimbing' => $letter->data_input['dosen_pembimbing'] ?? '-',
