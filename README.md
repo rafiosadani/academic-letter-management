@@ -1,59 +1,221 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📌 Sistem Informasi Persuratan Akademik Berbasis Web
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white" />
+  <img src="https://img.shields.io/badge/PHP-8.2-777BB4?logo=php&logoColor=white" />
+  <img src="https://img.shields.io/badge/TailwindCSS-4-38BDF8?logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-Build-646CFF?logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Role%20Management-Spatie-blue" />
+  <img src="https://img.shields.io/badge/PHPWord-Document-8892BF" />
+  <img src="https://img.shields.io/badge/PDF-DomPDF-red" />
+  <img src="https://img.shields.io/badge/QR%20Code-Endroid-green" />
+  <img src="https://img.shields.io/badge/Status-Development-F59E0B" />
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📖 Deskripsi Sistem
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="justify">Sistem Informasi Persuratan Akademik Berbasis Web merupakan solusi digital yang dirancang untuk mengelola seluruh proses persuratan akademik secara terpadu dan terstruktur di lingkungan perguruan tinggi di Indonesia.</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<p align="justify">Sistem ini dikembangkan untuk menggantikan proses semi-manual yang sebelumnya menggunakan berbagai platform terpisah seperti Google Form, Google Spreadsheet, dan Microsoft Word menjadi satu platform terintegrasi. Sistem ini memfasilitasi proses pengajuan, verifikasi, persetujuan, hingga penerbitan surat akademik secara otomatis dan efisien.</p>
 
-## Learning Laravel
+<p align="justify">Dengan adanya sistem ini, seluruh proses persuratan menjadi lebih cepat, transparan, dan terdokumentasi dengan baik dalam satu basis data terpusat.</p>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🎯 Fitur Utama
 
-## Laravel Sponsors
+- Pengajuan surat akademik secara online
+- Workflow persetujuan multi-level (bertingkat)
+- Verifikasi dan validasi oleh pihak akademik
+- Generate dokumen otomatis (PDF & DOCX)
+- Tanda tangan elektronik (TTE)
+- QR Code untuk validasi keaslian dokumen
+- Tracking status pengajuan secara real-time
+- Arsip surat terpusat dan terdokumentasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 📄 Jenis Surat
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Surat Keterangan Aktif Kuliah
+- Surat Permohonan Penelitian
+- Surat Dispensasi Perkuliahan
+- Surat Dispensasi Mahasiswa
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Tech Stack
 
-## Code of Conduct
+- Laravel 12
+- PHP 8.2+
+- Tailwind CSS
+- Vite
+- MySQL / MariaDB
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📦 Package / Library
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- spatie/laravel-permission → Role & Permission
+- barryvdh/laravel-dompdf → Generate PDF
+- endroid/qr-code → QR Code
+- phpoffice/phpword → Export DOCX
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## ⚙️ Requirements
+
+- PHP >= 8.2
+- Composer
+- Node.js >= 18
+- NPM
+- MySQL / MariaDB
+
+---
+
+## 🛠️ Cara Instalasi
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/username/nama-project.git
+cd nama-project
+```
+
+---
+
+### 2️⃣ Install Dependency PHP
+
+```bash
+composer install
+```
+
+---
+
+### 3️⃣ Install Dependency Frontend
+
+```bash
+npm install
+```
+
+---
+
+### 4️⃣ Konfigurasi Environment
+
+```bash
+cp .env.example .env
+```
+
+Sesuaikan database di `.env`:
+
+```
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+---
+
+### 5️⃣ Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+### 6️⃣ Migrasi Database
+
+```bash
+php artisan migrate
+```
+
+---
+
+### 7️⃣ Jalankan Seeder
+
+```bash
+php artisan db:seed
+```
+
+---
+
+## ▶️ Menjalankan Aplikasi
+
+### Jalankan Backend
+
+```bash
+php artisan serve
+```
+
+---
+
+### Jalankan Frontend (Vite)
+
+```bash
+npm run dev
+```
+
+---
+
+### Akses Aplikasi
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 🔐 Role & Permission
+
+Sistem menggunakan:
+
+- Spatie Laravel Permission
+
+Role utama dalam sistem:
+
+- Mahasiswa
+- Staf Akademik
+- Kepala Subbagian
+- Pimpinan (Approver)
+
+---
+
+## 🧪 Data Awal (Seeder)
+
+Seeder digunakan untuk mengisi data awal seperti role dan user.
+
+Contoh akun default:
+
+```
+Email: administrator@gmail.com
+Password: password
+```
+
+---
+
+## 🌟 Keunggulan Sistem
+
+- Sistem terintegrasi dalam satu platform
+- Mengurangi kesalahan manual
+- Proses lebih cepat dan efisien
+- Transparansi penuh (real-time tracking)
+- Arsip digital terpusat
+
+---
+
+## 👨‍💻 Developer
+
+Nama: Rafio Sadani  
+Project: Tugas Akhir / Skripsi
+
+---
+
+## ⚠️ Catatan Penting
+
+- Pastikan database sudah dibuat sebelum menjalankan migration
+- Jika terjadi error permission dari Spatie, jalankan ulang seeder
+- Gunakan `npm run build` untuk mode production
