@@ -81,8 +81,8 @@
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/username/nama-project.git
-cd nama-project
+git clone https://github.com/rafiosadani/academic-letter-management.git
+cd academic-letter-management
 ```
 
 ---
